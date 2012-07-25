@@ -29,7 +29,7 @@ def unshorten_url(url):
 	return url
 
 # fetch the url
-url = "http://search.twitter.com/search.json?q=%40dpref"
+url = "http://search.twitter.com/search.json?q=%40dpref&rpp=100"
 json = urllib2.urlopen(url).read()
 tweets = simplejson.loads(json)
 for tweet in tweets['results']:
