@@ -1,10 +1,6 @@
-#!/bin/env python
+#!/usr/bin/env python
 import tweetstream
 import re
-
-
-# This is for Py2k.  For Py3k, use http.client and urllib.parse instead, and
-# use // instead of / for the division
 import httplib
 import urlparse
 import urllib2
