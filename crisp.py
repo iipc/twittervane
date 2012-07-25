@@ -38,7 +38,7 @@ for tweet in tweets['results']:
     if len(urls) == 0:
         urls = [""]
     for url in urls:
-        print "\"{}\", \"{}\", \"{}\", \"{}\", \"{}\"".format( tweet['created_at'], unshorten_url(url), ','.join(tags), tweet['text'], tweet['from_user'])
+        print "\"{}\", \"{}\", \"{}\", \"{}\", \"@{}\"".format( tweet['created_at'], unshorten_url(url), ','.join(tags), tweet['text'], tweet['from_user'])
 
 def tweet_stream():
     config = ConfigParser.ConfigParser()
