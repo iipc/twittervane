@@ -5,8 +5,10 @@ Dependencies
 ------------
 
     easy_install tweetstream
-    easy_install gspread
     easy_install simplejson
+    easy_install gspread
+
+https://github.com/burnash/gspread
 
 Example Output
 --------------
