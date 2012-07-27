@@ -29,7 +29,7 @@ twitter_pw = config.get("twitter", "pw")
 
 def tweet_stream():
     # To track:
-    words = ["olympic", "olympics", "olympian", "olympiad"]
+    words = ["olympic", "olympics", "olympian", "olympiad", "london2012"]
     # UK bounds:
     #locations = ["-10.0,50.0", "5.0,65.0"]
     try:
@@ -44,5 +44,4 @@ def tweet_stream():
 
 while True:
     tweet_stream()
-    #time.sleep(0.01)
-
+    time.sleep(0.1)
