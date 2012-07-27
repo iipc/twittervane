@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 import tweetstream
 import re
 import httplib
@@ -47,26 +47,3 @@ for tweet in reversed(tweets['results']):
     for url in urls:
         print "\"{}\", \"{}\", \"{}\", \"{}\", \"@{}\", \"{}\"".format( date, unshorten_url(url), ','.join(tags), tweet['text'], tweet['from_user'], tweet['id'])
 
-def tweet_stream():
-    config = ConfigParser.ConfigParser()
-    config.read("config.ini")
-    twitter_user = config.get("twitter", "user")
-    twitter_pw = config.get("twitter", "pw")
-
-    print twitter_user, twitter_pw
-
-    words = ["jubilee", "olympics"]
-    locations = ["-10.0,50.0", "5.0,65.0"]
-    try:
-        #with tweetstream.SampleStream(, ) as stream:
-        with tweetstream.FilterStream(twitter_user, twitter_pw, locations=locations) as stream:
-            for tweet in stream:
-                if tweet.has_key("user"):
-                    print tweet["text"]
-                    for url in tweet["entities"]["urls"]:
-                        print "TURL",unshorten_url(url["expanded_url"])
-                    print "RURL",re.findall(r'(https?://\S+)', tweet["text"])
-                    print "Got tweet from %-16s\t( tweet %d, rate %.1f tweets/sec)" % (
-                        tweet["user"]["screen_name"], stream.count, stream.rate )
-    except tweetstream.ConnectionError, e:
-        print "Disconnected from twitter. Reason:", e.reason
