@@ -23,3 +23,13 @@ Example Output
     "Fri, 20 Jul 2012 08:20:27 +0000", "http://www.w3.org/TR/html5/single-page.html", "markup,web,specification", "@dpref HTML5 spec (version 20120329/ http://t.co/6mKlwgne  #markup #web #specification", "@mopennock"
     "Fri, 20 Jul 2012 08:17:09 +0000", "", "validation,epub", "@dpref Flightcrew: A better ePub validator #validation #epub", "@mopennock"
 
+
+Vane
+====
+
+Add bbcolympics.
+Use a daily log file.
+
+- Make adding tags easy.
+- Autosuggest or add strongly co-located tags.
+
