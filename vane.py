@@ -17,7 +17,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 # Use a logger to keep log files in sensible chunks:
-logHandler = handlers.TimedRotatingFileHandler("tweetlog",when="S",encoding="utf-8")
+logHandler = handlers.TimedRotatingFileHandler("tweetlog",when="H",encoding="utf-8")
 logFormatter = logging.Formatter('%(message)s')
 logHandler.setFormatter( logFormatter )
 logger = logging.getLogger( 'MyLogger' )
@@ -49,7 +49,7 @@ def tweet_stream():
     
     except tweetstream.ConnectionError, e:
         logger.error("ERROR: Disconnected from twitter. Reason:", e.reason)
+        time.sleep(0.1)
 
 while True:
     tweet_stream()
-    time.sleep(0.1)
