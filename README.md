@@ -7,6 +7,7 @@ Dependencies
     easy_install tweetstream
     easy_install simplejson
     easy_install gspread
+    easy_install urlclean lxml BeautifulSoup
 
 https://github.com/burnash/gspread
 
