@@ -10,11 +10,7 @@ def unshorten_url(url):
         resource = "{}?{}".format(parsed.path, parsed.query) 
     else:
         resource = parsed.path
-    h.putrequest('HEAD', resource )
-    h.putheader('User-Agent', 'curl/7.21.4 (universal-apple-darwin11.0) libcurl/7.21.4 OpenSSL/0.9.8r zlib/1.2.5')
-    #h.putheader('Host:', parsed.host)
-    h.putheader('Accept:', '*/*')
-    h.endheaders()
+    h.request('HEAD', resource )
     response = h.getresponse()
     if response.status/100 == 3 and response.getheader('Location'):
       new_url = response.getheader('Location')
