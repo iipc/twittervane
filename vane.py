@@ -17,7 +17,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 # Use a logger to keep log files in sensible chunks:
-logHandler = handlers.TimedRotatingFileHandler("tweetlog",when="S")
+logHandler = handlers.TimedRotatingFileHandler("tweetlog",when="S",encoding="utf-8")
 logFormatter = logging.Formatter('%(message)s')
 logHandler.setFormatter( logFormatter )
 logger = logging.getLogger( 'MyLogger' )

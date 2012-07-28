@@ -27,16 +27,17 @@ Example Output
 Vane
 ====
 
-Add:
-bbcolympics
-openingceremony
-2012OlympicOpeningCeremony
-OlymicsOpeningCeremony2012
-Olympic2012Ceremony
+Using an hourly log file.
 
-Use a daily log file.
+Lessons?
 
+To Do:
 - Make adding tags easy.
 - Autosuggest or add strongly co-located tags.
+
+Useful Commands:
+- nohup python2.7 vane.py &
+- tail -f tweetlog | pv -l -i10 -r -b >/dev/null
+
 
 
