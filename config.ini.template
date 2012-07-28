@@ -1,3 +1,8 @@
 [twitter]
 user: username
 pw: password
+
+[google]
+user: username
+pw: password
+

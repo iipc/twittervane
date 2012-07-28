@@ -27,9 +27,16 @@ Example Output
 Vane
 ====
 
-Add bbcolympics.
+Add:
+bbcolympics
+openingceremony
+2012OlympicOpeningCeremony
+OlymicsOpeningCeremony2012
+Olympic2012Ceremony
+
 Use a daily log file.
 
 - Make adding tags easy.
 - Autosuggest or add strongly co-located tags.
+
 
