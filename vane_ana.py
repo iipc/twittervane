@@ -17,7 +17,6 @@ tweetlogfile = sys.argv[1]
 tweetlog = open(tweetlogfile, 'r')
 for line in tweetlog:
     tweet = eval(line)
-    print tweet["text"]
     tags = re.findall(r'#(\S+)', tweet["text"])
     urls = re.findall(r'(https?://[^\s\"]+)', tweet["text"])
     d = datetime.strptime( tweet['created_at'], '%a %b %d %H:%M:%S +0000 %Y')
