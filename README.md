@@ -32,6 +32,7 @@ Using an hourly log file.
 Lessons?
 
 To Do:
+- Outputs as Python dict(), should use JSON (original JSON if possible).
 - Make adding tags easy.
 - Autosuggest or add strongly co-located tags.
 
