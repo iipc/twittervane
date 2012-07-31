@@ -1,5 +1,7 @@
 import httplib
 import urlparse
+import urllib
+import BeautifulSoup
 
 def unshorten_url(url):
   try:
@@ -19,3 +21,11 @@ def unshorten_url(url):
         return url
   except:
     return url
+
+def get_url_title(url):
+  try:
+    soup = BeautifulSoup.BeautifulSoup(urllib.urlopen( url ))
+    return soup.title.string
+  except:
+    return "" 
+
