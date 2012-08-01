@@ -33,7 +33,7 @@ stopwords = { 'getgluehd', 'getgluehd!', 'olympics.', 'olympics2012', '2012londo
 all_words = {}
 wovertime = {}
 
-for file in glob.glob("json/tweetlog.*-??_??.json"):
+for file in sorted(glob.glob("json/tweetlog.*-??_??.json")):
     tws = simplejson.load(open(file))
     tstamp = tws['timestamp']
     for tag in tws['tags']:
