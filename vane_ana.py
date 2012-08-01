@@ -16,8 +16,10 @@ from string import punctuation
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
+vane_root = "/home/anjackson/git/crisp"
+
 # Load stopwords, and extend with tags.
-stopwords = open('common-english-words.txt', 'r').read().split(',')
+stopwords = open(os.path.join(vane_root,'common-english-words.txt'), 'r').read().split(',')
 stopwords.append('')
 stopwords.append('olympic')
 stopwords.append('olympics')
@@ -29,9 +31,9 @@ stopwords.append('amp')
 
 def process_tweetlog(file):
     tweetlogfile = file
-    resultsfile = "json/" + tweetlogfile + ".json"
+    resultsfile = os.path.join(vane_root, "json/" + os.path.basename(tweetlogfile) + ".json")
+    #print tweetlogfile, "->", resultsfile
     if os.path.exists(resultsfile):
-        print "exists " + resultsfile
         return
 
     tweetlog = open(tweetlogfile, 'r')
@@ -46,6 +48,8 @@ def process_tweetlog(file):
     #
     for line in tweetlog:
         tweet = eval(line)
+        if not tweet.has_key('text'):
+          continue
         twotal += 1
         # Words
         for word in tweet['text'].split():
@@ -109,7 +113,6 @@ def process_tweetlog(file):
     rf.close()
 
 # Test globs:
-for file in glob.glob("tweetlog.*-??_??"):
-    print file
+for file in glob.glob("/vol1/collections/twittervane/olympic/tweetlog.*-??_??"):
     process_tweetlog(file)
 
