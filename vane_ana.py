@@ -5,6 +5,7 @@ import urllib2
 import ConfigParser
 import simplejson
 import sys
+import time
 from datetime import datetime
 from unshorten import *
 from string import punctuation
@@ -26,12 +27,13 @@ stopwords.append('amp')
 # fetch the url
 tweetlogfile = sys.argv[1]
 tweetlog = open(tweetlogfile, 'r')
-N = 50
+N = 40
 words = {}
 tags = {}
 links = {}
 last_word = ""
 twotal = 0
+first_d = None
 last_d = None
 #
 for line in tweetlog:
@@ -68,32 +70,38 @@ for line in tweetlog:
     if last_d != None:
         pass
         #print last_d, d, (d-last_d), ( max([d,last_d]) - min([d,last_d]) )
+    if first_d == None:
+        first_d = d
     last_d = d
 
 
-print "TOTAL"
+results = {}
 
-print twotal
+results['total'] = twotal
+results['timestamp'] = int(time.mktime((last_d -  first_d).timetuple()))
 
-print "WORDS"
+print simplejson.dumps(results)
 
+
+results['words'] = {}
 top_words = sorted(words.items(), key=lambda item: item[1], reverse=True)[:N]
 for word, frequency in top_words:
-    sys.stdout.write ("%s %d," % (word, frequency))
-print ""
+    results['words'][word] = frequency
 
-print "TAGS"
-
+results['tags'] = {}
 top_tags = sorted(tags.items(), key=lambda item: item[1], reverse=True)[:N]
 for tag, frequency in top_tags:
-    sys.stdout.write ("%s %d," % (tag, frequency))
-print ""
+    results['tags'][tag] = frequency
 
-print "URLS"
-
+results['urls'] = {}
 top_links = sorted(links.items(), key=lambda item: item[1], reverse=True)[:N]
 for url, frequency in top_links:
-    lurl = unshorten_url(url)
-    title = get_url_title(lurl).replace("\n","")
-    sys.stdout.write ("%s - %s:%d,\n" % (lurl, title, frequency))
-print ""
+    #results['urls'][url] = frequency
+    #lurl = unshorten_url(url)
+    title, lurl = get_url_title(url)
+    title = title.replace("\n","")
+    results['urls'][url] = {}
+    results['urls'][url]['lurl'] = lurl
+    results['urls'][url]['title'] = title
+
+print simplejson.dumps(results)

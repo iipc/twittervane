@@ -24,8 +24,9 @@ def unshorten_url(url):
 
 def get_url_title(url):
   try:
-    soup = BeautifulSoup.BeautifulSoup(urllib.urlopen( url ))
-    return soup.title.string
+    res = urllib.urlopen( url )
+    soup = BeautifulSoup.BeautifulSoup(res)
+    return (res.url, soup.title.string)
   except:
-    return "" 
+    return (url, "")
 
