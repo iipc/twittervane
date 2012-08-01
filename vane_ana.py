@@ -29,7 +29,7 @@ stopwords.append('amp')
 
 def process_tweetlog(file):
     tweetlogfile = file
-    resultsfile = tweetlogfile + ".json"
+    resultsfile = "json/" + tweetlogfile + ".json"
     if os.path.exists(resultsfile):
         print "exists " + resultsfile
         return
@@ -86,7 +86,7 @@ def process_tweetlog(file):
     results = {}
 
     results['total'] = twotal
-    results['timestamp'] = int(time.mktime((last_d).timetuple())) - int(time.mktime((first_d).timetuple()))
+    results['timestamp'] = 1000 * ( int(time.mktime((last_d).timetuple())) + int(time.mktime((first_d).timetuple())) ) / 2
 
     results['words'] = {}
     top_words = sorted(words.items(), key=lambda item: item[1], reverse=True)[:N]
@@ -109,7 +109,7 @@ def process_tweetlog(file):
     rf.close()
 
 # Test globs:
-for file in glob.glob("tweetlog.*-??-??"):
+for file in glob.glob("tweetlog.*-??_??"):
     print file
     process_tweetlog(file)
 
