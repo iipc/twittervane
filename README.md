@@ -6,6 +6,10 @@ Dependencies
 
     easy_install tweetstream
     easy_install simplejson
+    easy_install pattern
+
+
+http://www.clips.ua.ac.be/pages/pattern-vector#tf-idf
 
 Ideas
 =====
