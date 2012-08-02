@@ -58,6 +58,10 @@ svg {
 <script src="novus-nvd3-c0c19c2/nv.d3.min.js"></script>
 <script>
 
+function dateLegend(e) {
+  return d3.time.format('%a, %e/%m, %I%p')(new Date(e.point[0] + 1000*60*60)) + '-' + d3.time.format('%I%p')(new Date(e.point[0] + 2*1000*60*60));
+}
+
 d3.json('twotals.json', function(data) {
 
 // Wrapping in nv.addGraph allows for '0 timeout render', stors rendered charts in nv.graphs, and may do more in the future... it's NOT required
@@ -67,7 +71,7 @@ nv.addGraph(function() {
                 .y(function(d) { return d[1] })
                 .color(d3.scale.category10().range());
 
-   chart.tooltipContent( function(key, x, y, e, graph) { return '<h3>' + y + ' ' + key + '</h3>' + '<p>at ' + d3.time.format('%a, %e/%m, %I%p')(new Date(e.point[0])) + '</p>' } );
+   chart.tooltipContent( function(key, x, y, e, graph) { return '<h3>' + y + ' ' + key + '</h3>' + '<p>at ' + dateLegend(e) + '</p>' } );
 
    chart.xAxis
       .tickFormat(function(d) {
@@ -102,7 +106,7 @@ d3.json('wordstreams.json', function(data) {
                    .clipEdge(true);
 
  
-   chart.tooltipContent( function(key, x, y, e, graph) { return '<h3>' + y + ' ' + key + '</h3>' + '<p>at ' + d3.time.format('%a, %e/%m, %I%p')(new Date(e.point[0])) + '</p>' } );
+   chart.tooltipContent( function(key, x, y, e, graph) { return '<h3>' + y + ' ' + key + '</h3>' + '<p>at ' + dateLegend(e) + '</p>' } );
 
      chart.xAxis
          .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)) });
