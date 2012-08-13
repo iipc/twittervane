@@ -47,9 +47,14 @@ def tweet_stream():
             for tweet in stream:
                 logger.info(tweet)
     
-    except tweetstream.ConnectionError, e:
-        logger.error("ERROR: Disconnected from twitter. Reason:", e.reason)
+    except tweetstream.ConnectionError as e:
+        logger.error( "ERROR: Disconnected from twitter. Reason: {}".format(e.reason) )
         time.sleep(0.1)
 
 while True:
-    tweet_stream()
+    try:
+    	tweet_stream()
+    except Exception as e:
+        logger.error( "ERROR: {}".format(e.reason) )
+	time.sleep(1.0)
+
