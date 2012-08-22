@@ -16,7 +16,7 @@ from string import punctuation
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-vane_root = "/home/anjackson/git/crisp"
+vane_root = "/home/anjackson/git/twittervane"
 
 # Load stopwords, and extend with tags.
 stopwords = open(os.path.join(vane_root,'common-english-words.txt'), 'r').read().split(',')
