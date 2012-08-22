@@ -37,7 +37,7 @@ twitter_pw = config.get("twitter", "pw")
 
 def tweet_stream():
     # To track:
-    words = ["olympic", "olympics", "olympian", "olympiad", "london2012", "bbcolympics", "openingceremony" ]
+    words = ["olympic", "olympics", "olympian", "olympiad", "london2012", "bbcolympics", "openingceremony", "paralympic", "lo2012", "torch", "torchrelay", "olympictorch", "teamgb" ]
     # UK bounds:
     #locations = ["-10.0,50.0", "5.0,65.0"]
     try:
@@ -47,9 +47,14 @@ def tweet_stream():
             for tweet in stream:
                 logger.info(tweet)
     
-    except tweetstream.ConnectionError, e:
-        logger.error("ERROR: Disconnected from twitter. Reason:", e.reason)
+    except tweetstream.ConnectionError as e:
+        logger.error( "ERROR: Disconnected from twitter. Reason: {}".format(e.reason) )
         time.sleep(0.1)
 
 while True:
-    tweet_stream()
+    try:
+        tweet_stream()
+    except Exception as e:
+        logger.error( "ERROR: {}".format(e.reason) )
+        time.sleep(1.0)
+
