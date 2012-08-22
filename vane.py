@@ -53,8 +53,8 @@ def tweet_stream():
 
 while True:
     try:
-    	tweet_stream()
+        tweet_stream()
     except Exception as e:
         logger.error( "ERROR: {}".format(e.reason) )
-	time.sleep(1.0)
+        time.sleep(1.0)
 
