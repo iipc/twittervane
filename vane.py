@@ -37,7 +37,7 @@ twitter_pw = config.get("twitter", "pw")
 
 def tweet_stream():
     # To track:
-    words = ["olympic", "olympics", "olympian", "olympiad", "london2012", "bbcolympics", "openingceremony" ]
+    words = ["olympic", "olympics", "olympian", "olympiad", "london2012", "bbcolympics", "openingceremony", "paralympic", "lo2012", "torch", "torchrelay", "olympictorch", "teamgb" ]
     # UK bounds:
     #locations = ["-10.0,50.0", "5.0,65.0"]
     try:

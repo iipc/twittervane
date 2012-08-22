@@ -1,5 +1,5 @@
 #!/bin/sh
-cd /home/anjackson/git/crisp
+cd /home/anjackson/git/twittervane
 /usr/local/bin/python2.7 vane_ana.py
 /usr/local/bin/python2.7 vane_aggra.py
 git checkout gh-pages
