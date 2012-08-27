@@ -47,7 +47,11 @@ def process_tweetlog(file):
     last_d = None
     #
     for line in tweetlog:
-        tweet = eval(line)
+        try:
+          tweet = eval(line)
+        except:
+          continue
+        #
         if not tweet.has_key('text'):
           continue
         twotal += 1
