@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="dashboard/novus-nvd3-c0c19c2/lib/cie.js|dashboard/novus-nvd3-c0c19c2/lib/d3.v2.js|dashboard/novus-nvd3-c0c19c2/lib/d3.v2.min.js|dashboard/novus-nvd3-c0c19c2/lib/fisheye.js|dashboard/novus-nvd3-c0c19c2/lib/hive.js|dashboard/novus-nvd3-c0c19c2/lib/horizon.js|dashboard/novus-nvd3-c0c19c2/lib/sankey.js|dashboard/novus-nvd3-c0c19c2/nv.d3.min.js" kind="src" path=""/>
+	<classpathentry kind="con" path="org.eclipse.wst.jsdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path=""/>
+</classpath>
