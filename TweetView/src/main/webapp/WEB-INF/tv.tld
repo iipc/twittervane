@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+  
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+  version="2.0">
+  
+  <tlib-version>1.1</tlib-version>
+  <short-name>tv</short-name>
+  <uri>http://ukwa/tv</uri>
+  
+  <tag>
+    <name>date</name>  
+    <tag-class>uk.bl.wap.crowdsourcing.tags.DateTag</tag-class>
+    <body-content>empty</body-content>
+
+    <attribute>
+        <name>type</name>
+        <required>true</required>
+        <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+        <name>value</name>
+        <required>true</required>
+        <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>    
+  
+  <tag>
+    <name>ellipsis</name>  
+    <tag-class>uk.bl.wap.crowdsourcing.tags.EllipsisTag</tag-class>
+    <body-content>empty</body-content>
+    <attribute>
+        <name>theString</name>
+        <required>true</required>
+        <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+        <name>length</name>
+        <required>true</required>
+        <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  
+    <tag>
+    <name>sortheader</name>  
+    <tag-class>uk.bl.wap.crowdsourcing.tags.SortHeaderTag</tag-class>
+    <body-content>empty</body-content>
+    <attribute>
+        <name>column</name>
+        <required>true</required>
+        <rtexprvalue>true</rtexprvalue>
+    </attribute>
+        <attribute>
+        <name>thisColumn</name>
+        <required>true</required>
+        <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+        <name>sort</name>
+        <required>true</required>
+        <rtexprvalue>true</rtexprvalue>
+    </attribute>
+        <attribute>
+        <name>displayName</name>
+        <required>true</required>
+        <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  
+</taglib>

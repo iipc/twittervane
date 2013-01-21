@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+<title>Olympic Twittervane</title>
+<link href="novus-nvd3-c0c19c2/src/nv.d3.css" rel="stylesheet" type="text/css">
+
+<style>
+
+body {
+  overflow-y:scroll;
+}
+
+text {
+  font: 12px sans-serif;
+}
+
+.chart {
+  padding: 0px 10px;
+  float: left;
+  width: 48%;
+}
+.bigchart {
+  clear: both;
+}
+
+svg {
+  display: block;
+  overflow: display:
+}
+
+.chart svg {
+  height: 150px;
+  min-width: 100px;
+  min-height: 100px;
+/*
+  margin: 50px;
+  Minimum height and width is a good idea to prevent negative SVG dimensions...
+  For example width should be =< margin.left + margin.right + 1,
+  of course 1 pixel for the entire chart would not be very useful, BUT should not have errors
+*/
+}
+
+</style>
+</head>
+<body>
+
+  <div id="chart1" class="chart">
+    <h1>Olympic Twittervane</h1>
+    <p><i>olympic, olympics, olympian, olympiad, london2012, bbcolympics, openingceremony</i></p>
+  </div>
+
+  <div id="chart2" class="chart">
+    <svg style="height: 150px;"></svg>
+  </div>
+
+  <div id="chart3" class="bigchart">
+    <svg style="height: 500px;"></svg>
+  </div>
+
+<script src="novus-nvd3-c0c19c2/lib/d3.v2.js"></script>
+<script src="novus-nvd3-c0c19c2/nv.d3.min.js"></script>
+<script>
+
+function dateLegend(e) {
+  return d3.time.format('%a, %e/%m, %I%p')(new Date(e.point[0] + 1000*60*60)) + '-' + d3.time.format('%I%p')(new Date(e.point[0] + 2*1000*60*60));
+}
+
+d3.json('twotals.json', function(data) {
+
+// Wrapping in nv.addGraph allows for '0 timeout render', stors rendered charts in nv.graphs, and may do more in the future... it's NOT required
+nv.addGraph(function() {  
+  var chart = nv.models.lineChart()
+                .x(function(d) { return d[0] })
+                .y(function(d) { return d[1] })
+                .color(d3.scale.category10().range());
+
+   chart.tooltipContent( function(key, x, y, e, graph) { return '<h3>' + y + ' ' + key + '</h3>' + '<p>at ' + dateLegend(e) + '</p>' } );
+
+   chart.xAxis
+      .tickFormat(function(d) {
+          return d3.time.format('%x')(new Date(d))
+        });
+
+  chart.yAxis
+      .tickFormat(d3.format(',.0'));
+
+  chart.forceY([0]);
+
+  d3.select('#chart2 svg')
+      .datum(data)
+    .transition().duration(500)
+      .call(chart);
+
+  //TODO: Figure out a good way to do this automatically
+  nv.utils.windowResize(chart.update);
+  //nv.utils.windowResize(function() { d3.select('#chart1 svg').call(chart) });
+
+  return chart;
+});
+
+});
+
+d3.json('wordstreams.json', function(data) {
+   nv.addGraph(function() {
+     var chart = nv.models.stackedAreaChart()
+		   .showLegend(true)
+                   .x(function(d) { return d[0] })
+                   .y(function(d) { return d[1] })
+                   .clipEdge(true);
+
+ 
+   chart.tooltipContent( function(key, x, y, e, graph) { return '<h3>' + y + ' ' + key + '</h3>' + '<p>at ' + dateLegend(e) + '</p>' } );
+
+     chart.xAxis
+         .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)) });
+ 
+     chart.yAxis
+         .tickFormat(d3.format(',.0f'));
+ 
+     d3.select('#chart3 svg')
+       .datum(data)
+         .transition().duration(500).call(chart);
+ 
+     nv.utils.windowResize(chart.update);
+ 
+     return chart;
+   });
+
+});
+
+</script>
+</body>
+</html>
