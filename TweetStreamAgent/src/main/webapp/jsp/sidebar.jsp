@@ -12,7 +12,6 @@
       <ul class="sidemenu">
         <li><a href="${pageContext.request.contextPath}/appconfig.html">Configuration</a>
         <li><a href="${pageContext.request.contextPath}/twitterstream.html">Twitter Stream</a></li>
-        <li><a href="${pageContext.request.contextPath}/runjob.html">Analysis / Tasks</a>
       </ul>
       <h1>Links</h1>
       <ul class="sidemenu">

@@ -12,7 +12,7 @@
 <script src="${pageContext.request.contextPath}/public-resources/jquery_validate.js" type="text/javascript"></script>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/public-resources/styles.css" type="text/css" />
 <link rel="stylesheet" href="${pageContext.request.contextPath}/public-resources/datePicker.css" type="text/css" />
-<title>TwitterVane</title>
+<title>Twitter Stream Agent</title>
 <script type="text/javascript">
 $(document).ready(function() {
     Date.format = 'dd-mmm-yyyy';
@@ -23,18 +23,11 @@ $(document).ready(function() {
 <body>
 <div id="wrap">
   <div id="header">
-    <h1 id="logo-text">TwitterVane</h1>
+    <h1 id="logo-text">Twitter Stream Agent</h1>
     <h2 id="slogan">Crowd sourcing for Web Archiving</h2>
     <div id="header-links">
-      <p> <a href="${pageContext.request.contextPath}/home.html">Home</a> | <a href="${pageContext.request.contextPath}/about.html">About</a></p>
+      <p><a href="${pageContext.request.contextPath}/about.html">About</a></p>
     </div>
-  </div>
-  <div  id="menu">
-    <ul>
-	  	<li><a href="${pageContext.request.contextPath}/collections.html">Collections</a></li>
-		<li><a href="${pageContext.request.contextPath}/report.html">Reports</a></li>
-		<li class="last"><a href="${pageContext.request.contextPath}/tweets.html">Latest Tweets</a></li>
-    </ul>
   </div>
   <div id="content-wrap">
   <%@ include file="sidebar.jsp" %>
