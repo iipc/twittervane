@@ -66,6 +66,7 @@ public class WebCollectionController {
     		}
     		String[] trackArray = {trackList};
     		
+    		//TODO: Send this as a RPC call to TweetStreamAgent
     		if (Util.twitterStream != null) {
     			Util.twitterStream.filter(new FilterQuery(0, followArray, trackArray));
     		}

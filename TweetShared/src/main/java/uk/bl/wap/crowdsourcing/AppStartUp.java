@@ -15,13 +15,14 @@ public class AppStartUp implements ServletContextListener{
 	}
 	
 	public void contextDestroyed(ServletContextEvent arg0) {
-
+/*
 		if (Util.twitterStream != null) {
 			log.info("Cleanup activity: Twitter Stream");
 			Util.twitterStream.shutdown();
 			Util.twitterStream.cleanUp();
 		}
 		log.info("Cleanup activity Complete.");
+		*/
 	}
 	
 	

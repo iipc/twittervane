@@ -33,19 +33,6 @@
 		</property>
 	</bean>
 
-	<!-- logger to write json tweets to a specified file -->
-	<bean id="jsonLogger" class="uk.bl.wap.crowdsourcing.logger.JsonLogger"
-		lazy-init="false">
-		<property name="fileName" value="json" />
-		<property name="filePath" value="C:\temp\logs\" />
-		<property name="fileExtension" value=".log." />
-	</bean>
-
-	<bean id="twitterStreamDaemonController"
-		class="uk.bl.wap.crowdsourcing.controller.TwitterStreamDaemonController">
-		<property name="jsonLogger" ref="jsonLogger" />
-	</bean>
-
 	<!-- Add Transaction support -->
 	<bean id="myTxManager" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="emf" />
