@@ -69,12 +69,13 @@ public class TweetDao {
     	return query.getResultList();
     }
     
-    public List<Tweet> getUnprocessedTweets(int jobNumber, long lastTweet) {
+    public List<Tweet> getUnprocessedTweets(Integer jobNumber) {
     	TypedQuery<Tweet> query = em.createQuery(
-                "SELECT t FROM Tweet t WHERE t.id > :lastTweet ORDER BY t.id asc", Tweet.class);
-    	query.setParameter("lastTweet", lastTweet);
+                "SELECT t FROM Tweet t WHERE t.processed = false ORDER BY t.id asc", Tweet.class);
     	query.setFirstResult(0);
-    	query.setMaxResults(jobNumber);
+    	if (jobNumber != null) {
+    		query.setMaxResults(jobNumber);
+    	}
         return query.getResultList();
     }
     

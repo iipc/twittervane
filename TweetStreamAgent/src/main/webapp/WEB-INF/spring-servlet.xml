@@ -44,6 +44,13 @@
 	<bean id="twitterStreamDaemonController"
 		class="uk.bl.wap.crowdsourcing.controller.TwitterStreamDaemonController">
 		<property name="jsonLogger" ref="jsonLogger" />
+		<property name="analysisTriggerValue" value="100" />
+		<property name="tweetAnalyserService" ref="tweetAnalyserService" />
+	</bean>
+
+	<bean id="tweetAnalyserService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">
+		<property name="serviceUrl" value="rmi://localhost:1199/TweetAnalyserService"/>
+		<property name="serviceInterface" value="uk.bl.wap.crowdsourcing.agent.TweetAnalyserService"/>
 	</bean>
 
 	<!-- Add Transaction support -->
@@ -64,5 +71,5 @@
 		class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basename" value="messages" />
 	</bean>
-
+	
 </beans>

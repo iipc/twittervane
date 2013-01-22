@@ -1,6 +1,7 @@
 <%@page import="uk.bl.wap.crowdsourcing.*"%>
-<jsp:useBean id="urlEntityDao" type="uk.bl.wap.crowdsourcing.dao.UrlEntityDao" scope="request" />
-<jsp:useBean id="tweetDao" type="uk.bl.wap.crowdsourcing.dao.TweetDao" scope="request" />
+<%@taglib prefix = "c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<jsp:useBean id="tweetAnalyserService" type="uk.bl.wap.crowdsourcing.agent.TweetAnalyserServiceImpl" scope="request" />
 <%@ include file="header.jsp" %>
 <div id="main">
 <h1>Jobs</h1>
@@ -14,13 +15,21 @@
         <p>
         Total Processed: ${message.message}
         </p>
-
+		<p>Tweet Analyser Service Status:
+		<span style="color:
+		<c:if test="${tweetAnalyserService.status eq 'RUNNING'}" >green</c:if>
+		<c:if test="${tweetAnalyserService.status eq 'STOPPED'}" >red</c:if>
+		<c:if test="${tweetAnalyserService.status eq 'PAUSED'}" >orange</c:if>
+		">
+		<%= tweetAnalyserService.getStatus() %>
+		</span>
+		</p>
  
  <h1>Summary</h1>
  
- <p>Total Tweets: <%= tweetDao.getTotalTweets() %></p>
- <p>Tweets Waiting for Analysis: <%= urlEntityDao.getTotalUnprocessed() %></p>
- <p>URLs Analysed: <%= urlEntityDao.getTotalProcessedEntities() %></p>
+ <p>Total Tweets: <%= tweetAnalyserService.getTotalTweets() %></p>
+ <p>Tweets Waiting for Analysis: <%= tweetAnalyserService.getTotalUnprocessed() %></p>
+ <p>URLs Analysed: <%= tweetAnalyserService.getTotalProcessedEntities() %></p>
  <br/><br/>
  
  <h1>Tasks</h1>

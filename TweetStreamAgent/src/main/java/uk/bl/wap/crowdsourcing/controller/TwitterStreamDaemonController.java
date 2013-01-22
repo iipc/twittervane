@@ -29,6 +29,7 @@ import uk.bl.wap.crowdsourcing.Tweet;
 import uk.bl.wap.crowdsourcing.UrlEntity;
 import uk.bl.wap.crowdsourcing.Util;
 import uk.bl.wap.crowdsourcing.WebCollection;
+import uk.bl.wap.crowdsourcing.agent.TweetAnalyserService;
 import uk.bl.wap.crowdsourcing.dao.AppConfigDao;
 import uk.bl.wap.crowdsourcing.dao.SearchTermDao;
 import uk.bl.wap.crowdsourcing.dao.TweetDao;
@@ -38,8 +39,13 @@ import uk.bl.wap.crowdsourcing.logger.JsonLogger;
 @Controller
 public class TwitterStreamDaemonController {
 
+	private Integer tweetCounter = 0;
+	private Integer analysisTriggerValue = 10;
+	
 	int processCounter = 0;
 	ModelAndView mv = new ModelAndView();
+	
+	private TweetAnalyserService tweetAnalyserService;
 	
 	@Autowired
 	private SearchTermDao searchTermDao; 
@@ -64,6 +70,7 @@ public class TwitterStreamDaemonController {
 	
 	public TwitterStreamDaemonController() {
 		log = LogFactory.getLog(getClass());
+		log.info("TwitterStreamDaemonController initialised with analysisTriggerValue: " + analysisTriggerValue);
 	}
 	
 	@RequestMapping(value="/twitterstream")
@@ -213,6 +220,16 @@ public class TwitterStreamDaemonController {
             				log.warn("Json logging is disabled");
             			}
             			tweetDao.persist(tweet);
+            			
+            			tweetCounter++;
+            			
+            			if (tweetAnalyserService != null && tweetCounter >= analysisTriggerValue) {
+            				log.debug("Triggering analysis after receiving " + tweetCounter + " tweets");
+            				tweetCounter = 0;
+            				tweetAnalyserService.run();
+            			}
+            			
+            			
             		} catch (Exception e) {
             			log.error("Transaction error on tweet" + e.getMessage() + ", cause: " + e.getCause());
             			log.debug(e);
@@ -290,6 +307,36 @@ public class TwitterStreamDaemonController {
 	 */
 	public void setJsonLogger(JsonLogger jsonLogger) {
 		this.jsonLogger = jsonLogger;
+	}
+
+	/**
+	 * @return the analysisTriggerValue
+	 */
+	public Integer getAnalysisTriggerValue() {
+		return analysisTriggerValue;
+	}
+
+	/**
+	 * @param analysisTriggerValue the analysisTriggerValue to set
+	 */
+	public void setAnalysisTriggerValue(Integer analysisTriggerValue) {
+		log.info("TwitterStreamDaemonController setting analysisTriggerValue: " + analysisTriggerValue);
+		this.analysisTriggerValue = analysisTriggerValue;
+	}
+
+	/**
+	 * @return the tweetAnalyserService
+	 */
+	public TweetAnalyserService getTweetAnalyserService() {
+		return tweetAnalyserService;
+	}
+
+	/**
+	 * @param tweetAnalyserService the tweetAnalyserService to set
+	 */
+	public void setTweetAnalyserService(
+			TweetAnalyserService tweetAnalyserService) {
+		this.tweetAnalyserService = tweetAnalyserService;
 	}
 	
 }
