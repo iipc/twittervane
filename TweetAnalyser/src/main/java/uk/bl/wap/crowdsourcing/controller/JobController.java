@@ -32,6 +32,7 @@ import uk.bl.wap.crowdsourcing.UrlEntity;
 import uk.bl.wap.crowdsourcing.UrlEntityFailed;
 import uk.bl.wap.crowdsourcing.Util;
 import uk.bl.wap.crowdsourcing.WebCollection;
+import uk.bl.wap.crowdsourcing.dao.AppConfigDao;
 import uk.bl.wap.crowdsourcing.dao.TweetDao;
 import uk.bl.wap.crowdsourcing.dao.UrlEntityDao;
 import uk.bl.wap.crowdsourcing.dao.UrlEntityFailedDao;
