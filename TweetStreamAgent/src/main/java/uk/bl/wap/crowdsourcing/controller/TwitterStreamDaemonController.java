@@ -70,7 +70,6 @@ public class TwitterStreamDaemonController {
 	
 	public TwitterStreamDaemonController() {
 		log = LogFactory.getLog(getClass());
-		log.info("TwitterStreamDaemonController initialised with analysisTriggerValue: " + analysisTriggerValue);
 	}
 	
 	@RequestMapping(value="/twitterstream")
@@ -120,6 +119,7 @@ public class TwitterStreamDaemonController {
         mv.addObject("message",message);
 		mv.addObject("appConfig",appConfigDao.getAppConfig());
 		mv.addObject("searchTermDao",searchTermDao);
+		mv.addObject("analysisTriggerValue", analysisTriggerValue);
         mv.setViewName("twitterstream.jsp");
         return mv;
 

@@ -3,6 +3,7 @@ package uk.bl.wap.crowdsourcing;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -13,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -30,6 +32,11 @@ public class WebCollection implements Serializable {
     private Date endDate;
     private Collection<SearchTerm> searchTerms;
     private List<UrlEntity> urlEntities;
+
+    private transient Long totalTweets;
+    private transient Long totalUrlsOriginal;
+    private transient Long totalUrlsExpanded;
+    private transient Long totalUrlErrors;
    
     public WebCollection() {
     }
@@ -37,6 +44,10 @@ public class WebCollection implements Serializable {
     public WebCollection(String name) {
         this.name = name;
         this.creationDate = new Date(System.currentTimeMillis());
+        this.totalTweets = 0L;
+        this.totalUrlsOriginal = 0L;
+        this.totalUrlsExpanded = 0L;
+        this.totalUrlErrors = 0L;
     }
     
     public WebCollection(String name,String description,String startDate,String endDate) {
@@ -98,7 +109,7 @@ public class WebCollection implements Serializable {
 		this.urlEntities = urlEntities;
 	}
 	
-    @Override
+	@Override
     public String toString() {
         return name + " (signed on " + creationDate + ")";
     }
@@ -151,5 +162,72 @@ public class WebCollection implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	/**
+	 * @return the serialversionuid
+	 */
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	/**
+	 * @return the totalTweets
+	 */
+	@Transient
+	public Long getTotalTweets() {
+		return totalTweets;
+	}
+
+	/**
+	 * @return the totalUrlsOriginal
+	 */
+	@Transient
+	public Long getTotalUrlsOriginal() {
+		return totalUrlsOriginal;
+	}
+
+	/**
+	 * @return the totalUrlsExpanded
+	 */
+	@Transient
+	public Long getTotalUrlsExpanded() {
+		return totalUrlsExpanded;
+	}
+
+	/**
+	 * @return the totalUrlErrors
+	 */
+	@Transient
+	public Long getTotalUrlErrors() {
+		return totalUrlErrors;
+	}
+
+	/**
+	 * @param totalTweets the totalTweets to set
+	 */
+	public void setTotalTweets(Long totalTweets) {
+		this.totalTweets = totalTweets;
+	}
+
+	/**
+	 * @param totalUrlsOriginal the totalUrlsOriginal to set
+	 */
+	public void setTotalUrlsOriginal(Long totalUrlsOriginal) {
+		this.totalUrlsOriginal = totalUrlsOriginal;
+	}
+
+	/**
+	 * @param totalUrlsExpanded the totalUrlsExpanded to set
+	 */
+	public void setTotalUrlsExpanded(Long totalUrlsExpanded) {
+		this.totalUrlsExpanded = totalUrlsExpanded;
+	}
+
+	/**
+	 * @param totalUrlErrors the totalUrlErrors to set
+	 */
+	public void setTotalUrlErrors(Long totalUrlErrors) {
+		this.totalUrlErrors = totalUrlErrors;
 	}
 }

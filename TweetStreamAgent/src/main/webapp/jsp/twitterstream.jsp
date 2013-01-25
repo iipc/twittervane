@@ -1,4 +1,6 @@
 <%@page import="uk.bl.wap.crowdsourcing.*"%>
+<%@taglib prefix = "c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <jsp:useBean id="appConfig" type="uk.bl.wap.crowdsourcing.AppConfig" scope="request" />
 <jsp:useBean id="searchTermDao" type="uk.bl.wap.crowdsourcing.dao.SearchTermDao" scope="request" />
 <%@page import="java.util.Iterator" %>
@@ -12,8 +14,8 @@
 		 <p><b>Twitter Stream Manager:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		 <a href="twitterstream.html?action=start">Start</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		 <a href="twitterstream.html?action=stop">Stop</a></p>
-		 <br/>
-		 
+		 <p><b>Tweet Analysis run for every <c:out value="${analysisTriggerValue}" /> tweets recieved</b></p>
+		  <br/>
 		 <h2>Twitter Stream Required</h2>
 		 <p>If any of the below are in red the twitter stream will not start.</p>
 		 <p><b>Terms:</b>

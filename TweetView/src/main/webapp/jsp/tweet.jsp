@@ -22,9 +22,9 @@
 	    %>
         <% for (Tweet tweet : tweetDao.getAllTweets()) { %>
       		<tr class="<%= trclass %>">
-      			<td><%= tweet.getName() %></td>
-      			<td><%= tweet.getCreationDate() %></td>
-      			<td><%= tweet.getRetweetCount() %>
+      			<td><%= tweet.getName()%></td>
+      			<td><%= tweet.getCreationDate()%></td>
+      			<td><%= tweet.getRetweetCount()%>
       			<td>
       			
 	      		<%

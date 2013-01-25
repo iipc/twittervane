@@ -37,10 +37,17 @@
 				<br/><br/>
             <input type="submit" value="Generate Report" />
         </form>
-		<br/>
+		<p></p>
 		<h1>Browse Reports</h1>
-		<a href="http://<%= request.getServerName() %>:<%= request.getLocalPort() %>${pageContext.request.contextPath}/reportView.html?sort=desc">Top URL By Collection</a>
-		<br/>
+		<div STYLE="font-size: 15px; color: black">
+		<p>
+		<a href="http://<%= request.getServerName() %>:<%= request.getLocalPort() %>${pageContext.request.contextPath}/reportView.html?report=tweetSummaryByCollection&sort=desc">Tweet Summary By Collection</a>
+		</p>
+		<p>
+		<a href="http://<%= request.getServerName() %>:<%= request.getLocalPort() %>${pageContext.request.contextPath}/reportView.html?report=topUrlsByCollection&sort=desc">Top URLs By Collection</a>
+		</p>
+		</div>
+		<p></p>
 		XML request: <a href="" id="a_xml" target="_new"></a>
 		<script language="javascript">
 			$(document).ready(function(){

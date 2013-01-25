@@ -18,12 +18,12 @@
   </appender>
   
   <logger name="uk.bl.wap.crowdsourcing.controller">
-	<level value="DEBUG" />
+	<level value="INFO" />
 	<appender-ref ref="GeneralLog"/> 	
   </logger>
     
   <logger name="uk.bl.wap.crowdsourcing.dao">
-	<level value="DEBUG" />
+	<level value="INFO" />
 	<appender-ref ref="GeneralLog"/> 	
   </logger>
   

@@ -1,6 +1,8 @@
 <%@page import="uk.bl.wap.crowdsourcing.*"%>
+<%@taglib prefix = "c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="tv" uri="http://ukwa/tv" %>
 <jsp:useBean id="urlEntityDao" type="uk.bl.wap.crowdsourcing.dao.UrlEntityDao" scope="request" />
-<jsp:useBean id="urlEntityFailedDao" type="uk.bl.wap.crowdsourcing.dao.UrlEntityFailedDao" scope="request" />
 <jsp:useBean id="webCollection" type="uk.bl.wap.crowdsourcing.WebCollection" scope="request" />
 <%@page import="java.util.Iterator" %>
 <%@ include file="header.jsp" %>
@@ -94,12 +96,15 @@
 	    	 %>
 	        	<tr class="<%= trclass %>">
 	        		<td><%= o[1] %></td>
+	        		<%String value = "";
+	        		if (o[0] != null)
+	        		value = (String)o[0];%>
 	        		<td>
 	        			<a onclick="submitForm('<%= o[0] %>','url')"><img src="${pageContext.request.contextPath}/public-resources/images/list.png" border="0" title="View Tweets" /></a>
 	        		</td>
 	        		<td><span style="white-space: pre;white-space: pre-wrap;white-space: pre-line;white-space: -pre-wrap;white-space: -o-pre-wrap;white-space: -moz-pre-wrap;white-space: -hp-pre-wrap;
 							word-wrap: break-word;">
-	        			<a href="<%= o[0] %>" target="_new"><%= o[0] %></a>
+	        			<a href="<%= o[0] %>" target="_new"><tv:ellipsis theString='<%=value%>' length='85' /></a>
 	        			</span>
 	        		</td>
 	        	</tr>
@@ -132,12 +137,12 @@
 	        }
 
 		} else if (reportType.contentEquals("failed")) {
-	    	 for (UrlEntityFailed entity : urlEntityFailedDao.getAllUrlEntitiesFailed()) { 
+	    	 for (UrlEntity entity : urlEntityDao.getAllUrlEntitiesFailed()) { 
 	    	 %>
 	        	<tr class="<%= trclass %>">
 	        		<td><%= entity.getId() %></td>
 	        		<td></td>
-	        		<td><a href="<%= entity.getUrl() %>" target="_new"><%= entity.getUrl() %></a></td>
+	        		<td><a href="<%= entity.getUrlOriginal() %>" target="_new"><%= entity.getUrlOriginal() %></a></td>
 	        	</tr>
 	        <%
 	        }

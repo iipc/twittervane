@@ -24,6 +24,7 @@
 		<%= tweetAnalyserService.getStatus() %>
 		</span>
 		</p>
+		<p>URL Expansion set to run for the top <c:out value="${tweetAnalyserService.topTweets}" /> tweets </p>
  
  <h1>Summary</h1>
  

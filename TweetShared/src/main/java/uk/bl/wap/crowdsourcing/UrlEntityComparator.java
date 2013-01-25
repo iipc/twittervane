@@ -4,7 +4,7 @@ import java.util.Comparator;
 
 public class UrlEntityComparator implements Comparator<UrlEntity> {
 	public enum Order {
-		urlFull, collectionName, totalTweets, totalRetweets
+		urlFull, totalTweets, totalRetweets
 	}
 	
 	public enum SortOrder {
@@ -22,12 +22,6 @@ public class UrlEntityComparator implements Comparator<UrlEntity> {
 				return url1.getUrlFull().compareTo(url2.getUrlFull());
 			} else {
 				return url2.getUrlFull().compareTo(url1.getUrlFull());
-			}
-		case collectionName:
-			if (this.sortOrder == SortOrder.asc) {
-			return url1.getCollectionName().compareTo(url2.getCollectionName());
-			} else {
-				return url2.getCollectionName().compareTo(url1.getCollectionName());
 			}
 		case totalTweets:
 			if (this.sortOrder == SortOrder.asc) {

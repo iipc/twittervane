@@ -12,7 +12,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import uk.bl.wap.crowdsourcing.dao.TweetDao;
 import uk.bl.wap.crowdsourcing.dao.UrlEntityDao;
-import uk.bl.wap.crowdsourcing.dao.UrlEntityFailedDao;
 import uk.bl.wap.crowdsourcing.dao.WebCollectionDao;
 
 @Controller
@@ -26,10 +25,6 @@ public class UrlEntityController {
 	
 	@Autowired 
 	TweetDao tweetDao;
-	
-	@Autowired
-	UrlEntityFailedDao urlEntityFailedDao;
-	
 	
 	private enumReportType reportType = enumReportType.topUrl;
 	private String filterUrl = "";
@@ -133,7 +128,6 @@ public class UrlEntityController {
 			mv.addObject("tweetDao",tweetDao);
 			mv.setViewName("entity.jsp");
 		} else if (this.collectionId > 0) {
-			mv.addObject("urlEntityFailedDao",urlEntityFailedDao);
 			mv.addObject("urlEntityDao",urlEntityDao);
 			mv.addObject("tweetDao",tweetDao);
 			mv.addObject("webCollection",webCollectionDao.getCollectionById(collectionId));

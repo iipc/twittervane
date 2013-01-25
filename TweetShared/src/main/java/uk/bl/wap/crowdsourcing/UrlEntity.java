@@ -19,10 +19,11 @@ public class UrlEntity implements Serializable {
 	private String urlOriginal;
 	private String urlFull;
 	private String urlDomain;
-	private String collectionName;
 	private Tweet tweet;
 	private WebCollection webCollection;
 	private Long popularity;
+	private String errors;
+	private Boolean expanded = false;
 	
 	@Transient
 	private Long totalTweets = 0L;
@@ -33,12 +34,10 @@ public class UrlEntity implements Serializable {
 	}
 
 	public UrlEntity(String urlOriginal, String urlFull, String urlDomain,
-			Tweet tweet, WebCollection webCollection, String collectionName,
-			Long popularity) {
+			Tweet tweet, WebCollection webCollection, String collectionName, Long popularity) {
 		this.setUrlOriginal(urlOriginal);
 		this.setUrlFull(urlFull);
 		this.setUrlDomain(urlDomain);
-		this.setCollectionName(collectionName);
 		this.setTweet(tweet);
 		this.setWebCollection(webCollection);
 		this.setPopularity(popularity);
@@ -85,13 +84,6 @@ public class UrlEntity implements Serializable {
 		this.urlDomain = urlDomain;
 	}
 
-	public String getCollectionName() {
-		return collectionName;
-	}
-
-	public void setCollectionName(String collectionName) {
-		this.collectionName = collectionName;
-	}
 
 	/**
 	 * @return the webCollection
@@ -152,6 +144,35 @@ public class UrlEntity implements Serializable {
 	 */
 	public void setTotalRetweets(Long retweets) {
 		this.totalRetweets = retweets;
+	}
+
+	/**
+	 * @return the errors
+	 */
+	@Column(length = 1000)
+	public String getErrors() {
+		return errors;
+	}
+
+	/**
+	 * @param errors the errors to set
+	 */
+	public void setErrors(String errors) {
+		this.errors = errors;
+	}
+
+	/**
+	 * @return the expanded
+	 */
+	public Boolean getExpanded() {
+		return expanded;
+	}
+
+	/**
+	 * @param expanded the expanded to set
+	 */
+	public void setExpanded(Boolean expanded) {
+		this.expanded = expanded;
 	}
 
 	

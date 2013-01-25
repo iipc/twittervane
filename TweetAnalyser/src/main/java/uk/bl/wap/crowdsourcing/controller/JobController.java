@@ -75,27 +75,15 @@ public class JobController {
 			tweetAnalyserService.run();
 			message.put("message", ""+ tweetAnalyserService.getProcessCounter());	 
 		} else if (purge) {
-			//while (tweetAnalyserService.getTotalEntities().longValue() > 0) {
-			//	tweetAnalyserService.deleteEntries();
-			//}
+			// purge all url entries
+			tweetAnalyserService.purgeUrlEntities();
 		} else if (purgeAll) {
-			//while (tweetAnalyserService.getTotalTweets().longValue() > 0) {
-			//	tweetAnalyserService.deleteAllTweets();
-			//}
+			// purge all tweets
+			tweetAnalyserService.purgeTweets();
 		} else if (purgeProcessed) {
-			long lastTweet;
-			//try {
-			//		lastTweet = (Long) tweetAnalyserService.getLastTweet();
-			//} 	catch (Exception e) {
-			//		lastTweet = 0;
-			//}
-			//while (tweetAnalyserService.getTotalProcessedTweets(lastTweet).longValue() > 0) {
-			//	tweetAnalyserService.deleteProcessedTweets(lastTweet);
-			//}
+			tweetAnalyserService.purgeProcessedTweets();
 		} else if (purgeFailed) {
-			//while (tweetAnalyserService.getTotalFailedEntities().longValue() > 0) {
-			//	tweetAnalyserService.deleteFailedEntries();
-			//}
+			tweetAnalyserService.purgeFailedUrls();
 		}
 	
         mv.addObject("message",message);

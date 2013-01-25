@@ -105,7 +105,9 @@ public class WebCollectionDao {
     public List<WebCollection> getAllCollections() {
     	TypedQuery<WebCollection> query = em.createQuery(
             "SELECT c FROM WebCollection c ORDER BY c.id", WebCollection.class);
-    	return query.getResultList();
+    	List<WebCollection> webCollections = query.getResultList();
+    	webCollections.add(new WebCollection("UNKNOWN"));
+    	return webCollections;
     }
     
     public List<WebCollection> getAllCollectionsForStream() {

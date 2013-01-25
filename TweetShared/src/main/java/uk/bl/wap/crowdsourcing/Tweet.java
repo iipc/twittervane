@@ -22,8 +22,8 @@ public class Tweet implements Serializable {
    Long id;
    private String name;
    private String text;
-   private long retweetCount;
-   private long tweetId;
+   private Long retweetCount;
+   private Long tweetId;
    private Date creationDate;
    private String twitterDate;
    @ElementCollection 
@@ -121,13 +121,11 @@ public class Tweet implements Serializable {
 		this.twitterDate = twitterDate;
 	}
 
-
-
-	public long getRetweetCount() {
+	public Long getRetweetCount() {
 		return retweetCount;
 	}
 
-	public void setRetweetCount(long retweetCount) {
+	public void setRetweetCount(Long retweetCount) {
 		this.retweetCount = retweetCount;
 	}
 

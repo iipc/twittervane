@@ -37,7 +37,7 @@
 	<bean id="jsonLogger" class="uk.bl.wap.crowdsourcing.logger.JsonLogger"
 		lazy-init="false">
 		<property name="fileName" value="json" />
-		<property name="filePath" value="C:\temp\logs\" />
+		<property name="filePath" value="C:\temp\logs\json\" />
 		<property name="fileExtension" value=".log." />
 	</bean>
 

@@ -17,16 +17,11 @@
     </layout>
   </appender>
   
-  <logger name="uk.bl.wap.crowdsourcing.controller">
-	<level value="INFO" />
+  <logger name="uk.bl.wap.crowdsourcing">
+	<level value="DEBUG" />
 	<appender-ref ref="GeneralLog"/> 	
   </logger>
     
-  <logger name="uk.bl.wap.crowdsourcing.dao">
-	<level value="INFO" />
-	<appender-ref ref="GeneralLog"/> 	
-  </logger>
-  
   <logger name="org.springframework">
 	<level value="WARN" />	
 	<appender-ref ref="GeneralLog"/>	  	

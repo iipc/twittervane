@@ -1,5 +1,7 @@
 package uk.bl.wap.crowdsourcing.dao;
 
+import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -37,11 +39,29 @@ public class TweetDao {
        	return countResult;
     }
     
+    public Long getTotalTweetsByCollection(Long collectionId) {
+    	// get the url count (processed + unprocessed)
+    	Number countUrl;
+    	String sql = null;
+    	if (collectionId != null) {
+    		sql = "SELECT count(distinct u.tweet_id) FROM url_entity u where u.web_collection_id = :collectionId ";
+    	} else {
+    		sql = "SELECT count(distinct u.tweet_id) FROM url_entity u where u.web_collection_id is null ";
+    	}
+		Query query = em.createNativeQuery(sql);
+		if (collectionId != null) {
+			query.setParameter("collectionId", collectionId);
+		}
+		countUrl =(Number) query.getSingleResult();
+
+       	return countUrl.longValue();
+    }
+    
     public Number getTotalProcessedTweets(long lastTweet) {
     	Number countResult;
     	try {
-    		Query query = em.createQuery(
-    				"SELECT count(t.id) FROM Tweet t WHERE t.id <= :lastTweet", Tweet.class);
+    		Query query = em.createNativeQuery(
+    				"SELECT count(t.id) FROM Tweet t WHERE t.processed = true", Tweet.class);
 	   		query.setParameter("lastTweet", lastTweet);
     		countResult=(Number) query.getSingleResult();
     	} catch (Exception e) {
@@ -79,6 +99,23 @@ public class TweetDao {
         return query.getResultList();
     }
     
+   public HashMap<Long, Long> getTopTweets(Integer topTweets) {
+    	
+    	String sql = "SELECT t.id, COUNT(t.id) FROM tweet t ";
+     	sql += " GROUP BY t.id ORDER BY COUNT(t.id) desc";
+    	
+     	Query query = em.createNativeQuery(sql);
+    	query.setFirstResult(0);
+    	query.setMaxResults(topTweets);
+     	List<Object[]> tuples = query.getResultList();
+     	HashMap<Long, Long> popularTweets = new HashMap<Long, Long>();
+     	for (int i = 0; i < tuples.size() ; i++) {
+     		popularTweets.put(((BigInteger)tuples.get(i)[0]).longValue(), ((BigInteger)tuples.get(i)[1]).longValue());
+     	}
+     	
+     	return popularTweets;
+    }
+    
     @Transactional
     public boolean deleteTweet(long id) {
     	  try{
@@ -91,10 +128,9 @@ public class TweetDao {
     	}
     
     @Transactional
-    public void deleteProcessedTweets(long lastTweet) {
+    public void deleteProcessedTweets() {
 	   	Query query = em.createQuery(
-	   			"SELECT t FROM Tweet t WHERE t.id <= :lastTweet ORDER BY t.id asc", Tweet.class);
-	   		query.setParameter("lastTweet", lastTweet);
+	   			"SELECT t FROM Tweet t WHERE t.processed = true", Tweet.class);
 	    	query.setFirstResult(0);
 	    	query.setMaxResults(50000);
 		    List<Tweet> results = query.getResultList();

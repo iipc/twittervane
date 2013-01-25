@@ -15,11 +15,11 @@ function submitForm(column, sortOrder) {
 <div id="main">
  <input type="hidden" name="sort" id="sort" value="${sort}" />
  <input type="hidden" name="column" id="column" value="${column}" />
+ <input type="hidden" name="report" id="column" value="${report}" />
 		<h1>Report</h1>
 		<table>
 			<tr><td>Report Name:</td><td>Top URLs By Collection</td></tr>
 			<tr><td>Report Date:</td><td><tv:date type="fullDateTime" value="${reportDate}"/></td></tr>
-			<tr><td>Collection Name:</td><td>All</td></tr>
 		</table>
 		<c:set var="nextSort" scope="page" value="" />
 		<c:choose>
@@ -47,10 +47,11 @@ function submitForm(column, sortOrder) {
 
 	        </tr>
 	        <c:set var="trclass" scope="page" value="row-a" />
+	        <c:set var="idx" scope="page" value="0" />
 		       <c:forEach items="${urlEntities}" var="urlEntity">
 		      		<tr class="<c:out value='${trclass}' />">
-		      		 			<td><a href="${urlEntity.urlFull}"><tv:ellipsis theString="${urlEntity.urlFull}" length="45" /></a></td>
-		      		 			<td align="left" style="padding-left: 12px;	padding-right: 12px;">${urlEntity.collectionName}</td>
+		      		 			<td><a href="${urlEntity.urlFull}"><tv:ellipsis theString="${urlEntity.urlFull}" length="25" /></a></td>
+		      		 			<td align="left" style="padding-left: 12px;	padding-right: 12px;">${webCollections[idx].name}</td>
 		      		 			<td align="center">${urlEntity.totalTweets}</td>
 		      		 			<td align="center">${tweets[urlEntity.tweet.id].retweetCount}</td>
 		      		</tr>
@@ -62,6 +63,7 @@ function submitForm(column, sortOrder) {
 		      			<c:set var="trclass" value="row-a" />
 		      		</c:otherwise>
 		      		</c:choose>
+		      		<c:set var="idx" scope="page" value="${idx + 1}" />
 		        </c:forEach>
         	<tr>
 	          <th class="first" colspan="2">TOTAL</th>

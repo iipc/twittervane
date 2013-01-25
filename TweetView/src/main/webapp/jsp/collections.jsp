@@ -19,6 +19,7 @@
 	         <%
 	         SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy");
 	         for (WebCollection webcollection : webCollectionDao.getAllCollections()) { 
+	        	 if (!webcollection.getName().equals("UNKNOWN")) {
 	         %>
 	          
 	         <tr class="<%= trclass %>">
@@ -45,6 +46,7 @@
 	  			} else {
 	  				trclass = "row-a";
 	  			}
+	        	 }
 	  		} 
 	  		%>
       	</table>

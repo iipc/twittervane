@@ -134,7 +134,7 @@ public class UrlEntityTest {
 		UrlEntity urlEntity = tweet.getUrlEntities().get(0);
 
 		// check it contains a stored attribute value
-		Assert.assertEquals("testDomain", urlEntity.getUrlDomain());
+		Assert.assertEquals("testDomain2", urlEntity.getUrlDomain());
 		
 		// modify the value
 		urlEntity.setUrlDomain("anotherTestDomain");
