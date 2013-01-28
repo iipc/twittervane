@@ -7,8 +7,8 @@
   <persistence-unit name="twittervanePU" transaction-type="RESOURCE_LOCAL">
   <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <properties>
-      <property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/Dwct"/>
-      <property name="hibernate.connection.username" value="usr_wct"/>
+      <property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/twittervane"/>
+      <property name="hibernate.connection.username" value="usr_tv"/>
 	  <property name="hibernate.connection.password" value="password"/>
 	  <property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>
       <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>

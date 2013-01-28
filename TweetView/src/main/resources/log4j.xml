@@ -9,7 +9,7 @@
   </appender>
   
   <appender name="GeneralLog" class="org.apache.log4j.DailyRollingFileAppender">
-    <param name="File" value="C:/temp/logs/twittervane.log"/>
+    <param name="File" value="/usr/share/tomcat6/logs/twittervane.log"/>
     <param name="DatePattern" value="'.'yyyy-MM-dd"/>
     <param name="Append" value="true"/>
     <layout class="org.apache.log4j.PatternLayout">
