@@ -54,5 +54,11 @@
 		class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basename" value="messages" />
 	</bean>
+	
+	<bean id="reportViewController" class="uk.bl.wap.crowdsourcing.controller.ReportViewController">
+		<property name="pageSize">
+			<value type="java.lang.Long">10</value>
+		</property>
+	</bean>
 
 </beans>

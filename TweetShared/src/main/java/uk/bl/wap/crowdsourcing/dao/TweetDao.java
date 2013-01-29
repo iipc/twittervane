@@ -83,6 +83,13 @@ public class TweetDao {
     	return query.getResultList();
     }
     
+    public List<Tweet> getTweetsByCollection(Long collectionId) {
+    	TypedQuery<Tweet> query = em.createQuery(
+            "SELECT t FROM Tweet t, UrlEntity u WHERE u.webCollection.id = :collectionId ORDER BY t.id desc", Tweet.class);
+    	query.setParameter("collectionId", collectionId);
+    	return query.getResultList();
+    }
+    
     public List<Tweet[]> getAllTweetsExpanded() {
     	TypedQuery<Tweet[]> query = em.createQuery(
             "SELECT t.name,t.text FROM Tweet t join t.urlEntities te ORDER BY t.id", Tweet[].class);

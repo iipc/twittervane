@@ -75,6 +75,25 @@ public class UrlEntityDao {
 		return query.getResultList();
 	}
 
+	//public List<UrlEntity> getUrlEntitiesByCollection(Long collectionId) {
+	//	TypedQuery<UrlEntity> query = em
+	//			.createQuery("SELECT u FROM UrlEntity u WHERE u.webCollection.id = :collectionId ORDER BY u.id desc",
+	//					UrlEntity.class);
+	//	query.setParameter("collectionId", collectionId);
+	//	query.setFirstResult(0);
+	//	return query.getResultList();
+	//}
+	
+	public List<UrlEntity> getUrlEntitiesByCollection(Long collectionId, Integer start, Integer rows) {
+		TypedQuery<UrlEntity> query = em
+				.createQuery("SELECT u FROM UrlEntity u WHERE u.webCollection.id = :collectionId",
+						UrlEntity.class);
+		query.setParameter("collectionId", collectionId);
+		query.setFirstResult(start);
+		query.setMaxResults(rows);
+		return query.getResultList();
+	}
+	
 	public List<ReportUrlEntity> getAllUrlEntitiesByCollection(
 			long webCollectionId, String filterUrl, String filterDomain) {
 		String sql = "SELECT u.url_full, u.url_domain, c.name, COUNT(u.id) FROM url_entity u, web_collection c WHERE c.id = u.web_collection_id and u.web_collection_id = :collectionid";

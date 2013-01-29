@@ -4,6 +4,7 @@
  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
  http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
  
+  
   <servlet>
     <servlet-name>spring</servlet-name>
     <servlet-class>
@@ -11,19 +12,11 @@
     </servlet-class>
     <load-on-startup>2</load-on-startup>
   </servlet>
+  
   <servlet-mapping>
     <servlet-name>spring</servlet-name>
     <url-pattern>*.html</url-pattern>
   </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>default</servlet-name>
-    <url-pattern>/public-resources/*</url-pattern>
-  </servlet-mapping>
-  
-  <servlet-mapping>
-		<servlet-name>spring</servlet-name>
-		<url-pattern>/rest/*</url-pattern>
-	</servlet-mapping>
 
     <session-config>
     <session-timeout>

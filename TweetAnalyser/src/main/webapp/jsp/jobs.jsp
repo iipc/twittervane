@@ -1,7 +1,6 @@
 <%@page import="uk.bl.wap.crowdsourcing.*"%>
 <%@taglib prefix = "c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<jsp:useBean id="tweetAnalyserService" type="uk.bl.wap.crowdsourcing.agent.TweetAnalyserServiceImpl" scope="request" />
 <%@ include file="header.jsp" %>
 <div id="main">
 <h1>Jobs</h1>
@@ -21,16 +20,16 @@
 		<c:if test="${tweetAnalyserService.status eq 'STOPPED'}" >red</c:if>
 		<c:if test="${tweetAnalyserService.status eq 'PAUSED'}" >orange</c:if>
 		">
-		<%= tweetAnalyserService.getStatus() %>
+		<c:out value="${tweetAnalyserService.status}" />
 		</span>
 		</p>
 		<p>URL Expansion set to run for the top <c:out value="${tweetAnalyserService.topTweets}" /> tweets </p>
  
  <h1>Summary</h1>
  
- <p>Total Tweets: <%= tweetAnalyserService.getTotalTweets() %></p>
- <p>Tweets Waiting for Analysis: <%= tweetAnalyserService.getTotalUnprocessed() %></p>
- <p>URLs Analysed: <%= tweetAnalyserService.getTotalProcessedEntities() %></p>
+ <p>Total Tweets: <c:out value="${tweetAnalyserService.totalTweets}" /></p>
+ <p>Tweets Waiting for Analysis: <c:out value="${tweetAnalyserService.totalUnprocessed}" /></p>
+ <p>URLs Analysed: <c:out value="${tweetAnalyserService.totalProcessedEntities}" /></p>
  <br/><br/>
  
  <h1>Tasks</h1>

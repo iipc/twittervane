@@ -116,7 +116,17 @@ public class WebCollectionDao {
     	return query.getResultList();
     }
     
-    
+    public WebCollection getWebCollection(Long collectionId) {
+    	TypedQuery<WebCollection> query = em.createQuery(
+            "SELECT c FROM WebCollection c WHERE c.id = :collectionId ORDER BY c.id", WebCollection.class);
+    	query.setParameter("collectionId", collectionId);
+    	List<WebCollection> webCollections = query.getResultList();
+    	if (webCollections.size() == 0) {
+    		return new WebCollection();
+    	} else {
+    		return webCollections.get(0);
+    	}
+    }
    
     
     public List<WebCollection[]> getCollection(int id) {

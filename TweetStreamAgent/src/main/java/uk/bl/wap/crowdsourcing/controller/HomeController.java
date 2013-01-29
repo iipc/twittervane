@@ -11,7 +11,6 @@ public class HomeController {
 	
 	@RequestMapping(value="/home")
     public ModelAndView crowdsourcing(HttpServletRequest request) {
- 
-        return new ModelAndView("twitterstream.html");
+        return new ModelAndView("twitterstream.jsp");
     }
 }

@@ -11,15 +11,22 @@ function submitForm(column, sortOrder) {
 	$('#sort').val(sortOrder);
 	$('#report').submit();
 }
+function setPageNumber(pageNo) {
+	$('#pageNumber').val(pageNo);
+	$('#report').submit();
+}
 </script>
 <div id="main">
  <input type="hidden" name="sort" id="sort" value="${sort}" />
  <input type="hidden" name="column" id="column" value="${column}" />
  <input type="hidden" name="report" id="column" value="${report}" />
+ <input type="hidden" name="collection" id="column" value="${collection}" />
+ <input type="hidden" name="pageNumber" id="pageNumber" value="${page.pageNumber}" />
 		<h1>Report</h1>
 		<table>
-			<tr><td>Report Name:</td><td>Tweet Summary By Collection</td></tr>
+			<tr><td>Report Name:</td><td>URLs In Collection</td></tr>
 			<tr><td>Report Date:</td><td><tv:date type="fullDateTime" value="${reportDate}"/></td></tr>
+			<tr><td>Collection Name:</td><td><c:out value="${webCollection.name}"/></td></tr>
 		</table>
 		<c:set var="nextSort" scope="page" value="" />
 		<c:choose>
@@ -33,30 +40,23 @@ function submitForm(column, sortOrder) {
         <table border="0">
 	        <tr>
 	          <th style="vertical-align: middle;" class="first" >
-					<tv:sortheader sort="${sort}" column="${column}" thisColumn="collectionName" displayName="Collection"/>
+					<tv:sortheader sort="${sort}" column="${column}" thisColumn="urlFull" displayName="URL"/>
 	          </th>
 	          <th style="vertical-align: middle;" class="first" >
-					<tv:sortheader sort="${sort}" column="${column}" thisColumn="totalTweets" displayName="Tweets"/>
+		          	<tv:sortheader sort="${sort}" column="${column}" thisColumn="tweeter" displayName="Tweeter"/>
 	          </th>
 	          <th style="vertical-align: middle;" class="first" >
-		          	<tv:sortheader sort="${sort}" column="${column}" thisColumn="totalUrlsOriginal" displayName="URLs"/>
-	          </th>
-	          <th style="vertical-align: middle;" class="first" >
-					<tv:sortheader sort="${sort}" column="${column}" thisColumn="totalUrlsFull" displayName="Expanded"/>
-	          </th>
-	          <th style="vertical-align: middle;" class="first" >
-					<tv:sortheader sort="${sort}" column="${column}" thisColumn="totalUrlErrors" displayName="Errors"/>
+					<tv:sortheader sort="${sort}" column="${column}" thisColumn="tweet" displayName="Tweet"/>
 	          </th>
 
 	        </tr>
 	        <c:set var="trclass" scope="page" value="row-a" />
-		       <c:forEach items="${webCollections}" var="webCollection">
+	        <c:set var="idx" scope="page" value="0" />
+		       <c:forEach items="${urlEntities}" var="urlEntity">
 		      		<tr class="<c:out value='${trclass}' />">
-		      		 			<td><a href="http://<%= request.getServerName() %>:<%= request.getLocalPort()%>${pageContext.request.contextPath}/reportView.html?report=urlsInCollection&collection=${webCollection.id}"><tv:ellipsis theString="${webCollection.name}" length="45" /></a></td>
-		      		 			<td align="center">${webCollection.totalTweets}</td>
-		      		 			<td align="center">${webCollection.totalUrlsOriginal}</td>
-		      		 			<td align="center">${webCollection.totalUrlsExpanded}</td>
-	      		 				<td align="center">${webCollection.totalUrlErrors}</td>
+		      		 			<td align="left"><a href="${urlEntity.urlFull}"><tv:ellipsis theString="${urlEntity.urlFull}" length="25" /></a></td>
+		      		 			<td align="left">${urlEntity.tweet.name}</td>
+		      		 			<td align="left">${urlEntity.tweet.text}</td>
 		      		</tr>
 		      		<c:choose>
 		      		<c:when test="${trclass eq 'row-a'}">
@@ -66,14 +66,9 @@ function submitForm(column, sortOrder) {
 		      			<c:set var="trclass" value="row-a" />
 		      		</c:otherwise>
 		      		</c:choose>
+		      		<c:set var="idx" scope="page" value="${idx + 1}" />
 		        </c:forEach>
-        	<tr>
-	          <th class="first">TOTAL</th>
-	          <th class="first" align="center">${totalTweets}</th>
-	          <th class="first" align="center">${totalUrlsOriginal}</th>
-	          <th class="first" align="center">${totalUrlsExpanded}</th>
-	          <th class="first" align="center">${totalUrlErrors}</th>
-	        </tr>
+		        <%@ include file="pagination.jsp" %>
         
       	</table>
       	<br/>

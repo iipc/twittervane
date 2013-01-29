@@ -4,14 +4,14 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<script src="${pageContext.request.contextPath}/public-resources/jquery.min.js" type="text/javascript"></script>
-<script src="${pageContext.request.contextPath}/public-resources/jquery.bgiframe.js" type="text/javascript"></script>
-<script src="${pageContext.request.contextPath}/public-resources/jquery.bt.min.js" type="text/javascript"></script>
-<script src="${pageContext.request.contextPath}/public-resources/date.js" type="text/javascript"></script>
-<script src="${pageContext.request.contextPath}/public-resources/jquery.datePicker.js" type="text/javascript"></script>
-<script src="${pageContext.request.contextPath}/public-resources/jquery_validate.js" type="text/javascript"></script>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/public-resources/styles.css" type="text/css" />
-<link rel="stylesheet" href="${pageContext.request.contextPath}/public-resources/datePicker.css" type="text/css" />
+<script src="${pageContext.request.contextPath}/scripts/jquery.min.js" type="text/javascript"></script>
+<script src="${pageContext.request.contextPath}/scripts/jquery.bgiframe.js" type="text/javascript"></script>
+<script src="${pageContext.request.contextPath}/scripts/jquery.bt.min.js" type="text/javascript"></script>
+<script src="${pageContext.request.contextPath}/scripts/date.js" type="text/javascript"></script>
+<script src="${pageContext.request.contextPath}/scripts/jquery.datePicker.js" type="text/javascript"></script>
+<script src="${pageContext.request.contextPath}/scripts/jquery_validate.js" type="text/javascript"></script>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/styles.css" type="text/css" />
+<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/datePicker.css" type="text/css" />
 <title>Twitter Stream Agent</title>
 <script type="text/javascript">
 $(document).ready(function() {

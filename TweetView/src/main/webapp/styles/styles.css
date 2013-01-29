@@ -73,7 +73,7 @@ ul, ol {
 	padding: 0 20px;
 }
 ul li {
-	list-style-image: url(/twittervane/public-resources/images/bullet.gif);
+	list-style-image: url(/twittervane/images/bullet.gif);
 }
 
 code {
@@ -95,7 +95,7 @@ blockquote {
 	margin: 10px;
  	padding: 0 0 0 28px;  
    border: 1px solid #f2f2f2; 
-  	background: #FAFAFA url(/twittervane/public-resources/images/quote.gif) no-repeat 5px 5px;    
+  	background: #FAFAFA url(/twittervane/images/quote.gif) no-repeat 5px 5px;    
 }
 
 /* start - table */
@@ -169,7 +169,7 @@ input.button {
 	margin: 0;
 	padding: 2px 3px; 
 	color: #FFF;
-	background: #8EB50C url(/twittervane/public-resources/images/button-bg.jpg) repeat-x 0 0;
+	background: #8EB50C url(/twittervane/images/button-bg.jpg) repeat-x 0 0;
 	border: none;
 }
 
@@ -201,7 +201,7 @@ input.button {
 ********************************************/ 
 #wrap {
 	width: 820px;
-	background: #CCC url(/twittervane/public-resources/images/content.jpg) repeat-y center top;
+	background: #CCC url(/twittervane/images/content.jpg) repeat-y center top;
 	margin: 0 auto;
 	text-align: left;
 }
@@ -215,7 +215,7 @@ input.button {
 	width: 820px;
 	position: relative;
 	height: 103px;
-	background: #CCC url(/twittervane/public-resources/images/header.jpg) no-repeat center top;
+	background: #CCC url(/twittervane/images/header.jpg) no-repeat center top;
 	padding: 0;	
 	color: #FFF;
 	/* font-size: 14px; */
@@ -261,7 +261,7 @@ input.button {
 #menu {
 	clear: both;	
 	margin: 0 auto; padding: 0;
-	background: url(/twittervane/public-resources/images/menu.jpg) repeat-x 0 0;	
+	background: url(/twittervane/images/menu.jpg) repeat-x 0 0;	
 	font: bold 12px/37px Verdana, Arial, Tahoma, Sans-serif;
 	height: 37px;
 	width: 780px;	
@@ -305,7 +305,7 @@ input.button {
 	color: #88ac0b; 
 	padding: 5px 0 5px 25px; 	
 	border-bottom: 1px solid #EFF0F1;
-	background: #FFF url(/twittervane/public-resources/images/square-green.png) no-repeat 3px 50%;	
+	background: #FFF url(/twittervane/images/square-green.png) no-repeat 3px 50%;	
 }
 
 .post-footer {
@@ -315,15 +315,15 @@ input.button {
 	font-size: 95%;	
 }
 .post-footer .date {
-	background: url(/twittervane/public-resources/images/clock.gif) no-repeat left center;
+	background: url(/twittervane/images/clock.gif) no-repeat left center;
 	padding-left: 20px; margin: 0 10px 0 5px;
 }
 .post-footer .comments {
-	background: url(/twittervane/public-resources/images/comment.gif) no-repeat left center;
+	background: url(/twittervane/images/comment.gif) no-repeat left center;
 	padding-left: 20px; margin: 0 10px 0 5px;
 }
 .post-footer .readmore {
-	background: url(/twittervane/public-resources/images/page.gif) no-repeat left center;
+	background: url(/twittervane/images/page.gif) no-repeat left center;
 	padding-left: 20px; margin: 0 10px 0 5px;
 }
 
@@ -346,11 +346,11 @@ input.button {
 	text-align: left;
 	margin: 7px 4px 8px 0; padding: 0;
 	text-decoration: none;		
-	background: url(/twittervane/public-resources/images/dots.jpg) repeat-x left top;
+	background: url(/twittervane/images/dots.jpg) repeat-x left top;
 }
 #sidebar ul.sidemenu li {
 	list-style: none;
-	background: url(/twittervane/public-resources/images/dots.jpg) repeat-x left bottom;
+	background: url(/twittervane/images/dots.jpg) repeat-x left bottom;
 	padding: 4px 0 4px 5px;
 	margin: 0 2px;	
 	color: #68774A;	
@@ -370,7 +370,7 @@ input.button {
 /* Footer */	
 #footer {
 	color: #C6DDEE;
-	background: #CCC url(/twittervane/public-resources/images/footer.jpg) no-repeat center top;
+	background: #CCC url(/twittervane/images/footer.jpg) no-repeat center top;
 	clear: both;
 	width: 820px;
 	height: 65px;

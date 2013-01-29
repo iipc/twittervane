@@ -100,7 +100,7 @@
 	        		if (o[0] != null)
 	        		value = (String)o[0];%>
 	        		<td>
-	        			<a onclick="submitForm('<%= o[0] %>','url')"><img src="${pageContext.request.contextPath}/public-resources/images/list.png" border="0" title="View Tweets" /></a>
+	        			<a onclick="submitForm('<%= o[0] %>','url')"><img src="${pageContext.request.contextPath}/images/list.png" border="0" title="View Tweets" /></a>
 	        		</td>
 	        		<td><span style="white-space: pre;white-space: pre-wrap;white-space: pre-line;white-space: -pre-wrap;white-space: -o-pre-wrap;white-space: -moz-pre-wrap;white-space: -hp-pre-wrap;
 							word-wrap: break-word;">
@@ -116,7 +116,7 @@
 	        	<tr class="<%= trclass %>">
 	        		<td><%= o[1] %></td>
 	        		<td>
-	        			<a onclick="submitForm('<%= o[0] %>','domain')"><img src="${pageContext.request.contextPath}/public-resources/images/list.png" border="0" title="View Tweets" /></a>
+	        			<a onclick="submitForm('<%= o[0] %>','domain')"><img src="${pageContext.request.contextPath}/images/list.png" border="0" title="View Tweets" /></a>
 	        		</td>
 	        		<td><a href="http://<%= o[0] %>" target="_new"><%= o[0] %></a></td>
 	        	</tr>
@@ -129,7 +129,7 @@
 	        	<tr class="<%= trclass %>">
 	        		<td><%= o[1] %></td>
 	        		<td>
-	        			<a onclick="submitForm('<%= o[0] %>','url')"><img src="${pageContext.request.contextPath}/public-resources/images/list.png" border="0" title="View Tweets" /></a>
+	        			<a onclick="submitForm('<%= o[0] %>','url')"><img src="${pageContext.request.contextPath}/images/list.png" border="0" title="View Tweets" /></a>
 	        		</td>
 	        		<td><a href="<%= o[0] %>" target="_new"><%= o[0] %></a></td>
 	        	</tr>

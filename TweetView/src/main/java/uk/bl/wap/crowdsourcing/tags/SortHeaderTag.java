@@ -65,9 +65,9 @@ public class SortHeaderTag extends TagSupport {
  		output.append("<td>");
 		
 	    if (sort.equals("desc") && thisColumn.equals(column)) {
-	    	output.append("<img src='./public-resources/images/sort-arrow-down.gif' onclick=");
+	    	output.append("<img src='./images/sort-arrow-down.gif' onclick=");
 	    } else if (thisColumn.equals(column)) {
-	    	output.append("<img src='./public-resources/images/sort-arrow-up.gif' onclick=");
+	    	output.append("<img src='./images/sort-arrow-up.gif' onclick=");
 	    };
 	    if (thisColumn.equals(column)) {
 	    	output.append(QUOTE);

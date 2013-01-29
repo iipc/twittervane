@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import uk.bl.wap.crowdsourcing.Page;
 import uk.bl.wap.crowdsourcing.Tweet;
 import uk.bl.wap.crowdsourcing.UrlEntity;
 import uk.bl.wap.crowdsourcing.UrlEntityComparator;
@@ -35,13 +36,26 @@ public class ReportViewController {
 	@Autowired
 	private TweetDao tweetDao;
 	
+	private Integer pageNumber = 1;
+	
+	/**
+	 * The number of records that will appear on a page
+	 */
+	private Integer pageSize;
+	
     @RequestMapping(value="/reportView")
     public ModelAndView buildReport(HttpServletRequest request) throws ParseException {
     	
     	String sort = request.getParameter("sort");
     	String column = request.getParameter("column");
     	String report = request.getParameter("report");
+    	String collection = request.getParameter("collection");
     	
+    	if (request.getParameter("pageNumber") != null) {
+    		pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
+    	} else {
+    		pageNumber = 1;
+    	}
 		ModelAndView mv = new ModelAndView();
     	Date reportDate = new Date(); 
     	
@@ -51,7 +65,7 @@ public class ReportViewController {
     	if (sort == null) {
     		sort = "desc";
     	}
-    	
+     	
     	if (report.equals("topUrlsByCollection")) {
         	if (column == null) {
         		column = "totalTweets";
@@ -62,6 +76,16 @@ public class ReportViewController {
         		column = "totalTweets";
         	}
     		mv = buildTweetSummaryByCollectionReport(mv, sort, column);
+    	} else if (report.equals("urlsInCollection")) {
+        	if (collection.equals("")) {
+        		collection = "0";
+        	} 
+        	Long collectionId = Long.parseLong(collection);
+
+        	if (column == null) {
+        		column = "collectionName";
+        	} 		
+        	mv = buildUrlsInCollectionReport(mv, sort, column, collectionId);
     	}
     	
     	// pass the generic report information to the view
@@ -237,6 +261,58 @@ public class ReportViewController {
     	return mv;
     }
     
+    private ModelAndView buildUrlsInCollectionReport(ModelAndView mv, String sort, String column, Long collectionId) {
+    	
+    	UrlEntityComparator.SortOrder urlEntitySortOrder = null;
+       	
+    	if (sort.equals("desc")) {
+    		urlEntitySortOrder = UrlEntityComparator.SortOrder.desc;
+    	} else {
+    		urlEntitySortOrder = UrlEntityComparator.SortOrder.asc;
+    	}
+       	
+    	// fetch the collection
+    	WebCollection webCollection = webCollectionDao.getWebCollection(collectionId);
+    	
+       	// fetch the url entities
+       	List<UrlEntity> urlEntities = urlEntityDao.getUrlEntitiesByCollection(webCollection.getId(), (this.pageNumber - 1) * this.pageSize, this.pageSize);
+    	
+    	// sort the url entities
+    	if (column.equals("urlFull")) {
+    		this.sortUrlEntitiesBy(urlEntities, UrlEntityComparator.Order.urlFull, urlEntitySortOrder);
+    	} else if (column.equals("tweeter")) {
+       		this.sortUrlEntitiesBy(urlEntities, UrlEntityComparator.Order.tweeter, urlEntitySortOrder);
+    	} else if (column.equals("tweet")) {
+       		this.sortUrlEntitiesBy(urlEntities, UrlEntityComparator.Order.tweet, urlEntitySortOrder);
+    	}
+    	
+    	mv.addObject("urlEntities", urlEntities);
+       	mv.addObject("webCollection", webCollection);
+       	mv.addObject("collection", collectionId);
+
+       	Page page = new Page();
+       	Long totalOriginal = urlEntityDao.getTotalURL(collectionId, null, null).longValue();
+       	Long totalExpanded = urlEntityDao.getTotalOriginalURL(collectionId, null, null).longValue();
+       	page.setTotal(totalOriginal + totalExpanded);
+       	Integer firstResult = (this.pageNumber - 1) * this.pageSize + 1;
+       	Integer lastResult = this.pageNumber * this.pageSize;
+       	if (lastResult > page.getTotal()) {
+       		lastResult = page.getTotal().intValue();
+       	}
+       	page.setFirstResult(firstResult);
+       	page.setLastResult(lastResult);
+       	page.setPageNumber(this.pageNumber);
+       	page.setNumberOfPages(page.getTotal() / this.pageSize);
+       	page.setPreviousPage((firstResult > this.pageSize ? true : false));
+       	page.setNextPage((lastResult < page.getTotal() ? true : false));
+       	
+       	mv.addObject("page", page);
+
+    	return mv;
+    }
+
+    
+    
     public void sortUrlEntitiesBy(List<UrlEntity> urlEntities, UrlEntityComparator.Order sortingBy, UrlEntityComparator.SortOrder sortOrder) {
     		UrlEntityComparator comparator = new UrlEntityComparator();
     		comparator.setSortOrder(sortOrder);
@@ -249,5 +325,19 @@ public class ReportViewController {
 		comparator.setSortOrder(sortOrder);
 		comparator.setSortingBy(sortingBy);
 		Collections.sort(urlEntities, comparator); // now we have a sorted list
+	}
+
+	/**
+	 * @return the pageSize
+	 */
+	public Integer getPageSize() {
+		return pageSize;
+	}
+
+	/**
+	 * @param pageSize the pageSize to set
+	 */
+	public void setPageSize(Integer pageSize) {
+		this.pageSize = pageSize;
 	}
 }

@@ -5,7 +5,7 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/common"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <property name="context-root" value="TweetAnalyser"/>
         <property name="java-output-path" value="/TweetAnalyser/build/classes"/>
+        <property name="context-root" value="/TweetAnalyser"/>
     </wb-module>
 </project-modules>
