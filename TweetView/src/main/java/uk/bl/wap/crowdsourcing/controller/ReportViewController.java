@@ -1,11 +1,16 @@
 package uk.bl.wap.crowdsourcing.controller;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,7 +35,6 @@ public class ReportViewController {
 	@Autowired
     private UrlEntityDao urlEntityDao;
 	
-	@Autowired
 	private WebCollectionDao webCollectionDao;
 	
 	@Autowired
@@ -76,12 +80,18 @@ public class ReportViewController {
         		column = "totalTweets";
         	}
     		mv = buildTweetSummaryByCollectionReport(mv, sort, column);
-    	} else if (report.equals("urlsInCollection")) {
-        	if (collection.equals("")) {
-        		collection = "0";
+    	} else if (report.equals("tweetSummaryByDate")) {
+    		Long collectionId = null;
+        	if (!collection.equals("")) {
+        		collectionId = Long.parseLong(collection);
         	} 
-        	Long collectionId = Long.parseLong(collection);
-
+    		mv = buildTweetSummaryByDateReport(mv, sort, column, collectionId);
+    	} else if (report.equals("urlsInCollection")) {
+    		Long collectionId = null;
+        	if (!collection.equals("")) {
+        		collectionId = Long.parseLong(collection);
+        	} 
+        	 
         	if (column == null) {
         		column = "collectionName";
         	} 		
@@ -97,6 +107,65 @@ public class ReportViewController {
     	mv.setViewName(report + ".jsp");
     	return mv;
     	
+    }
+    
+    private ModelAndView buildTweetSummaryByDateReport(ModelAndView mv, String sort, String column, Long collectionId) {
+    	
+    	// fetch the list of collections
+    	WebCollection webCollection = webCollectionDao.getWebCollection(collectionId);
+    	
+    	Calendar periodStart = new GregorianCalendar();
+    	Calendar periodEnd = new GregorianCalendar();
+    	
+    	// construct a set of labels for the column headers
+    	
+    	// by day (tweets over last week)
+    	Map<String, Long> lastWeek = new LinkedHashMap<String, Long>();
+    	SimpleDateFormat sdf = new SimpleDateFormat("EEE");
+    	for (int i=0; i<7; i++) {
+    		Long count = 0L;
+    		count = count + tweetDao.getTotalTweetsByPeriod(collectionId, periodStart, periodEnd);
+    		lastWeek.put(sdf.format(periodStart.getTime()), count);
+    		periodStart.add(Calendar.DAY_OF_WEEK, -1);
+    		periodEnd.add(Calendar.DAY_OF_WEEK, -1);
+    	}
+    	
+    	periodStart = new GregorianCalendar();
+    	periodEnd = new GregorianCalendar();
+    	
+    	// by month (tweets over last month)
+    	Map<String, Long> lastMonth = new LinkedHashMap<String, Long>();
+    	sdf = new SimpleDateFormat("d");
+    	for (int i=0; i<30; i++) {
+    		Long count = 0L;
+    		count = count + tweetDao.getTotalTweetsByPeriod(collectionId, periodStart, periodEnd);
+    		lastMonth.put(sdf.format(periodStart.getTime()), count);
+    		periodStart.add(Calendar.DAY_OF_MONTH, -1);
+    		periodEnd.add(Calendar.DAY_OF_MONTH, -1);
+    	}
+    	
+    	// by year (tweets over last year)
+    	periodStart = new GregorianCalendar();
+    	periodEnd = new GregorianCalendar();
+    	periodEnd.add(Calendar.MONTH, -1);
+    	
+    	// by month (tweets over last month)
+    	Map<String, Long> lastYear = new LinkedHashMap<String, Long>();
+    	sdf = new SimpleDateFormat("MMM");
+    	for (int i=0; i<12; i++) {
+    		Long count = 0L;
+       		count = count + tweetDao.getTotalTweetsByPeriod(collectionId, periodEnd, periodStart);
+    		lastYear.put(sdf.format(periodStart.getTime()), count);
+    		periodStart.add(Calendar.MONTH, -1);
+    		periodEnd.add(Calendar.MONTH, -1);
+    	}
+    	
+    	mv.addObject("lastWeek", lastWeek);
+    	mv.addObject("lastMonth", lastMonth);
+    	mv.addObject("lastYear", lastYear);
+    	mv.addObject("webCollection", webCollection);
+    	
+    	return mv;
     }
     
     private ModelAndView buildTweetSummaryByCollectionReport(ModelAndView mv, String sort, String column) {
@@ -339,5 +408,19 @@ public class ReportViewController {
 	 */
 	public void setPageSize(Integer pageSize) {
 		this.pageSize = pageSize;
+	}
+
+	/**
+	 * @return the webCollectionDao
+	 */
+	public WebCollectionDao getWebCollectionDao() {
+		return webCollectionDao;
+	}
+
+	/**
+	 * @param webCollectionDao the webCollectionDao to set
+	 */
+	public void setWebCollectionDao(WebCollectionDao webCollectionDao) {
+		this.webCollectionDao = webCollectionDao;
 	}
 }

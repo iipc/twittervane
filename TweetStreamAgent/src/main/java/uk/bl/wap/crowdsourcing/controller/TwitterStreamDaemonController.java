@@ -1,7 +1,10 @@
 package uk.bl.wap.crowdsourcing.controller;
 
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +64,11 @@ public class TwitterStreamDaemonController {
 	
 	private AppConfig appConfig = null;
 	private boolean termsFound = false;
+	private Integer displayLastStreamErrors = 3;
+	/**
+	 * Last error revieved from the Twitter Stream
+	 */
+	private List<String> lastStreamErrors = new ArrayList<String>(); 
 	
 	/** the application logger **/
 	private final Log log;
@@ -110,9 +118,9 @@ public class TwitterStreamDaemonController {
 		}
 	
 		if (Util.twitterStream != null) {
-			message.put("message", "<span style=\"color:green;\">On</span>");
+			message.put("message", "<span style=\"color:green;\">RUNNING</span>");
 		} else {
-			message.put("message", "<span style=\"color:red;\">Off</span>");
+			message.put("message", "<span style=\"color:red;\">SHUTDOWN</span>");
 		}
 		
 	
@@ -120,6 +128,8 @@ public class TwitterStreamDaemonController {
 		mv.addObject("appConfig",appConfigDao.getAppConfig());
 		mv.addObject("searchTermDao",searchTermDao);
 		mv.addObject("analysisTriggerValue", analysisTriggerValue);
+		mv.addObject("lastStreamErrors", lastStreamErrors);
+		mv.addObject("displayLastStreamErrors", displayLastStreamErrors);
         mv.setViewName("twitterstream.jsp");
         return mv;
 
@@ -138,15 +148,18 @@ public class TwitterStreamDaemonController {
 			    	 log.info("Twitter Stream started");
 			     } else if (!termsFound) {
 			    	 log.warn("Twitter Stream start aborted (no search terms defined)");
+			    	 setLastStreamError("Twitter Stream start aborted (no search terms defined)");
 			     }
 				
 			} catch (Exception e) {
 				log.error("Error initializing twitter stream: " + e.getMessage());
+				setLastStreamError(e.getMessage());
 			}
 
 
 		} catch (Exception e) {
 			log.error("Error initializing twitter stream: " + e.getMessage());
+			setLastStreamError(e.getMessage());
 		}
 	}
 	
@@ -159,6 +172,7 @@ public class TwitterStreamDaemonController {
 			}
 		} catch (Exception e) {
 			log.error("Error closing twitter stream: " + e.getMessage());
+			setLastStreamError(e.getMessage());
 		}
 	}
 	
@@ -189,7 +203,6 @@ public class TwitterStreamDaemonController {
 				}
 		}
 		
-	    	
         StatusListener listener = new StatusListener() {
         	
         	
@@ -244,6 +257,7 @@ public class TwitterStreamDaemonController {
             public void onScrubGeo(long userId, long upToStatusId) {}
             public void onException(Exception ex) {
             	log.error("Error retrieving tweet: " + ex.getMessage());
+            	setLastStreamError(ex.getMessage());
                }
         };
         
@@ -337,6 +351,48 @@ public class TwitterStreamDaemonController {
 	public void setTweetAnalyserService(
 			TweetAnalyserService tweetAnalyserService) {
 		this.tweetAnalyserService = tweetAnalyserService;
+	}
+
+	/**
+	 * @return the lastStreamError
+	 */
+	public List<String> getLastStreamErrors() {
+		return lastStreamErrors;
+	}
+
+	/**
+	 * @param lastStreamError the lastStreamError to set
+	 */
+	public void setLastStreamError(String lastStreamError) {
+		while (lastStreamErrors.size() >= displayLastStreamErrors) {
+			lastStreamErrors.remove(lastStreamErrors.size() - 1);
+		}
+		lastStreamErrors.add(0, getFormattedDate() + " - " + lastStreamError);
+	}
+	
+	/**
+	 * Return the current date and time formatted for display
+	 * @return current date in yyyy-MM-dd HH:mm:ss format
+	 */
+	private String getFormattedDate() {
+		Calendar calendar = new GregorianCalendar();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String formattedDate = sdf.format(calendar.getTime());
+		return formattedDate;
+	}
+
+	/**
+	 * @return the displayLastStreamErrors
+	 */
+	public Integer getDisplayLastStreamErrors() {
+		return displayLastStreamErrors;
+	}
+
+	/**
+	 * @param displayLastStreamErrors the displayLastStreamErrors to set
+	 */
+	public void setDisplayLastStreamErrors(Integer displayLastStreamErrors) {
+		this.displayLastStreamErrors = displayLastStreamErrors;
 	}
 	
 }

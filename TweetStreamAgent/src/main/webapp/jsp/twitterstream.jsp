@@ -13,7 +13,12 @@
 		 <p><b>Twitter Stream Manager:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		 <a href="twitterstream.html?action=start">Start</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		 <a href="twitterstream.html?action=stop">Stop</a></p>
-		 <p><b>Tweet Analysis run for every <c:out value="${analysisTriggerValue}" /> tweets recieved</b></p>
+		 <p><b>Tweet analysis run for every <c:out value="${analysisTriggerValue}" /> tweets recieved</b></p>
+		 <p><b>Last <c:out value="${displayLastStreamErrors}" /> Twitter stream errors:</b><br/>
+		 <c:forEach items="${lastStreamErrors}" var="error">
+		 	<c:out value="${error}" /><br/>
+		 </c:forEach>
+		 </p>
 		  <br/>
 		 <h2>Twitter Stream Required</h2>
 		 <p>If any of the below are in red the twitter stream will not start.</p>
@@ -21,18 +26,15 @@
 		 <c:set var="searchTermText" value="" />
 		 <c:set var="termsFound" value="false" />
 		 <c:forEach items="${searchTermDao.allSearchTerms}" var="searchTerm">
-		 	<c:set var="searchTermText" value="${fn:join(searchTermText, searchTerm)}" />
-		 	<c:set var="searchTermText" value="${fn:join(searchTermText, ' ')}" />
+		    <c:if test="${termsFound eq 'true'}">
+		    	<c:out value=", " />
+		    </c:if>
+		 	<c:out value="${searchTerm}" />
 		 	<c:set var="termsFound" value="true" />
 		 </c:forEach>
-		 <c:choose>
-		 	<c:when test="${termsFound eq 'false'}">
-		 		<span style="color:red">Required</span>
-		 	</c:when>
-		 	<c:otherwise>
-		 		<c:out value="${searchTermText}" />
-		 	</c:otherwise>
-		 </c:choose>
+	 	<c:if test="${termsFound eq 'false'}">
+	 		<span style="color:red">Required</span>
+	 	</c:if>
 		  </p>
 		 <p>
 		 <b>Twitter Api</b>

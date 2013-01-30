@@ -260,7 +260,7 @@ public class UrlEntityTest {
 		
 		List<WebCollection> webCollections = webCollectionDao.getAllCollections();
 		for (WebCollection webCollection : webCollections) {
-			if (webCollection.getName().equals("JUnit Test Web Collection")) {
+			if (webCollection.getName() != null && webCollection.getName().equals("JUnit Test Web Collection")) {
 				webCollectionDao.deleteWebCollection(webCollection.getId());
 			}
 		}

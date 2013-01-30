@@ -1,6 +1,7 @@
 package uk.bl.wap.crowdsourcing.dao;
 
 import java.math.BigInteger;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
@@ -52,6 +53,26 @@ public class TweetDao {
 		if (collectionId != null) {
 			query.setParameter("collectionId", collectionId);
 		}
+		countUrl =(Number) query.getSingleResult();
+
+       	return countUrl.longValue();
+    }
+    
+    public Long getTotalTweetsByPeriod(Long collectionId, Calendar start, Calendar end) {
+    	// get the url count (processed + unprocessed)
+    	Number countUrl;
+    	String sql = null;
+    	if (collectionId != null) {
+    		sql = "SELECT count(t.id) FROM tweet t, url_entity u where t.id = u.tweet_id and u.web_collection_id = :collectionId and t.creation_date between :start and :end ";
+    	} else {
+    		sql = "SELECT count(t.id) FROM tweet t, url_entity u where t.id = u.tweet_id and u.web_collection_id is null and t.creation_date between :start and :end ";
+    	}
+		Query query = em.createNativeQuery(sql);
+		if (collectionId != null) {
+			query.setParameter("collectionId", collectionId);
+		}
+		query.setParameter("start", start);
+		query.setParameter("end", end);
 		countUrl =(Number) query.getSingleResult();
 
        	return countUrl.longValue();

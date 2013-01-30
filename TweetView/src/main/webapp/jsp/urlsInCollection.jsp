@@ -45,10 +45,9 @@ function setPageNumber(pageNo) {
 	          <th style="vertical-align: middle;" class="first" >
 		          	<tv:sortheader sort="${sort}" column="${column}" thisColumn="tweeter" displayName="Tweeter"/>
 	          </th>
-	          <th style="vertical-align: middle;" class="first" >
+	          <th align="center" style="vertical-align: middle;" class="first" >
 					<tv:sortheader sort="${sort}" column="${column}" thisColumn="tweet" displayName="Tweet"/>
 	          </th>
-
 	        </tr>
 	        <c:set var="trclass" scope="page" value="row-a" />
 	        <c:set var="idx" scope="page" value="0" />
@@ -68,9 +67,12 @@ function setPageNumber(pageNo) {
 		      		</c:choose>
 		      		<c:set var="idx" scope="page" value="${idx + 1}" />
 		        </c:forEach>
+		        <tr><td colspan="3">
 		        <%@ include file="pagination.jsp" %>
-        
+		        </td></tr>
       	</table>
+      		
+     </table>
       	<br/>
  </div>
 

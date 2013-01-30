@@ -100,8 +100,9 @@ blockquote {
 
 /* start - table */
 table {
+	width: 100%;
 	border-collapse: collapse;
-	margin: 10px;	
+	margin: 0px;	
 }
 th strong {
 	color: #fff;

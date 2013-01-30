@@ -45,6 +45,7 @@
 		class="uk.bl.wap.crowdsourcing.controller.TwitterStreamDaemonController">
 		<property name="jsonLogger" ref="jsonLogger" />
 		<property name="analysisTriggerValue" value="100" />
+		<property name="displayLastStreamErrors" value="5" />
 		<property name="tweetAnalyserService" ref="tweetAnalyserService" />
 	</bean>
 

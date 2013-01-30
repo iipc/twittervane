@@ -19,6 +19,9 @@ public class WebCollectionDao {
 	// Injected database connection:
     @PersistenceContext private EntityManager em;
  
+    // the display name allocated to the "UNKNOWN" bucket web collection (when a tweet cant be resolved to a web collection based on a search term)
+    private String unknownCollection;
+    
     // Stores a new collection:
     @Transactional
     public void persist(WebCollection webCollection) {
@@ -106,7 +109,7 @@ public class WebCollectionDao {
     	TypedQuery<WebCollection> query = em.createQuery(
             "SELECT c FROM WebCollection c ORDER BY c.id", WebCollection.class);
     	List<WebCollection> webCollections = query.getResultList();
-    	webCollections.add(new WebCollection("UNKNOWN"));
+    	webCollections.add(new WebCollection(unknownCollection));
     	return webCollections;
     }
     
@@ -122,7 +125,9 @@ public class WebCollectionDao {
     	query.setParameter("collectionId", collectionId);
     	List<WebCollection> webCollections = query.getResultList();
     	if (webCollections.size() == 0) {
-    		return new WebCollection();
+    		WebCollection displayCollection = new WebCollection();
+    		displayCollection.setName(unknownCollection);
+    		return displayCollection;
     	} else {
     		return webCollections.get(0);
     	}
@@ -145,4 +150,18 @@ public class WebCollectionDao {
     	WebCollection collection =  em.find(WebCollection.class, id);
     	return collection;
     }
+
+	/**
+	 * @return the unknownCollection
+	 */
+	public String getUnknownCollection() {
+		return unknownCollection;
+	}
+
+	/**
+	 * @param unknownCollection the unknownCollection to set
+	 */
+	public void setUnknownCollection(String unknownCollection) {
+		this.unknownCollection = unknownCollection;
+	}
 }

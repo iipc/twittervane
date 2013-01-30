@@ -35,16 +35,16 @@ function submitForm(column, sortOrder) {
 	          <th style="vertical-align: middle;" class="first" >
 					<tv:sortheader sort="${sort}" column="${column}" thisColumn="collectionName" displayName="Collection"/>
 	          </th>
-	          <th style="vertical-align: middle;" class="first" >
+	          <th title="No of processed and unprocessed tweets" style="vertical-align: middle;" class="first" >
 					<tv:sortheader sort="${sort}" column="${column}" thisColumn="totalTweets" displayName="Tweets"/>
 	          </th>
-	          <th style="vertical-align: middle;" class="first" >
+	          <th title="No of expanded and non-expanded URLs" style="vertical-align: middle;" class="first" >
 		          	<tv:sortheader sort="${sort}" column="${column}" thisColumn="totalUrlsOriginal" displayName="URLs"/>
 	          </th>
-	          <th style="vertical-align: middle;" class="first" >
+	          <th title="Expanded URL count" style="vertical-align: middle;" class="first" >
 					<tv:sortheader sort="${sort}" column="${column}" thisColumn="totalUrlsFull" displayName="Expanded"/>
 	          </th>
-	          <th style="vertical-align: middle;" class="first" >
+	          <th title="No of analysis errors (eg: failure to resolve tweet to a web collection)" style="vertical-align: middle;" class="first" >
 					<tv:sortheader sort="${sort}" column="${column}" thisColumn="totalUrlErrors" displayName="Errors"/>
 	          </th>
 
@@ -52,9 +52,9 @@ function submitForm(column, sortOrder) {
 	        <c:set var="trclass" scope="page" value="row-a" />
 		       <c:forEach items="${webCollections}" var="webCollection">
 		      		<tr class="<c:out value='${trclass}' />">
-		      		 			<td><a href="http://<%= request.getServerName() %>:<%= request.getLocalPort()%>${pageContext.request.contextPath}/reportView.html?report=urlsInCollection&collection=${webCollection.id}"><tv:ellipsis theString="${webCollection.name}" length="45" /></a></td>
+		      		 			<td><a href="http://<%= request.getServerName() %>:<%= request.getLocalPort()%>${pageContext.request.contextPath}/reportView.html?report=tweetSummaryByDate&collection=${webCollection.id}"><tv:ellipsis theString="${webCollection.name}" length="45" /></a></td>
 		      		 			<td align="center">${webCollection.totalTweets}</td>
-		      		 			<td align="center">${webCollection.totalUrlsOriginal}</td>
+		      		 			<td align="center"><a href="http://<%= request.getServerName() %>:<%= request.getLocalPort()%>${pageContext.request.contextPath}/reportView.html?report=urlsInCollection&collection=${webCollection.id}">${webCollection.totalUrlsOriginal}</a></td>
 		      		 			<td align="center">${webCollection.totalUrlsExpanded}</td>
 	      		 				<td align="center">${webCollection.totalUrlErrors}</td>
 		      		</tr>

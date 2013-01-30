@@ -85,10 +85,17 @@ public class UrlEntityDao {
 	//}
 	
 	public List<UrlEntity> getUrlEntitiesByCollection(Long collectionId, Integer start, Integer rows) {
-		TypedQuery<UrlEntity> query = em
-				.createQuery("SELECT u FROM UrlEntity u WHERE u.webCollection.id = :collectionId",
-						UrlEntity.class);
-		query.setParameter("collectionId", collectionId);
+		
+		String sql = null;
+		if (collectionId != null) {
+			sql = "SELECT u FROM UrlEntity u WHERE u.webCollection.id = :collectionId";
+		} else {
+			sql = "SELECT u FROM UrlEntity u WHERE u.webCollection.id is null ";
+		}
+		TypedQuery<UrlEntity> query = em.createQuery(sql, UrlEntity.class);
+		if (collectionId != null) {
+			query.setParameter("collectionId", collectionId);
+		}
 		query.setFirstResult(start);
 		query.setMaxResults(rows);
 		return query.getResultList();
@@ -135,7 +142,7 @@ public class UrlEntityDao {
 	public List<UrlEntity> getEntitiesByUrl(Long collectionId, String url) {
 		TypedQuery<UrlEntity> query = em
 				.createQuery(
-						"SELECT u FROM UrlEntity u WHERE u.collectionId = :collectionid AND u.urlFull = :url ORDER BY u.popularity desc",
+						"SELECT u FROM UrlEntity u WHERE u.webCollection.id = :collectionid AND u.urlFull = :url ORDER BY u.popularity desc",
 						UrlEntity.class);
 		query.setParameter("url", url);
 		query.setParameter("collectionid", collectionId);
@@ -312,9 +319,9 @@ public class UrlEntityDao {
 		Number countResult;
 		String sql = null;
 		if (collectionId != null) {
-			sql = "SELECT COUNT(u.urlFull) FROM UrlEntity u WHERE u.webCollection.id = :collectionid and u.expanded = true and u.errors is null ";
+			sql = "SELECT COUNT(u.urlFull) FROM UrlEntity u WHERE u.webCollection.id = :collectionid and u.expanded = true  ";
 		} else {
-			sql = "SELECT COUNT(u.urlFull) FROM UrlEntity u WHERE u.webCollection.id is null and u.expanded = true and u.errors is null ";
+			sql = "SELECT COUNT(u.urlFull) FROM UrlEntity u WHERE u.webCollection.id is null and u.expanded = true  ";
 		}
 		if (filterUrl != null && !filterUrl.isEmpty()) {
 			if (!filterUrl.contains("%")) {
@@ -356,9 +363,9 @@ public class UrlEntityDao {
 		Number countResult;
 		String sql = null;
 		if (collectionId != null) {
-			sql = "SELECT COUNT(u.urlOriginal) FROM UrlEntity u WHERE u.webCollection.id = :collectionid and u.expanded = false and u.errors is null ";
+			sql = "SELECT COUNT(u.urlOriginal) FROM UrlEntity u WHERE u.webCollection.id = :collectionid and u.expanded = false ";
 		} else {
-			sql = "SELECT COUNT(u.urlOriginal) FROM UrlEntity u WHERE u.webCollection.id is null and u.expanded = false and u.errors is null ";
+			sql = "SELECT COUNT(u.urlOriginal) FROM UrlEntity u WHERE u.webCollection.id is null and u.expanded = false";
 		}
 		if (filterUrl != null && !filterUrl.isEmpty()) {
 			if (!filterUrl.contains("%")) {
