@@ -2,14 +2,14 @@
 <%@ include file="header.jsp" %>
 <jsp:useBean id="tweetDao" type="uk.bl.wap.crowdsourcing.dao.TweetDao" scope="request" />
 <div id="main">
-		<h1>Latest Tweets</h1>
+		<h1>Streamed Tweets</h1>
 		<!-- 
 		 <form method="POST" action="tweetedit.html">
             Tweet: <input type="text" name="tweet" />
             <input type="submit" value="Add" />
         </form>
 		 -->
-        <table>
+        <table width="100%">
 	        <tr>
 	          <th class="first">Tweeter</th>
 	          <th>Date</th>

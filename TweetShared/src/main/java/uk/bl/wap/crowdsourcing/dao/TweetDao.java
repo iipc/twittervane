@@ -45,9 +45,9 @@ public class TweetDao {
     	Number countUrl;
     	String sql = null;
     	if (collectionId != null) {
-    		sql = "SELECT count(distinct u.tweet_id) FROM url_entity u where u.web_collection_id = :collectionId ";
+    		sql = "SELECT count(distinct u.tweet_id) FROM url_entity u where u.url_original is not null and u.web_collection_id = :collectionId ";
     	} else {
-    		sql = "SELECT count(distinct u.tweet_id) FROM url_entity u where u.web_collection_id is null ";
+    		sql = "SELECT count(distinct u.tweet_id) FROM url_entity u where u.url_original is not null and u.web_collection_id is null ";
     	}
 		Query query = em.createNativeQuery(sql);
 		if (collectionId != null) {
@@ -63,9 +63,9 @@ public class TweetDao {
     	Number countUrl;
     	String sql = null;
     	if (collectionId != null) {
-    		sql = "SELECT count(t.id) FROM tweet t, url_entity u where t.id = u.tweet_id and u.web_collection_id = :collectionId and t.creation_date between :start and :end ";
+    		sql = "SELECT count(t.id) FROM tweet t, url_entity u where u.url_original is not null and t.id = u.tweet_id and u.web_collection_id = :collectionId and t.creation_date between :start and :end ";
     	} else {
-    		sql = "SELECT count(t.id) FROM tweet t, url_entity u where t.id = u.tweet_id and u.web_collection_id is null and t.creation_date between :start and :end ";
+    		sql = "SELECT count(t.id) FROM tweet t, url_entity u where u.url_original is not null and t.id = u.tweet_id and u.web_collection_id is null and t.creation_date between :start and :end ";
     	}
 		Query query = em.createNativeQuery(sql);
 		if (collectionId != null) {
@@ -106,14 +106,14 @@ public class TweetDao {
     
     public List<Tweet> getTweetsByCollection(Long collectionId) {
     	TypedQuery<Tweet> query = em.createQuery(
-            "SELECT t FROM Tweet t, UrlEntity u WHERE u.webCollection.id = :collectionId ORDER BY t.id desc", Tweet.class);
+            "SELECT t FROM Tweet t, UrlEntity u WHERE u.urlOriginal is not null and u.webCollection.id = :collectionId ORDER BY t.id desc", Tweet.class);
     	query.setParameter("collectionId", collectionId);
     	return query.getResultList();
     }
     
     public List<Tweet[]> getAllTweetsExpanded() {
     	TypedQuery<Tweet[]> query = em.createQuery(
-            "SELECT t.name,t.text FROM Tweet t join t.urlEntities te ORDER BY t.id", Tweet[].class);
+            "SELECT t.name,t.text FROM Tweet t join t.urlEntities te where te.urlOriginal is not null ORDER BY t.id", Tweet[].class);
     	return query.getResultList();
     }
     

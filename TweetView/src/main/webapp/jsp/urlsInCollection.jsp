@@ -37,7 +37,7 @@ function setPageNumber(pageNo) {
 				<c:set var="nextSort" value="desc" />
 			</c:otherwise>
 		</c:choose>
-        <table border="0">
+        <table border="0" width="100%">
 	        <tr>
 	          <th style="vertical-align: middle;" class="first" >
 					<tv:sortheader sort="${sort}" column="${column}" thisColumn="urlFull" displayName="URL"/>
@@ -53,7 +53,14 @@ function setPageNumber(pageNo) {
 	        <c:set var="idx" scope="page" value="0" />
 		       <c:forEach items="${urlEntities}" var="urlEntity">
 		      		<tr class="<c:out value='${trclass}' />">
+		      		<c:choose>
+		      		<c:when test="${urlEntity.urlFull ne null}">
 		      		 			<td align="left"><a href="${urlEntity.urlFull}"><tv:ellipsis theString="${urlEntity.urlFull}" length="25" /></a></td>
+		      		</c:when>
+		      		<c:otherwise>
+		      		 			<td align="left"><a href="${urlEntity.urlOriginal}"><tv:ellipsis theString="${urlEntity.urlOriginal}" length="25" /></a></td>
+		      		</c:otherwise>
+		      		 </c:choose>
 		      		 			<td align="left">${urlEntity.tweet.name}</td>
 		      		 			<td align="left">${urlEntity.tweet.text}</td>
 		      		</tr>

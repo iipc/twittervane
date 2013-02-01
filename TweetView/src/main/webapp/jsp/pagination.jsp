@@ -1,5 +1,5 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<table cellpadding="0" cellspacing="0" border="0">
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
   <tr>
     <th class="first" width="5%">
       <c:if test="${page.previousPage}"><img style="cursor: pointer;" title="Prev" src="./images/left-arrow.gif" alt="Prev" border="0" onclick="return setPageNumber(${page.pageNumber - 1});"/></c:if>

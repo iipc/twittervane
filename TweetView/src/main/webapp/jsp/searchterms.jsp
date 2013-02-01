@@ -13,7 +13,7 @@
         for (SearchTerm searchterm : searchTermDao.getAllSearchTerms()) { 
         %>
         		<tr class="<%= trclass %>">
-      				<td><a href="${pageContext.request.contextPath}/searctherm.html?id=<%= searchterm.getId() %>"><%= searchterm.getTerm() %></a> &nbsp;&nbsp;&nbsp;&nbsp;</td>
+      				<td><a href="./searctherm.html?id=<%= searchterm.getId() %>"><%= searchterm.getTerm() %></a> &nbsp;&nbsp;&nbsp;&nbsp;</td>
 					<!--  <td><a href="searchterms.html?id=<%= searchterm.getId() %>">Delete</a></td>-->
 	    		</tr>
 	  	<%

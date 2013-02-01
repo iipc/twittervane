@@ -28,7 +28,7 @@ SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
          		while (iterator.hasNext()) {
          			SearchTerm st = searchTermDao.getSearchTermByid((Long) iterator.next().getId());
 		%>
-				<a href="${pageContext.request.contextPath}/searchterm.html?id=<%= st.getId() %>"><%=  st.getTerm() %></a><br/>
+				<a href="./searchterm.html?id=<%= st.getId() %>"><%=  st.getTerm() %></a><br/>
 		<%
          	}
 		%>

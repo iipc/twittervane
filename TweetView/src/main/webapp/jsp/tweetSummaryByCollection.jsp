@@ -30,7 +30,7 @@ function submitForm(column, sortOrder) {
 				<c:set var="nextSort" value="desc" />
 			</c:otherwise>
 		</c:choose>
-        <table border="0">
+        <table border="0" width="100%">
 	        <tr>
 	          <th style="vertical-align: middle;" class="first" >
 					<tv:sortheader sort="${sort}" column="${column}" thisColumn="collectionName" displayName="Collection"/>
@@ -52,9 +52,9 @@ function submitForm(column, sortOrder) {
 	        <c:set var="trclass" scope="page" value="row-a" />
 		       <c:forEach items="${webCollections}" var="webCollection">
 		      		<tr class="<c:out value='${trclass}' />">
-		      		 			<td><a href="http://<%= request.getServerName() %>:<%= request.getLocalPort()%>${pageContext.request.contextPath}/reportView.html?report=tweetSummaryByDate&collection=${webCollection.id}"><tv:ellipsis theString="${webCollection.name}" length="45" /></a></td>
+		      		 			<td><a href="./reportView.html?report=tweetSummaryByDate&collection=${webCollection.id}"><tv:ellipsis theString="${webCollection.name}" length="45" /></a></td>
 		      		 			<td align="center">${webCollection.totalTweets}</td>
-		      		 			<td align="center"><a href="http://<%= request.getServerName() %>:<%= request.getLocalPort()%>${pageContext.request.contextPath}/reportView.html?report=urlsInCollection&collection=${webCollection.id}">${webCollection.totalUrlsOriginal}</a></td>
+		      		 			<td align="center"><a href="./reportView.html?report=urlsInCollection&collection=${webCollection.id}">${webCollection.totalUrlsOriginal}</a></td>
 		      		 			<td align="center">${webCollection.totalUrlsExpanded}</td>
 	      		 				<td align="center">${webCollection.totalUrlErrors}</td>
 		      		</tr>

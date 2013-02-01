@@ -4,14 +4,14 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<script src="${pageContext.request.contextPath}/scripts/jquery.min.js" type="text/javascript"></script>
-<script src="${pageContext.request.contextPath}/scripts/jquery.bgiframe.js" type="text/javascript"></script>
-<script src="${pageContext.request.contextPath}/scripts/jquery.bt.min.js" type="text/javascript"></script>
-<script src="${pageContext.request.contextPath}/scripts/date.js" type="text/javascript"></script>
-<script src="${pageContext.request.contextPath}/scripts/jquery.datePicker.js" type="text/javascript"></script>
-<script src="${pageContext.request.contextPath}/scripts/jquery_validate.js" type="text/javascript"></script>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/styles.css" type="text/css" />
-<link rel="stylesheet" href="${pageContext.request.contextPath}/styles/datePicker.css" type="text/css" />
+<script src="<%=request.getScheme()+"://"+request.getServerName() %>:<%= request.getLocalPort()%>${pageContext.request.contextPath}/scripts/jquery.min.js" type="text/javascript"></script>
+<script src="<%=request.getScheme()+"://"+request.getServerName() %>:<%= request.getLocalPort()%>${pageContext.request.contextPath}/scripts/jquery.bgiframe.js" type="text/javascript"></script>
+<script src="<%=request.getScheme()+"://"+request.getServerName() %>:<%= request.getLocalPort()%>${pageContext.request.contextPath}/scripts/jquery.bt.min.js" type="text/javascript"></script>
+<script src="<%=request.getScheme()+"://"+request.getServerName() %>:<%= request.getLocalPort()%>${pageContext.request.contextPath}/scripts/date.js" type="text/javascript"></script>
+<script src="<%=request.getScheme()+"://"+request.getServerName() %>:<%= request.getLocalPort()%>${pageContext.request.contextPath}/scripts/jquery.datePicker.js" type="text/javascript"></script>
+<script src="<%=request.getScheme()+"://"+request.getServerName() %>:<%= request.getLocalPort()%>${pageContext.request.contextPath}/scripts/jquery_validate.js" type="text/javascript"></script>
+<link rel="stylesheet" href="<%=request.getScheme()+"://"+request.getServerName() %>:<%= request.getLocalPort()%>${pageContext.request.contextPath}/styles/styles.css" type="text/css" />
+<link rel="stylesheet" href="<%=request.getScheme()+"://"+request.getServerName() %>:<%= request.getLocalPort()%>${pageContext.request.contextPath}/styles/datePicker.css" type="text/css" />
 <title>Twitter Stream Agent</title>
 <script type="text/javascript">
 $(document).ready(function() {
@@ -26,7 +26,7 @@ $(document).ready(function() {
     <h1 id="logo-text">Twitter Stream Agent</h1>
     <h2 id="slogan">Crowd sourcing for Web Archiving</h2>
     <div id="header-links">
-      <p><a href="${pageContext.request.contextPath}/about.html">About</a></p>
+      <p><a href="<%=request.getScheme()+"://"+request.getServerName() %>:<%= request.getLocalPort()%>${pageContext.request.contextPath}/about.html">About</a></p>
     </div>
   </div>
   <div id="content-wrap">

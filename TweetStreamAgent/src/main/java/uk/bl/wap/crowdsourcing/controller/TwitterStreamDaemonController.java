@@ -246,6 +246,7 @@ public class TwitterStreamDaemonController {
             		} catch (Exception e) {
             			log.error("Transaction error on tweet" + e.getMessage() + ", cause: " + e.getCause());
             			log.debug(e);
+            			setLastStreamError(e.getMessage());
             		} finally {
 
             		}

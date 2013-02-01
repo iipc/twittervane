@@ -5,7 +5,7 @@
 <%@ include file="header.jsp" %>
 <div id="main">
 		<h1>Collections</h1>
-        <table>
+        <table border="0" width="100%">
 	        <tr>
 	          <th class="first">Collection</th>
 	          <th>Start Date</th>
@@ -23,7 +23,7 @@
 	         %>
 	          
 	         <tr class="<%= trclass %>">
-	         	<td class="first"><a href ="${pageContext.request.contextPath}/collection.html?id=<%= webcollection.getId() %>"><%= webcollection.getName() %></a></td>
+	         	<td class="first"><a href ="./collection.html?id=<%= webcollection.getId() %>"><%= webcollection.getName() %></a></td>
 	          	<td><%= sdf.format(webcollection.getStartDate()) %></td>
 	          	<td><%= sdf.format(webcollection.getEndDate()) %></td>
 	         	<td>
@@ -33,12 +33,12 @@
 	         	 while (iterator.hasNext()) {
 	         		 searchterm = (SearchTerm) iterator.next();
 	         	 %>
-	         		<a href="${pageContext.request.contextPath}/searchterm.html?id=<%= searchterm.getId() %>"><%= searchterm.getTerm() %></a><br/>		 
+	         		<a href="./searchterm.html?id=<%= searchterm.getId() %>"><%= searchterm.getTerm() %></a><br/>		 
 	         	 <%
 	         	 }
 	         	 %>
 	         	</td>
-	         	<td><a href="${pageContext.request.contextPath}/collections.html?id=<%= webcollection.getId() %>">Delete</a></td>
+	         	<td><a href="./collections.html?id=<%= webcollection.getId() %>">Delete</a></td>
 	       	 </tr>
 	  		<%
 	  			if ( trclass.contentEquals("row-a")) {

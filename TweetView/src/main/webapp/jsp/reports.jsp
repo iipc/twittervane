@@ -18,8 +18,8 @@
 	            </select>
 			<label>Report Type</label>
 				<select name="reportType">
-					<option value="topUrl">Top URLs</option>
 					<option value="domain">Top Domains</option>
+					<option value="topUrl">Top URLs</option>
 					<option value="popUrl">Top URL by Retweet</otpion>
 					<option value="failed">Failed Analysis</otpion>
 				</select>
@@ -41,17 +41,16 @@
 		<h1>Browse Reports</h1>
 		<div STYLE="font-size: 15px; color: black">
 		<p>
-		<a href="http://<%= request.getServerName() %>:<%= request.getLocalPort() %>${pageContext.request.contextPath}/reportView.html?report=tweetSummaryByCollection&sort=desc">Tweet Summary By Collection</a>
+		<a href="./reportView.html?report=tweetSummaryByCollection&sort=desc">Tweet Summary By Collection</a>
 		</p>
 		<p>
-		<a href="http://<%= request.getServerName() %>:<%= request.getLocalPort() %>${pageContext.request.contextPath}/reportView.html?report=topUrlsByCollection&sort=desc">Top URLs By Collection</a>
+		<a href="./reportView.html?report=topUrlsByCollection&sort=desc">Top URL By Collection</a>
 		</p>
 		</div>
 		<p></p>
-		XML request: <a href="" id="a_xml" target="_new"></a>
 		<script language="javascript">
 			$(document).ready(function(){
-				var str = "http://<%= request.getServerName() %>:<%= request.getLocalPort() %>${pageContext.request.contextPath}/rest/xmlreport/" + $("#collectionId").val();
+				var str = "<%=request.getScheme()+"://"+request.getServerName() %>:<%= request.getLocalPort() %>${pageContext.request.contextPath}/rest/xmlreport/" + $("#collectionId").val();
 				$("#a_xml").attr("href",str);
 				$('#a_xml').html(str);
 				
@@ -66,7 +65,7 @@
 				});
 
 				function updateXml() {
-					var str = "http://<%= request.getServerName() %>:<%= request.getLocalPort() %>${pageContext.request.contextPath}/rest/xmlreport/" + $("#collectionId").val();
+					var str = "<%=request.getScheme()+"://"+request.getServerName() %>:<%= request.getLocalPort() %>${pageContext.request.contextPath}/rest/xmlreport/" + $("#collectionId").val();
 					
 					if ( $('#filterDomain').val() !== "" && $('#filterUrl').val() !== "" ) {
 						str += "/filterDomain/" + $('#filterDomain').val().replace(/\./g,"__") + "/filterURl/" + $('#filterUrl').val().replace(/\./g,"__");

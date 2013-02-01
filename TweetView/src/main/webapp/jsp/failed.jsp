@@ -94,7 +94,7 @@
 	        	<tr class="<%= trclass %>">
 	        		<td><%= o[1] %></td>
 	        		<td>
-	        			<a onclick="submitForm('<%= o[0] %>','url')"><img src="${pageContext.request.contextPath}/images/list.png" border="0" title="View Tweets" /></a>
+	        			<a onclick="submitForm('<%= o[0] %>','url')"><img src="./images/list.png" border="0" title="View Tweets" /></a>
 	        		</td>
 	        		<td><span style="white-space: pre;white-space: pre-wrap;white-space: pre-line;white-space: -pre-wrap;white-space: -o-pre-wrap;white-space: -moz-pre-wrap;white-space: -hp-pre-wrap;
 							word-wrap: break-word;">
@@ -110,7 +110,7 @@
 	        	<tr class="<%= trclass %>">
 	        		<td><%= o[1] %></td>
 	        		<td>
-	        			<a onclick="submitForm('<%= o[0] %>','domain')"><img src="${pageContext.request.contextPath}/images/list.png" border="0" title="View Tweets" /></a>
+	        			<a onclick="submitForm('<%= o[0] %>','domain')"><img src="./images/list.png" border="0" title="View Tweets" /></a>
 	        		</td>
 	        		<td><%= o[0] %></td>
 	        	</tr>
@@ -123,7 +123,7 @@
 	        	<tr class="<%= trclass %>">
 	        		<td><%= o[1] %></td>
 	        		<td>
-	        			<a onclick="submitForm('<%= o[0] %>','url')"><img src="${pageContext.request.contextPath}/images/list.png" border="0" title="View Tweets" /></a>
+	        			<a onclick="submitForm('<%= o[0] %>','url')"><img src="./images/list.png" border="0" title="View Tweets" /></a>
 	        		</td>
 	        		<td><%= o[0] %></td>
 	        	</tr>

@@ -23,7 +23,7 @@
 		<c:out value="${tweetAnalyserService.status}" />
 		</span>
 		</p>
-		<p>URL Expansion set to run for the top <c:out value="${tweetAnalyserService.topTweets}" /> tweets </p>
+		<p>URL Expansion set to run for the top <c:out value="${tweetAnalyserService.topUrls}" /> tweets </p>
  
  <h1>Summary</h1>
  

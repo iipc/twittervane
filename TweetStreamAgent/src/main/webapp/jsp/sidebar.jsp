@@ -10,8 +10,8 @@
        -->
       <h1>Admin Menu</h1>
       <ul class="sidemenu">
-        <li><a href="${pageContext.request.contextPath}/appconfig.html">Configuration</a>
-        <li><a href="${pageContext.request.contextPath}/twitterstream.html">Twitter Stream</a></li>
+        <li><a href="<%=request.getScheme()+"://"+request.getServerName() %>:<%= request.getLocalPort()%>${pageContext.request.contextPath}/appconfig.html">Configuration</a>
+        <li><a href="<%=request.getScheme()+"://"+request.getServerName() %>:<%= request.getLocalPort()%>${pageContext.request.contextPath}/twitterstream.html">Twitter Stream</a></li>
       </ul>
       <h1>Links</h1>
       <ul class="sidemenu">

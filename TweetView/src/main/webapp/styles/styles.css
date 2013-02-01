@@ -99,11 +99,13 @@ blockquote {
 }
 
 /* start - table */
+
 table {
-	width: 100%;
+	/*width: 100%;*/
 	border-collapse: collapse;
-	margin: 0px;	
+	margin: 0px;
 }
+
 th strong {
 	color: #fff;
 }

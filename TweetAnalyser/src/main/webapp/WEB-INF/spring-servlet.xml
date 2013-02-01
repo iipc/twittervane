@@ -53,8 +53,8 @@
 	</bean>
 
 	<bean id="tweetAnalyserService" class="uk.bl.wap.crowdsourcing.agent.TweetAnalyserServiceImpl">
-		<!-- defines the most popular n-tweets -->
-		<property name="topTweets">
+		<!-- defines the most popular n-URLs -->
+		<property name="topUrls">
 			<value type="java.lang.Integer">10</value>
 		</property>
 	</bean>
