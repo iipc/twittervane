@@ -100,7 +100,7 @@
 	        		if (o[0] != null)
 	        		value = (String)o[0];%>
 	        		<td>
-	        			<a onclick="submitForm('<%= o[0] %>','url')"><img src="<%=request.getScheme()+"://"+request.getServerName() %>:<%= request.getLocalPort()%>./images/list.png" border="0" title="View Tweets" /></a>
+	        			<a onclick="submitForm('<%= o[0] %>','url')"><img src="./images/list.png" border="0" title="View Tweets" /></a>
 	        		</td>
 	        		<td><span style="white-space: pre;white-space: pre-wrap;white-space: pre-line;white-space: -pre-wrap;white-space: -o-pre-wrap;white-space: -moz-pre-wrap;white-space: -hp-pre-wrap;
 							word-wrap: break-word;">
@@ -142,7 +142,7 @@
 	        	<tr class="<%= trclass %>">
 	        		<td><%= entity.getId() %></td>
 	        		<td></td>
-	        		<td><a href="<%= entity.getUrlOriginal() %>" target="_new"><%= entity.getUrlOriginal() %></a></td>
+	        		<td><a href="<%= entity.getUrlOriginal() %>" target="_new"><tv:ellipsis theString='<%= entity.getUrlOriginal()%>' length='85' /></a></td>
 	        	</tr>
 	        <%
 	        }

@@ -105,7 +105,7 @@ public class UrlEntityDao {
 	
 	public List<ReportUrlEntity> getAllUrlEntitiesByCollection(
 			long webCollectionId, String filterUrl, String filterDomain) {
-		String sql = "SELECT u.url_full, u.url_domain, c.name, COUNT(u.id) FROM url_entity u, web_collection c WHERE u.urlOriginal is not null and  c.id = u.web_collection_id and u.web_collection_id = :collectionid";
+		String sql = "SELECT u.url_full, u.url_domain, c.name, COUNT(u.id) FROM url_entity u, web_collection c WHERE u.url_original is not null and  c.id = u.web_collection_id and u.web_collection_id = :collectionid";
 		if (filterUrl != null && !filterUrl.isEmpty()) {
 			if (!filterUrl.contains("%")) {
 				filterUrl = "%" + filterUrl + "%";
@@ -279,7 +279,7 @@ public class UrlEntityDao {
 	public List<Object[]> getTopUrl(long collectionId, String filterUrl,
 			String filterDomain, int start, int rows) {
 
-		String sql = "SELECT u.url_full, COUNT(u.id), u.tweet_id FROM url_entity u WHERE u.url_original is not null and u.web_collection_id = :collectionid";
+		String sql = "SELECT u.url_full, COUNT(u.id), u.tweet_id FROM url_entity u WHERE u.url_original is not null and u.url_full is not null and u.web_collection_id = :collectionid";
 
 		if (filterUrl != null && !filterUrl.isEmpty()) {
 			if (!filterUrl.contains("%")) {
@@ -536,18 +536,10 @@ public class UrlEntityDao {
 
 	public Number getTotalUnprocessed() {
 		Number countResult;
-		try {
-			// Query query =
-			// em.createQuery("SELECT max(u.tweetId) FROM UrlEntity u");
-			// long lastTweetId = (Long) query.getSingleResult();
-
-			Query query2 = em
-					.createQuery("SELECT COUNT(t.id) FROM Tweet t WHERE t.processed = false");
-			// query2.setParameter("lastTweetId", lastTweetId);
-			countResult = (Number) query2.getSingleResult();
-		} catch (Exception e) {
-			countResult = 0;
-		}
+		Query query2 = em
+				.createQuery("SELECT COUNT(t.id) FROM Tweet t WHERE t.processed = false");
+		// query2.setParameter("lastTweetId", lastTweetId);
+		countResult = (Number) query2.getSingleResult();
 		return countResult;
 	}
 
@@ -577,14 +569,10 @@ public class UrlEntityDao {
 
 	public Number getTotalProcessedEntities() {
 		Number countResult;
-		try {
-			String sql = "SELECT count(u.id) FROM UrlEntity u LEFT JOIN u.tweet where u.tweet.processed = true and u.urlOriginal is not null";
-			Query query = em.createQuery(sql);
-			countResult = (Number) query.getSingleResult();
-		} catch (Exception e) {
-			e.printStackTrace();
-			countResult = 0;
-		}
+		String sql = "SELECT count(u.id) FROM UrlEntity u where u.tweet.processed = true and u.urlOriginal is not null";
+		Query query = em.createQuery(sql);
+		countResult = (Number) query.getSingleResult();
+
 		return countResult;
 	}
 

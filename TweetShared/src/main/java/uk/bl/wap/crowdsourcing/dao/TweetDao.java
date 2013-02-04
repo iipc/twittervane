@@ -31,12 +31,8 @@ public class TweetDao {
     
     public Number getTotalTweets() {
     	Number countResult;
-    	try {
-    		Query query = em.createQuery("SELECT count(t.id) FROM Tweet t");
-    		countResult=(Number) query.getSingleResult();
-    	} catch (Exception e) {
-    		countResult = 0;
-    	}
+		Query query = em.createQuery("SELECT count(t.id) FROM Tweet t");
+		countResult=(Number) query.getSingleResult();
        	return countResult;
     }
     

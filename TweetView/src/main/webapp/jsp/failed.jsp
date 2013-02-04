@@ -3,6 +3,7 @@
 <jsp:useBean id="webCollection" type="uk.bl.wap.crowdsourcing.WebCollection" scope="request" />
 <%@page import="java.util.Iterator" %>
 <%@ include file="header.jsp" %>
+<%@taglib prefix="tv" uri="http://ukwa/tv" %>
 <div id="main">
 		<%
 	    long collectionId =  (long) Long.parseLong(request.getParameter("collectionId"));
@@ -98,7 +99,7 @@
 	        		</td>
 	        		<td><span style="white-space: pre;white-space: pre-wrap;white-space: pre-line;white-space: -pre-wrap;white-space: -o-pre-wrap;white-space: -moz-pre-wrap;white-space: -hp-pre-wrap;
 							word-wrap: break-word;">
-	        			<%= o[0] %>
+	        			<tv:ellipsis theString="<%= o[0] %>" length="25" />
 	        			</span>
 	        		</td>
 	        	</tr>
@@ -112,7 +113,7 @@
 	        		<td>
 	        			<a onclick="submitForm('<%= o[0] %>','domain')"><img src="./images/list.png" border="0" title="View Tweets" /></a>
 	        		</td>
-	        		<td><%= o[0] %></td>
+	        		<td><tv:ellipsis theString="<%= o[0] %>" length="25" /></td>
 	        	</tr>
 	        <%
 	        }
@@ -125,7 +126,7 @@
 	        		<td>
 	        			<a onclick="submitForm('<%= o[0] %>','url')"><img src="./images/list.png" border="0" title="View Tweets" /></a>
 	        		</td>
-	        		<td><%= o[0] %></td>
+	        		<td><tv:ellipsis theString="<%= o[0] %>" length="25" /></td>
 	        	</tr>
 	        <%
 	        }
