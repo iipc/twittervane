@@ -1,6 +1,7 @@
 package uk.bl.wap.crowdsourcing;
 
 import java.io.Serializable;
+import java.sql.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,7 +16,7 @@ import javax.persistence.Transient;
 public class UrlEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	Long id;
+	private Long id;
 	private String urlOriginal;
 	private String urlFull;
 	private String urlDomain;
@@ -24,6 +25,8 @@ public class UrlEntity implements Serializable {
 	private Long popularity;
 	private String errors;
 	private Boolean expanded = false;
+	private Boolean processed = false;
+	private Date creationDate;
 	
 	@Transient
 	private Long totalTweets = 0L;
@@ -31,6 +34,7 @@ public class UrlEntity implements Serializable {
 	private Long totalRetweets = 0L;
 
 	public UrlEntity() {
+		this.setCreationDate(new Date(System.currentTimeMillis()));
 	}
 
 	public UrlEntity(String urlOriginal, String urlFull, String urlDomain,
@@ -173,6 +177,34 @@ public class UrlEntity implements Serializable {
 	 */
 	public void setExpanded(Boolean expanded) {
 		this.expanded = expanded;
+	}
+
+	/**
+	 * @return the processed
+	 */
+	public Boolean getProcessed() {
+		return processed;
+	}
+
+	/**
+	 * @param processed the processed to set
+	 */
+	public void setProcessed(Boolean processed) {
+		this.processed = processed;
+	}
+
+	/**
+	 * @return the creationDate
+	 */
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	/**
+	 * @param creationDate the creationDate to set
+	 */
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	}
 
 	

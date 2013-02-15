@@ -20,12 +20,12 @@ public class WebCollectionDao {
     @PersistenceContext private EntityManager em;
  
     // the display name allocated to the "UNKNOWN" bucket web collection (when a tweet cant be resolved to a web collection based on a search term)
-    private String unknownCollection;
+    private String unknownCollectionName;
     
     // Stores a new collection:
     @Transactional
     public void persist(WebCollection webCollection) {
-        em.persist(webCollection);
+        em.merge(webCollection);
     }
     
     @Transactional
@@ -109,13 +109,12 @@ public class WebCollectionDao {
     	TypedQuery<WebCollection> query = em.createQuery(
             "SELECT c FROM WebCollection c ORDER BY c.id", WebCollection.class);
     	List<WebCollection> webCollections = query.getResultList();
-    	webCollections.add(new WebCollection(unknownCollection));
     	return webCollections;
     }
     
     public List<WebCollection> getAllCollectionsForStream() {
     	TypedQuery<WebCollection> query = em.createQuery(
-            " SELECT wc FROM WebCollection wc WHERE wc.startDate < CURRENT_TIMESTAMP AND wc.endDate >  CURRENT_TIMESTAMP", WebCollection.class);
+            " SELECT wc FROM WebCollection wc WHERE CURRENT_TIMESTAMP BETWEEN wc.startDate AND wc.endDate ", WebCollection.class);
     	return query.getResultList();
     }
     
@@ -124,13 +123,8 @@ public class WebCollectionDao {
             "SELECT c FROM WebCollection c WHERE c.id = :collectionId ORDER BY c.id", WebCollection.class);
     	query.setParameter("collectionId", collectionId);
     	List<WebCollection> webCollections = query.getResultList();
-    	if (webCollections.size() == 0) {
-    		WebCollection displayCollection = new WebCollection();
-    		displayCollection.setName(unknownCollection);
-    		return displayCollection;
-    	} else {
-    		return webCollections.get(0);
-    	}
+
+    	return webCollections.get(0);
     }
    
     
@@ -154,14 +148,28 @@ public class WebCollectionDao {
 	/**
 	 * @return the unknownCollection
 	 */
-	public String getUnknownCollection() {
-		return unknownCollection;
+	public String getUnknownCollectionName() {
+		return unknownCollectionName;
 	}
 
 	/**
 	 * @param unknownCollection the unknownCollection to set
 	 */
-	public void setUnknownCollection(String unknownCollection) {
-		this.unknownCollection = unknownCollection;
+	public void setUnknownCollectionName(String unknownCollectionName) {
+		this.unknownCollectionName = unknownCollectionName;
 	}
+	
+	public WebCollection getUnknownCollection() {
+		return getCollectionByName(unknownCollectionName);
+	}
+	
+    public WebCollection getCollectionByName(String webCollectionName) {
+       	TypedQuery<WebCollection> query = em.createQuery(
+                "SELECT c FROM WebCollection c WHERE name = :webCollectionName", WebCollection.class);
+       	query.setParameter("webCollectionName", webCollectionName);
+       	query.setMaxResults(1);
+        List<WebCollection> webCollections = query.getResultList();
+
+    	return webCollections.get(0);
+    }
 }

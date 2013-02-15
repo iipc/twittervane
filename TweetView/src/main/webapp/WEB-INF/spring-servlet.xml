@@ -61,13 +61,20 @@
 		</property>
 		<property name="webCollectionDao" ref="webCollectionDao" />
 	</bean>
+	
+		<bean id="urlEntityController" class="uk.bl.wap.crowdsourcing.controller.UrlEntityController">
+		<property name="pageSize">
+			<value type="java.lang.Long">10</value>
+		</property>
+	</bean>
 
 	<bean id="webCollectionDao" class="uk.bl.wap.crowdsourcing.dao.WebCollectionDao">
 	    <!-- The display name allocated to the "UNKNOWN" bucket web collection 
 	    	(when a tweet cant be resolved to a web collection based on a search term)
 	 	-->
-		<property name="unknownCollection">
+		<property name="unknownCollectionName">
 			<value>UNKNOWN</value>
 		</property>
 	</bean>
+	
 </beans>

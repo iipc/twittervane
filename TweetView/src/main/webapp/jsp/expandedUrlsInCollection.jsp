@@ -24,7 +24,7 @@ function setPageNumber(pageNo) {
  <input type="hidden" name="pageNumber" id="pageNumber" value="${page.pageNumber}" />
 		<h1>Report</h1>
 		<table>
-			<tr><td>Report Name:</td><td>URLs In Collection</td></tr>
+			<tr><td>Report Name:</td><td>Expanded URLs In Collection</td></tr>
 			<tr><td>Report Date:</td><td><tv:date type="fullDateTime" value="${reportDate}"/></td></tr>
 			<tr><td>Collection Name:</td><td><c:out value="${webCollection.name}"/></td></tr>
 		</table>
@@ -53,7 +53,7 @@ function setPageNumber(pageNo) {
 	        <c:set var="idx" scope="page" value="0" />
 		       <c:forEach items="${urlEntities}" var="urlEntity">
 		      		<tr class="<c:out value='${trclass}' />">
-		      		 			<td align="left"><a href="${urlEntity.urlOriginal}" target="_new"><tv:ellipsis theString="${urlEntity.urlOriginal}" length="25" /></a></td>
+		      		 			<td align="left"><a href="${urlEntity.urlFull}" target="_new"><tv:ellipsis theString="${urlEntity.urlFull}" length="25" /></a></td>
 		      		 			<td align="left">${urlEntity.tweet.name}</td>
 		      		 			<td align="left">${urlEntity.tweet.text}</td>
 		      		</tr>

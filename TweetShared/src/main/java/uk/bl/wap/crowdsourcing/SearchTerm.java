@@ -1,5 +1,7 @@
 package uk.bl.wap.crowdsourcing;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -8,9 +10,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class SearchTerm {
-	@SuppressWarnings("unused")
-	private static final long serialVersionUID = 1L;
+public class SearchTerm implements Serializable{
+	
+	private static final long serialVersionUID = -6838621632058900956L;
 	
 	private Long id;
 	private WebCollection webCollection;

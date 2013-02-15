@@ -25,7 +25,7 @@
 		 <p><b>Terms:</b>
 		 <c:set var="searchTermText" value="" />
 		 <c:set var="termsFound" value="false" />
-		 <c:forEach items="${searchTermDao.allSearchTerms}" var="searchTerm">
+		 <c:forEach items="${allSearchTerms}" var="searchTerm">
 		    <c:if test="${termsFound eq 'true'}">
 		    	<c:out value=", " />
 		    </c:if>

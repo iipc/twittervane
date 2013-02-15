@@ -49,14 +49,9 @@ public class SearchTermDao {
 	}
 	
 	@Transactional
-    public boolean deleteSearchTerm(Long id) {
-    	  try{
+    public void deleteSearchTerm(Long id) {
     	    SearchTerm searchTerm = em.find(SearchTerm.class,id);
     	    em.remove(searchTerm);
-    	  } catch (Exception e) {
-    	    return false;
-    	  }
-    	  return true;
     	}
 	
 }

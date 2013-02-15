@@ -57,14 +57,21 @@
 		<property name="topUrls">
 			<value type="java.lang.Integer">10</value>
 		</property>
+		<property name="webCollectionDao" ref="webCollectionDao" />
 	</bean>
 	
+	<bean id="webCollectionDao" class="uk.bl.wap.crowdsourcing.dao.WebCollectionDao">
+		<!-- defines name for the "UNKNOWN" bucket web collection -->
+		<property name="unknownCollectionName" value="UNKNOWN" />
+	</bean>
+	
+	<!-- RMI service definition for the tweetAnalyserService -->
 	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">
 		<!-- does not necessarily have to be the same name as the bean to be exported -->
 		<property name="serviceName" value="TweetAnalyserService"/>
 		<property name="service" ref="tweetAnalyserService"/>
 		<property name="serviceInterface" value="uk.bl.wap.crowdsourcing.agent.TweetAnalyserService"/>
 		<!-- defaults to 1099 -->
-		<property name="registryPort" value="1199"/>
+		<property name="registryPort" value="1099"/>
 	</bean>
 </beans>

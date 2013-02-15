@@ -38,7 +38,7 @@ function submitForm(column, sortOrder) {
 	          <th title="No of processed and unprocessed tweets" style="vertical-align: middle;" class="first" >
 					<tv:sortheader sort="${sort}" column="${column}" thisColumn="totalTweets" displayName="Tweets"/>
 	          </th>
-	          <th title="No of expanded and non-expanded URLs" style="vertical-align: middle;" class="first" >
+	          <th title="No of non-expanded URLs" style="vertical-align: middle;" class="first" >
 		          	<tv:sortheader sort="${sort}" column="${column}" thisColumn="totalUrlsOriginal" displayName="URLs"/>
 	          </th>
 	          <th title="Expanded URL count" style="vertical-align: middle;" class="first" >
@@ -54,8 +54,8 @@ function submitForm(column, sortOrder) {
 		      		<tr class="<c:out value='${trclass}' />">
 		      		 			<td><a href="./reportView.html?report=tweetSummaryByDate&collection=${webCollection.id}"><tv:ellipsis theString="${webCollection.name}" length="45" /></a></td>
 		      		 			<td align="center">${webCollection.totalTweets}</td>
-		      		 			<td align="center"><a href="./reportView.html?report=urlsInCollection&collection=${webCollection.id}">${webCollection.totalUrlsOriginal}</a></td>
-		      		 			<td align="center">${webCollection.totalUrlsExpanded}</td>
+		      		 			<td align="center"><a href="./reportView.html?report=urlsInCollection&collection=${webCollection.id}">${webCollection.totalUrlsOriginal - webCollection.totalUrlsExpanded}</a></td>
+		      		 			<td align="center"><a href="./reportView.html?report=expandedUrlsInCollection&collection=${webCollection.id}">${webCollection.totalUrlsExpanded}</a></td>
 	      		 				<td align="center">${webCollection.totalUrlErrors}</td>
 		      		</tr>
 		      		<c:choose>

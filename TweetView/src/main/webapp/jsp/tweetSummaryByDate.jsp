@@ -150,31 +150,33 @@ $(document).ready(function(){
 	          <th style="vertical-align: middle;" class="first" >
 					Past Month
 	          </th>
-	          <c:set var="count" value="0"/>
-			  <c:forEach items="${lastMonth}" var="day">
-			  	<c:if test="${count % 2 == 0}">
+	          
+	          <c:set var="itemTotal" value="0" />
+			  <c:forEach items="${lastMonth}" var="day" >
+		  		<c:set var="itemTotal" value="${itemTotal + day.value}" />
 				  	<th style="vertical-align: middle;" class="first" >
 				  		<c:out value="${day.key}" />
-			  			<script>chart2Ticks.push('<c:out value="${day.key}" />'); chart2Series.push('<c:out value="${day.value}" />');</script>				  	</th>
-			  			<script>if (<c:out value="${day.value}" /> > chart2Max) chart2Max = <c:out value="${day.value/10 + day.value}" />;</script>
-			  	</c:if>
-			  	<c:set var="count" value="${count+1}"/>
+			  		</th>
+			  			<script>chart2Ticks.push('<c:out value="${day.key}" />'); chart2Series.push('<c:out value="${itemTotal}" />');</script>				  	
+			  			<script> if (<c:out value="${itemTotal}" /> > chart2Max) chart2Max = <c:out value="${itemTotal/10 + itemTotal}" />;</script>
+			  			<c:set var="itemTotal" value="0" />
 			  </c:forEach>
+				  
 	        </tr>
    	        <tr>
-   	          <c:set var="count" value="0"/>
-   	          <c:set var="itemTotal" value="0" />
-	          <td><c:out value="${webCollection.name}" /></td>
+   	        
+
+	          <td>
+	          <c:out value="${webCollection.name}" />
+	          </td>
+	          
 			  <c:forEach items="${lastMonth}" var="day">
-			   <c:set var="itemTotal" value="${itemTotal + day.value}" />
-			  	<c:if test="${count % 2 == 0}">
+			   <c:set var="itemTotal" value="${day.value}" />
 				  	<td align="center" >
-				  		<c:out value="${itemTotal}" />
-				  		<c:set var="itemTotal" value="0" />
+				  		<c:out value="${day.value}" />
 				  	</td>
-			  	</c:if>
-			  	<c:set var="count" value="${count+1}"/>
 			  </c:forEach>
+			  
 	        </tr>   
       	</table>
       	<div id="chart2" name="chart2" style="height:300px;width:570px; "></div> 

@@ -1,6 +1,7 @@
 package uk.bl.wap.crowdsourcing.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,6 +11,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import uk.bl.wap.crowdsourcing.Page;
+import uk.bl.wap.crowdsourcing.SearchTerm;
+import uk.bl.wap.crowdsourcing.UrlEntity;
+import uk.bl.wap.crowdsourcing.WebCollection;
 import uk.bl.wap.crowdsourcing.dao.TweetDao;
 import uk.bl.wap.crowdsourcing.dao.UrlEntityDao;
 import uk.bl.wap.crowdsourcing.dao.WebCollectionDao;
@@ -33,11 +38,16 @@ public class UrlEntityController {
 	private String d = "";  // Tweets by domain
 	private String queryString = "";
 	private String pagingString= "";
-	private int rows = 100;
-	private int start = 0;
-	private int nextPage = 0;
-	private int prevPage = 0;
-	private int collectionId = 0;
+	private Integer rows = 100;
+	private Integer start = 0;
+	private Integer nextPage = 0;
+	private Integer prevPage = 0;
+	private Integer pageNumber = 1;
+	/**
+	 * The number of records that will appear on a page
+	 */
+	private Integer pageSize;
+	private Integer collectionId = 0;
 	
 	private enum enumReportType {
 		topUrl,
@@ -89,24 +99,18 @@ public class UrlEntityController {
 		} else {
 			filterUrl = null;
 		}
-		if (request.getParameter("start") != null) {
-			start = (int) Integer.parseInt(request.getParameter("start"));
-		} else {
-			start = 0;
-		}
 		if (request.getParameter("rows") != null) {
 			rows = (int) Integer.parseInt(request.getParameter("rows"));
 		} else {
 			rows = 100;
 		}
-		
-		nextPage = start + rows;
-		if (start - rows >= 0) {
-			prevPage = start - rows;
-		} else {
-			prevPage = 0;
-		}
-		
+    	if (request.getParameter("pageNumber") != null) {
+    		pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
+    	} else {
+    		pageNumber = 1;
+    	}
+		start = (Integer)((pageNumber - 1) * pageSize);
+
 		pagingString = "";
 		queryString = "";
 		queryString += "&collectionId=" + collectionId + "&reportType=" + reportType + "&filterUrl=" + filterUrl;
@@ -122,6 +126,7 @@ public class UrlEntityController {
 		pagingString += "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"report.html?start=" + nextPage + "&rows=" + rows + queryString + "\">Next</a>";
 		
 		message.put("paging",pagingString);
+		List<SearchTerm> searchTerms = null;
 		
 		if (!u.isEmpty() || !d.isEmpty()) {
 			mv.addObject("urlEntityDao",urlEntityDao);
@@ -130,7 +135,8 @@ public class UrlEntityController {
 		} else if (this.collectionId > 0) {
 			mv.addObject("urlEntityDao",urlEntityDao);
 			mv.addObject("tweetDao",tweetDao);
-			mv.addObject("webCollection",webCollectionDao.getCollectionById(collectionId));
+			WebCollection webCollection = webCollectionDao.getCollectionById(collectionId);
+			mv.addObject("webCollection", webCollection);
 			mv.addObject("message", message);
 			mv.setViewName("report.jsp");
 			
@@ -138,7 +144,57 @@ public class UrlEntityController {
 			mv.addObject("webCollectionDao",webCollectionDao);
 			mv.setViewName("reports.jsp");
 		}
+		
+		List<UrlEntity> failedUrlEntities = null;
+		
+		if (reportType.toString().equals("topUrl")) {
+			rows = urlEntityDao.getTopUrl(collectionId.longValue(), filterUrl, filterDomain, null, null).size();
+			List<Object[]> topUrls = urlEntityDao.getTopUrl(collectionId.longValue(), filterUrl, filterDomain, start, pageSize);
+			mv.addObject("topUrls", topUrls);			
+		} else if (reportType.toString().equals("domain")) {
+			rows = urlEntityDao.getTopDomain(collectionId.longValue(), filterUrl, filterDomain, null, null).size();
+			List<Object[]> topDomains = urlEntityDao.getTopDomain(collectionId.longValue(), filterUrl, filterDomain, start, pageSize);
+			mv.addObject("topDomains", topDomains);
+		} else if (reportType.toString().equals("popUrl")) {
+			rows = urlEntityDao.getTopPopularity(collectionId.longValue(), filterUrl, filterDomain, null, null).size();
+			List<Object[]> popularUrls = urlEntityDao.getTopPopularity(collectionId.longValue(), filterUrl, filterDomain, start, pageSize);
+			mv.addObject("popularUrls", popularUrls);
+		} else if (reportType.toString().equals("failed")) {
+			rows = urlEntityDao.getTotalEntitiesFailedByCollection(collectionId.longValue()).intValue();
+			failedUrlEntities = urlEntityDao.getUrlEntitiesFailedByCollection(collectionId.longValue(), start, pageSize);
+			mv.addObject("failedUrlEntities", failedUrlEntities);
+		}
+		
+       	Page page = new Page();
+       	page.setTotal(rows.longValue());
+       	Integer firstResult = (this.pageNumber - 1) * this.pageSize + 1;
+       	Integer lastResult = this.pageNumber * this.pageSize;
+       	if (lastResult > page.getTotal()) {
+       		lastResult = page.getTotal().intValue();
+       	}
+       	page.setFirstResult(firstResult);
+       	page.setLastResult(lastResult);
+       	page.setPageNumber(this.pageNumber);
+       	page.setNumberOfPages(page.getTotal() / this.pageSize);
+       	page.setPreviousPage((firstResult > this.pageSize ? true : false));
+       	page.setNextPage((lastResult < page.getTotal() ? true : false));
+       	
+       	mv.addObject("page", page);
+       	mv.addObject("pageSize", pageSize);
+       	mv.addObject("reportType", reportType);
 
 		return mv;
     }
+	/**
+	 * @return the pageSize
+	 */
+	public Integer getPageSize() {
+		return pageSize;
+	}
+	/**
+	 * @param pageSize the pageSize to set
+	 */
+	public void setPageSize(Integer pageSize) {
+		this.pageSize = pageSize;
+	}
 }

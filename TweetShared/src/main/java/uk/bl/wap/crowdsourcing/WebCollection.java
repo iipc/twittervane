@@ -3,8 +3,6 @@ package uk.bl.wap.crowdsourcing;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -14,29 +12,28 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 @Entity
 public class WebCollection implements Serializable {
-	private static final long serialVersionUID = 1L;
 	
-	 // Persistent Fields:
+	private static final long serialVersionUID = -7930913195790169565L;
+	// Persistent Fields:
     private Long id;
     private String name;
     private String description;
     private Date creationDate;
     private Date startDate;
     private Date endDate;
-    private Collection<SearchTerm> searchTerms;
+    private List<SearchTerm> searchTerms;
     private List<UrlEntity> urlEntities;
 
-    private transient Long totalTweets;
-    private transient Long totalUrlsOriginal;
-    private transient Long totalUrlsExpanded;
-    private transient Long totalUrlErrors;
+    private Long totalTweets = 0L;
+    private Long totalUrlsOriginal = 0L;
+    private Long totalUrlsExpanded = 0L;
+    private Long totalUrlErrors = 0L;
    
     public WebCollection() {
     }
@@ -44,10 +41,6 @@ public class WebCollection implements Serializable {
     public WebCollection(String name) {
         this.name = name;
         this.creationDate = new Date(System.currentTimeMillis());
-        this.totalTweets = 0L;
-        this.totalUrlsOriginal = 0L;
-        this.totalUrlsExpanded = 0L;
-        this.totalUrlErrors = 0L;
     }
     
     public WebCollection(String name,String description,String startDate,String endDate) {
@@ -84,14 +77,15 @@ public class WebCollection implements Serializable {
 	@OneToMany (
 			mappedBy="webCollection",    
             targetEntity=SearchTerm.class,   
-            cascade = CascadeType.ALL  
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
 	) 
 	@LazyCollection(LazyCollectionOption.FALSE)
-	public Collection<SearchTerm> getSearchTerms() {
+	public List<SearchTerm> getSearchTerms() {
 		return searchTerms;
 	}
 	
-	public void setSearchTerms(Collection<SearchTerm> searchTerms) {
+	public void setSearchTerms(List<SearchTerm> searchTerms) {
 		this.searchTerms = searchTerms;
 	}
 	
@@ -154,8 +148,6 @@ public class WebCollection implements Serializable {
     	getSearchTerms().remove(st);
     }
 
-
-
 	public String getDescription() {
 		return description;
 	}
@@ -174,7 +166,6 @@ public class WebCollection implements Serializable {
 	/**
 	 * @return the totalTweets
 	 */
-	@Transient
 	public Long getTotalTweets() {
 		return totalTweets;
 	}
@@ -182,7 +173,6 @@ public class WebCollection implements Serializable {
 	/**
 	 * @return the totalUrlsOriginal
 	 */
-	@Transient
 	public Long getTotalUrlsOriginal() {
 		return totalUrlsOriginal;
 	}
@@ -190,7 +180,6 @@ public class WebCollection implements Serializable {
 	/**
 	 * @return the totalUrlsExpanded
 	 */
-	@Transient
 	public Long getTotalUrlsExpanded() {
 		return totalUrlsExpanded;
 	}
@@ -198,7 +187,6 @@ public class WebCollection implements Serializable {
 	/**
 	 * @return the totalUrlErrors
 	 */
-	@Transient
 	public Long getTotalUrlErrors() {
 		return totalUrlErrors;
 	}

@@ -9,12 +9,12 @@
 <div id="main">
 		<%
 	    long collectionId =  (long) Long.parseLong(request.getParameter("collectionId"));
-	    String trclass = "row-a";
 	    String reportType = request.getParameter("reportType");
 	    String filterDomain = request.getParameter("filterDomain");
 	    String filterUrl = request.getParameter("filterUrl");
 	    int start = 0;
 	    int rows = 100;
+	    Integer pageSize = 5;
 	    if (request.getParameter("start") != null) {
 	    	start = (int) Integer.parseInt(request.getParameter("start"));
 	    }
@@ -31,11 +31,17 @@
 				}
 				document.form1.submit();
 			}
+			function setPageNumber(pageNo) {
+				$('#pageNumber').val(pageNo);
+				$('#form1').submit();
+			}
 	   	</script>
 		<form action="report.html" id="form1" name="form1" method="post">
 			<input type="hidden" id="collectionId" name="collectionId" value="<%= collectionId%>">
 			<input type="hidden" id="u" name="u" value="">
 			<input type="hidden" id="d" name="d" value="">
+			<input type="hidden" name="pageNumber" id="pageNumber" value="${page.pageNumber}" />
+			<input type="hidden" name="reportType" id="reportType" value="${reportType}" />
 		</form>
 		
 		<h1>Reports</h1>
@@ -45,14 +51,9 @@
 	   			<td><Label>Total Tweets:</Label></td><td><%= urlEntityDao.getTotalTweets(collectionId, filterUrl, filterDomain) %></td>
 	   			<td rowspan="3" valign="top"><Label>KeyWords:</Label></td>
 	   			<td rowspan="3" valign="top">
-	   				<%
-					Iterator<SearchTerm> iterator = webCollection.getSearchTerms().iterator();
-		         		while (iterator.hasNext()) {
-		         			%>
-		         			<%= iterator.next().getTerm() %><br/>
-			        <%
-			         	}
-					%>
+	   			<c:forEach items="${webCollection.searchTerms}" var="searchTerm">
+	   				<c:out value="${searchTerm.term}" /><br/>
+	   			</c:forEach>
 				</td>
 	   		</tr>
 	   		<tr>
@@ -61,105 +62,85 @@
 	   		<tr>
 	   			<td><Label>Total Domains:</Label></td><td><%=urlEntityDao.getTotalDomain(collectionId, filterUrl, filterDomain) %></td>
 	   		</tr>
-	   		<!--
-	   		<tr>
-	   			<td>Keywords:</td>
-	   			<td>
-	   			
-	   			</td>
-	   		</tr>
-	   		-->
 	   	</table>
-	   	<p>${message.paging}</p>
+	 
 		<table>
 	        <tr>
 	          <th>No.</th>
 	          <th></th>
 	          <th class="first">
-	          <%
-	          if (reportType.contentEquals("topUrl")) { 
-	          %>
-	          	Url
-	          <%
-	          } else {
-	          %>
-	       		Domain
-	       	  <%
-	          }
-	          %>
+	          
+	        <c:choose>
+				<c:when test="${reportType eq 'topUrl' }" >
+		          	Url
+				</c:when>
+				<c:otherwise>
+		       		Domain
+				</c:otherwise>
+			</c:choose>
 	          
 	          </th>
 	        </tr>
-		<%
-	    if (reportType.contentEquals("topUrl")) { 
-	        for (Object[] o : urlEntityDao.getTopUrl(collectionId,filterUrl,filterDomain,start,rows)) { 
-	    	 %>
-	        	<tr class="<%= trclass %>">
-	        		<td><%= o[1] %></td>
-	        		<%String value = "";
-	        		if (o[0] != null)
-	        		value = (String)o[0];%>
+	        <c:set var="trclass" value="row-a" scope="page" />
+		<c:if test="${reportType eq 'topUrl' }" >
+			<c:forEach items="${topUrls}" var="entity">
+	        	<tr class="<c:out value='${trclass}' />">
+	        		<td><c:out value='${entity[1]}' /></td>
 	        		<td>
-	        			<a onclick="submitForm('<%= o[0] %>','url')"><img src="./images/list.png" border="0" title="View Tweets" /></a>
+	        			<a onclick="submitForm('${entity[0]}','url')"><img src="./images/list.png" border="0" title="View Tweets" /></a>
 	        		</td>
 	        		<td><span style="white-space: pre;white-space: pre-wrap;white-space: pre-line;white-space: -pre-wrap;white-space: -o-pre-wrap;white-space: -moz-pre-wrap;white-space: -hp-pre-wrap;
 							word-wrap: break-word;">
-	        			<a href="<%= o[0] %>" target="_new"><tv:ellipsis theString='<%=value%>' length='85' /></a>
+	        			<a href="${entity[0]}" target="_new"><tv:ellipsis theString="${entity[0]}" length="85" /></a>
 	        			</span>
 	        		</td>
 	        	</tr>
-	        <%
-	        }
-	    } else if (reportType.contentEquals("domain")) {
-	    	 for (Object[] o : urlEntityDao.getTopDomain(collectionId,filterUrl,filterDomain,start,rows)) { 
-	    	 %>
-	        	<tr class="<%= trclass %>">
-	        		<td><%= o[1] %></td>
-	        		<td>
-	        			<a onclick="submitForm('<%= o[0] %>','domain')"><img src="./images/list.png" border="0" title="View Tweets" /></a>
-	        		</td>
-	        		<td><a href="http://<%= o[0] %>" target="_new"><%= o[0] %></a></td>
-	        	</tr>
-	        <%
-	        }
+	        </c:forEach>
+		</c:if>
+    	<c:if test="${reportType eq 'domain' }" >
+    		<c:forEach items="${topDomains}" var="entity">
+        	<tr class="<c:out value='${trclass}' />">
+        		<td><c:out value='${entity[1]}' /></td>
+        		<td>
+        			<a onclick="submitForm('${entity[0]}','domain')"><img src="./images/list.png" border="0" title="View Tweets" /></a>
+        		</td>
+        		<td><a href="http://${entity[0]}" target="_new"><tv:ellipsis theString="${entity[0]}" length="85" /></a></td>
+        	</tr>
+        	</c:forEach>
+        </c:if>
 
-		} else if (reportType.contentEquals("popUrl")) {
-	    	 for (Object[] o : urlEntityDao.getTopPopularity(collectionId,filterUrl,filterDomain,start,rows)) { 
-	    	 %>
-	        	<tr class="<%= trclass %>">
-	        		<td><%= o[1] %></td>
-	        		<td>
-	        			<a onclick="submitForm('<%= o[0] %>','url')"><img src="./images/list.png" border="0" title="View Tweets" /></a>
-	        		</td>
-	        		<td><a href="<%= o[0] %>" target="_new"><%= o[0] %></a></td>
-	        	</tr>
-	        <%
-	        }
-
-		} else if (reportType.contentEquals("failed")) {
-	    	 for (UrlEntity entity : urlEntityDao.getAllUrlEntitiesFailed()) { 
-	    	 %>
-	        	<tr class="<%= trclass %>">
-	        		<td><%= entity.getId() %></td>
+    	<c:if test="${reportType eq 'popUrl' }" >
+    		<c:forEach items="${popularUrls}" var="entity">
+        	<tr class="<c:out value='${trclass}' />">
+        		<td><c:out value='${entity[1]}' /></td>
+        		<td>
+        			<a onclick="submitForm('${entity[0]}','url')"><img src="./images/list.png" border="0" title="View Tweets" /></a>
+        		</td>
+        		<td><a href="${entity[0]}" target="_new"><tv:ellipsis theString="${entity[0]}" length="85" /></a></td>
+        	</tr>
+        	</c:forEach>
+        </c:if>
+	        
+	   <c:if test="${reportType eq 'failed' }" >
+			<c:forEach items="${failedUrlEntities}" var="entity">
+	        	<tr class="<c:out value='${trclass}' />">
+	        		<td><c:out value='${entity.id}' /></td>
 	        		<td></td>
-	        		<td><a href="<%= entity.getUrlOriginal() %>" target="_new"><tv:ellipsis theString='<%= entity.getUrlOriginal()%>' length='85' /></a></td>
+	        		<td><a href="${entity.urlOriginal}" target="_new"><tv:ellipsis theString="${entity.urlOriginal}" length="85" /></a></td>
 	        	</tr>
-	        <%
-	        }
-
-		} else if (reportType.contentEquals("browseTopUrl")) {
-			%>
-			<tr class="<%= trclass %>">
-    		<td>To be implemented</td>
-    		</tr>
-    		<%
-		}
-	  	if ( trclass.contentEquals("row-a")) {
-	  		trclass = "row-b";
-	  	} else {
-	  		trclass = "row-a";
-	  	}
-	  	%>
+	        </c:forEach>
+	    </c:if>
+	    <c:choose>
+	    	<c:when test="${trclass eq 'row-a' }" >
+	    		<c:set var="trclass" value="row-b" scope="page" />
+	    	</c:when>
+	    	<c:otherwise>
+	    		<c:set var="trclass" value="row-a" scope="page" />
+	    	</c:otherwise>
+	    </c:choose>
+				<tr><td colspan="3">
+	        		<%@ include file="pagination.jsp" %>
+	        </td></tr>
       	</table>
  </div>
 <%@ include file="footer.jsp" %>

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import uk.bl.wap.crowdsourcing.ReportUrlEntity;
+import uk.bl.wap.crowdsourcing.Tweet;
 import uk.bl.wap.crowdsourcing.UrlEntity;
 
 @Component
@@ -56,8 +57,10 @@ public class UrlEntityDao {
 		query.setFirstResult(0);
 		query.setMaxResults(50000);
 		List<UrlEntity> results = query.getResultList();
-		for (Object entity : results) {
+		for (UrlEntity entity : results) {
+			Tweet tweet = entity.getTweet();
 			em.remove(entity);
+			em.remove(tweet);
 		}
 	}
 
@@ -77,27 +80,19 @@ public class UrlEntityDao {
 		return query.getResultList();
 	}
 
-	//public List<UrlEntity> getUrlEntitiesByCollection(Long collectionId) {
-	//	TypedQuery<UrlEntity> query = em
-	//			.createQuery("SELECT u FROM UrlEntity u WHERE u.webCollection.id = :collectionId ORDER BY u.id desc",
-	//					UrlEntity.class);
-	//	query.setParameter("collectionId", collectionId);
-	//	query.setFirstResult(0);
-	//	return query.getResultList();
-	//}
-	
-	public List<UrlEntity> getUrlEntitiesByCollection(Long collectionId, Integer start, Integer rows) {
+	public List<UrlEntity> getUrlEntitiesByCollection(Long collectionId, Integer start, Integer rows, Boolean expanded) {
 		
 		String sql = null;
 		if (collectionId != null) {
-			sql = "SELECT u FROM UrlEntity u WHERE u.urlOriginal is not null and u.webCollection.id = :collectionId";
+			sql = "SELECT u FROM UrlEntity u WHERE u.webCollection.id = :collectionId and expanded = :expanded ";
 		} else {
-			sql = "SELECT u FROM UrlEntity u WHERE u.urlOriginal is not null and u.webCollection.id is null ";
+			sql = "SELECT u FROM UrlEntity u WHERE u.webCollection.id is null and expanded = :expanded ";
 		}
 		TypedQuery<UrlEntity> query = em.createQuery(sql, UrlEntity.class);
 		if (collectionId != null) {
 			query.setParameter("collectionId", collectionId);
 		}
+		query.setParameter("expanded", expanded);
 		query.setFirstResult(start);
 		query.setMaxResults(rows);
 		return query.getResultList();
@@ -276,24 +271,33 @@ public class UrlEntityDao {
 	     	return popUrls;
 	    }
 
-	public List<Object[]> getTopUrl(long collectionId, String filterUrl,
-			String filterDomain, int start, int rows) {
+	  /**
+	   * Returns the top expanded URLs 
+	   * @param collectionId The identifier of the require Web Collection
+	   * @param filterUrl A URL query filter
+	   * @param filterDomain A domain query filter
+	   * @param start The position of the initial result
+	   * @param rows The number of results to return
+	   * @return
+	   */
+	public List<Object[]> getTopUrl(Long collectionId, String filterUrl,
+			String filterDomain, Integer start, Integer rows) {
 
-		String sql = "SELECT u.url_full, COUNT(u.id), u.tweet_id FROM url_entity u WHERE u.url_original is not null and u.url_full is not null and u.web_collection_id = :collectionid";
+		String sql = "SELECT url_full, COUNT(url_full) FROM url_entity WHERE web_collection_id = :collectionid";
 
 		if (filterUrl != null && !filterUrl.isEmpty()) {
 			if (!filterUrl.contains("%")) {
 				filterUrl = "%" + filterUrl + "%";
 			}
-			sql += " AND u.url_full LIKE :filterUrl";
+			sql += " AND url_full LIKE :filterUrl";
 		}
 		if (filterDomain != null && !filterDomain.isEmpty()) {
 			if (!filterDomain.contains("%")) {
 				filterDomain = "%" + filterDomain + "%";
 			}
-			sql += " AND u.url_domain LIKE :filterDomain";
+			sql += " AND url_domain LIKE :filterDomain";
 		}
-		sql += " GROUP BY u.url_full, u.tweet_id ORDER BY COUNT(u.id) desc";
+		sql += " GROUP BY url_full ORDER BY COUNT(url_full) desc";
 
 		Query query = em.createNativeQuery(sql);
 		query.setParameter("collectionid", collectionId);
@@ -303,8 +307,10 @@ public class UrlEntityDao {
 		if (filterDomain != null && !filterDomain.isEmpty()) {
 			query.setParameter("filterDomain", filterDomain);
 		}
-		query.setFirstResult(start);
-		query.setMaxResults(rows);
+		if (start != null)
+			query.setFirstResult(start);
+		if (rows != null)
+			query.setMaxResults(rows);
 		return query.getResultList();
 	}
 
@@ -312,7 +318,7 @@ public class UrlEntityDao {
 			String filterDomain) {
 		Number countResult;
 		try {
-			String sql = "SELECT COUNT(DISTINCT u.tweetId) FROM UrlEntity u WHERE u.urlOriginal is not null and u.collectionId = :collectionid";
+			String sql = "SELECT COUNT(DISTINCT u.tweetId) FROM UrlEntity u WHERE u.collectionId = :collectionid";
 			if (filterUrl != null && !filterUrl.isEmpty()) {
 				if (!filterUrl.contains("%")) {
 					filterUrl = "%" + filterUrl + "%";
@@ -399,9 +405,9 @@ public class UrlEntityDao {
 		Number countResult;
 		String sql = null;
 		if (collectionId != null) {
-			sql = "SELECT COUNT(u.urlOriginal) FROM UrlEntity u WHERE u.urlOriginal is not null and u.webCollection.id = :collectionid and u.expanded = false ";
+			sql = "SELECT COUNT(u.urlOriginal) FROM UrlEntity u WHERE u.webCollection.id = :collectionid ";
 		} else {
-			sql = "SELECT COUNT(u.urlOriginal) FROM UrlEntity u WHERE u.urlOriginal is not null and u.webCollection.id is null and u.expanded = false";
+			sql = "SELECT COUNT(u.urlOriginal) FROM UrlEntity u WHERE u.webCollection.id is null ";
 		}
 		if (filterUrl != null && !filterUrl.isEmpty()) {
 			if (!filterUrl.contains("%")) {
@@ -463,8 +469,17 @@ public class UrlEntityDao {
 		return countResult;
 	}
 
-	public List<Object[]> getTopDomain(long collectionId, String filterUrl,
-			String filterDomain, int start, int rows) {
+	/**
+	 * Fetches URL domains and the number of URLs in the domain sorted in reverse order
+	 * @param collectionId The identifier of the required Web Collection
+	 * @param filterUrl A URL query filter
+	 * @param filterDomain A URL domain query filter
+	 * @param start The position of the initial record
+	 * @param rows The number of rows to return
+	 * @return
+	 */
+	public List<Object[]> getTopDomain(Long collectionId, String filterUrl,
+			String filterDomain, Integer start, Integer rows) {
 		String sql = "SELECT u.url_domain, COUNT(u.id) FROM url_entity u WHERE u.url_original is not null and u.web_collection_id = :collectionid";
 		if (filterUrl != null && !filterUrl.isEmpty()) {
 			if (!filterUrl.contains("%")) {
@@ -487,13 +502,24 @@ public class UrlEntityDao {
 		if (filterDomain != null && !filterDomain.isEmpty()) {
 			query.setParameter("filterDomain", filterDomain);
 		}
-		query.setFirstResult(start);
-		query.setMaxResults(rows);
+		if (start != null)
+			query.setFirstResult(start);
+		if (rows != null)
+			query.setMaxResults(rows);
 		return query.getResultList();
 	}
 
-	public List<Object[]> getTopPopularity(long collectionId, String filterUrl,
-			String filterDomain, int start, int rows) {
+	/**
+	 * Returns the most popular expanded URL for a specific <code>WebCollection</code>
+	 * @param collectionId The identifier of the required <code>WebCollection</code>
+	 * @param filterUrl A URL SQL query filter
+	 * @param filterDomain A domain SQL query filter
+	 * @param start The position of the initial result
+	 * @param rows The number of results to return
+	 * @return
+	 */
+	public List<Object[]> getTopPopularity(Long collectionId, String filterUrl,
+			String filterDomain, Integer start, Integer rows) {
 		String sql = "SELECT u.url_full, max(u.popularity) FROM url_entity u WHERE u.web_collection_id = :collectionid AND u.popularity > 0";
 		if (filterUrl != null && !filterUrl.isEmpty()) {
 			if (!filterUrl.contains("%")) {
@@ -516,8 +542,10 @@ public class UrlEntityDao {
 		if (filterDomain != null && !filterDomain.isEmpty()) {
 			query.setParameter("filterDomain", filterDomain);
 		}
-		query.setFirstResult(start);
-		query.setMaxResults(rows);
+		if (start != null)
+			query.setFirstResult(start);
+		if (rows != null)
+			query.setMaxResults(rows);
 		return query.getResultList();
 	}
 
@@ -534,15 +562,6 @@ public class UrlEntityDao {
 
 	}
 
-	public Number getTotalUnprocessed() {
-		Number countResult;
-		Query query2 = em
-				.createQuery("SELECT COUNT(t.id) FROM Tweet t WHERE t.processed = false");
-		// query2.setParameter("lastTweetId", lastTweetId);
-		countResult = (Number) query2.getSingleResult();
-		return countResult;
-	}
-
 	public Number getTotalEntities() {
 		Number countResult;
 		try {
@@ -557,7 +576,7 @@ public class UrlEntityDao {
 	public Number getTotalUnprocessedEntities() {
 		Number countResult;
 		try {
-			String sql = "SELECT count(u.id) FROM UrlEntity u LEFT JOIN u.tweet where u.tweet.processed = false u.urlOriginal is not null";
+			String sql = "SELECT count(u.id) FROM UrlEntity u where u.processed = false u.urlOriginal is not null";
 			Query query = em.createQuery(sql);
 			countResult = (Number) query.getSingleResult();
 		} catch (Exception e) {
@@ -569,7 +588,7 @@ public class UrlEntityDao {
 
 	public Number getTotalProcessedEntities() {
 		Number countResult;
-		String sql = "SELECT count(u.id) FROM UrlEntity u where u.tweet.processed = true and u.urlOriginal is not null";
+		String sql = "SELECT count(u.id) FROM UrlEntity u where u.processed = true and u.urlOriginal is not null";
 		Query query = em.createQuery(sql);
 		countResult = (Number) query.getSingleResult();
 
@@ -607,6 +626,16 @@ public class UrlEntityDao {
 		Number countResult;
 		String sql = "SELECT u FROM UrlEntity u WHERE urlOriginal is not null and errors is not null ";
 		Query query = em.createQuery(sql);
+		return query.getResultList();
+	}
+	
+	public List<UrlEntity> getUrlEntitiesFailedByCollection(Long collectionId, Integer start, Integer rows) {
+		Number countResult;
+		String sql = "SELECT u FROM UrlEntity u WHERE u.webCollection.id = :collectionId and urlOriginal is not null and errors is not null ";
+		Query query = em.createQuery(sql);
+		query.setParameter("collectionId", collectionId);
+		query.setFirstResult(start);
+		query.setMaxResults(rows);
 		return query.getResultList();
 	}
 }

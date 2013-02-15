@@ -148,6 +148,12 @@ public class Tweet implements Serializable {
 	 * @param processed the processed to set
 	 */
 	public void setProcessed(Boolean processed) {
+		// also set the processed flag on the associated UrlEntities to improve performance
+		if (urlEntities != null) {
+			for (UrlEntity urlEntity : urlEntities) {
+				urlEntity.setProcessed(processed);
+			}
+		}
 		this.processed = processed;
 	}
 }

@@ -1,6 +1,7 @@
 package uk.bl.wap.crowdsourcing.dao;
 
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -41,9 +42,9 @@ public class TweetDao {
     	Number countUrl;
     	String sql = null;
     	if (collectionId != null) {
-    		sql = "SELECT count(distinct u.tweet_id) FROM url_entity u where u.url_original is not null and u.web_collection_id = :collectionId ";
+    		sql = "SELECT count(distinct u.tweet_id) FROM url_entity u where u.web_collection_id = :collectionId ";
     	} else {
-    		sql = "SELECT count(distinct u.tweet_id) FROM url_entity u where u.url_original is not null and u.web_collection_id is null ";
+    		sql = "SELECT count(distinct u.tweet_id) FROM url_entity u where u.web_collection_id is null ";
     	}
 		Query query = em.createNativeQuery(sql);
 		if (collectionId != null) {
@@ -58,17 +59,18 @@ public class TweetDao {
     	// get the url count (processed + unprocessed)
     	Number countUrl;
     	String sql = null;
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     	if (collectionId != null) {
-    		sql = "SELECT count(t.id) FROM tweet t, url_entity u where u.url_original is not null and t.id = u.tweet_id and u.web_collection_id = :collectionId and t.creation_date between :start and :end ";
+    		sql = "SELECT count(distinct tweet_id) FROM url_entity where web_collection_id = :collectionId and creation_date between :start and :end ";
     	} else {
-    		sql = "SELECT count(t.id) FROM tweet t, url_entity u where u.url_original is not null and t.id = u.tweet_id and u.web_collection_id is null and t.creation_date between :start and :end ";
+    		sql = "SELECT count(distinct tweet_id) FROM url_entity where web_collection_id is null and creation_date between :start and :end ";
     	}
 		Query query = em.createNativeQuery(sql);
 		if (collectionId != null) {
 			query.setParameter("collectionId", collectionId);
 		}
-		query.setParameter("start", start);
-		query.setParameter("end", end);
+		query.setParameter("start", sdf.format(start.getTime()));
+		query.setParameter("end", sdf.format(end.getTime()));
 		countUrl =(Number) query.getSingleResult();
 
        	return countUrl.longValue();
@@ -122,6 +124,14 @@ public class TweetDao {
     	}
         return query.getResultList();
     }
+    
+	public Number getTotalUnprocessed() {
+		Number countResult;
+		Query query2 = em
+				.createQuery("SELECT COUNT(t.id) FROM Tweet t WHERE t.processed = false");
+		countResult = (Number) query2.getSingleResult();
+		return countResult;
+	}
     
    public HashMap<Long, Long> getTopTweets(Integer topTweets) {
     	

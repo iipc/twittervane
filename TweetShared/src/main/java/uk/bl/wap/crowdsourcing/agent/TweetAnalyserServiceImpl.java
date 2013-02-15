@@ -34,18 +34,6 @@ import com.rosaloves.bitlyj.Url;
  * @author twoods
  *
  */
-/**
- * @author twoods
- *
- */
-/**
- * @author twoods
- *
- */
-/**
- * @author twoods
- *
- */
 public class TweetAnalyserServiceImpl implements TweetAnalyserService {
 
 	private TweetAnalyserStatusEnum status = TweetAnalyserStatusEnum.STOPPED;
@@ -53,7 +41,6 @@ public class TweetAnalyserServiceImpl implements TweetAnalyserService {
 	@Autowired
 	private UrlEntityDao urlEntityDao;
 
-	@Autowired
 	private WebCollectionDao webCollectionDao;
 
 	@Autowired
@@ -61,15 +48,12 @@ public class TweetAnalyserServiceImpl implements TweetAnalyserService {
 
 	@Autowired
 	private AppConfigDao appConfigDao;
-
+ 
 	private Integer jobNumber = null;
 	private Integer processCounter = 0;
-	private boolean purge = false;
-	private boolean purgeAll = false;
-	private boolean purgeProcessed = false;
-	private boolean purgeFailed = false;
 	private String urlInProgress = null;
 	private AppConfig appConfig = null;
+	private WebCollection unknownWebCollection = null;
 
 	/**
 	 * Number of most popular (eg: top 10) tweets for url expansion
@@ -123,6 +107,10 @@ public class TweetAnalyserServiceImpl implements TweetAnalyserService {
 		Set<String> popularUrls = urlEntityDao.getTopUrls(topUrls);
 
 		List<WebCollection> tweetWebCollection = new ArrayList<WebCollection>();
+		
+		if (unknownWebCollection == null) {
+			unknownWebCollection = webCollectionDao.getUnknownCollection();
+		}
 
 		URL u = null;
 		String expandedUrl = null;
@@ -188,6 +176,8 @@ public class TweetAnalyserServiceImpl implements TweetAnalyserService {
 					}
 					if (tweetWebCollection.isEmpty()) {
 						ue.setErrors("Failed to identify web collection: no search term found in tweet text");
+						// allocate it to the unknown collection
+						ue.setWebCollection(unknownWebCollection);
 					}
 
 				} catch (Exception e) {
@@ -201,7 +191,26 @@ public class TweetAnalyserServiceImpl implements TweetAnalyserService {
 			tweet.setProcessed(true);
 			tweetDao.persist(tweet);
 		}
+		// update the summary stats
+		updateWebCollectionSummary();
+		
 		status = TweetAnalyserStatusEnum.STOPPED;
+	}
+	
+	/**
+	 * Updates Web Collections with summary statistics
+	 */
+	private void updateWebCollectionSummary() {
+    	// fetch the list of collections
+    	List<WebCollection> webCollections = webCollectionDao.getAllCollections();
+    	
+    	for (WebCollection webCollection : webCollections) {
+    		webCollection.setTotalTweets(tweetDao.getTotalTweetsByCollection(webCollection.getId()).longValue());
+    		webCollection.setTotalUrlsOriginal(urlEntityDao.getTotalOriginalURL(webCollection.getId(), null, null).longValue());
+       		webCollection.setTotalUrlsExpanded(urlEntityDao.getTotalURL(webCollection.getId(), null, null).longValue());
+       		webCollection.setTotalUrlErrors(urlEntityDao.getTotalEntitiesFailedByCollection(webCollection.getId()).longValue());
+       		webCollectionDao.persist(webCollection);
+    	}
 	}
 
 	private boolean getExpandedUrl() {
@@ -360,7 +369,7 @@ public class TweetAnalyserServiceImpl implements TweetAnalyserService {
 
 	@Override
 	public Number getTotalUnprocessed() {
-		return urlEntityDao.getTotalUnprocessed();
+		return tweetDao.getTotalUnprocessed();
 	}
 
 	@Override
@@ -410,6 +419,13 @@ public class TweetAnalyserServiceImpl implements TweetAnalyserService {
 	@Override
 	public void purgeFailedUrls() {
 		urlEntityDao.deleteFailedEntries();
+	}
+
+	/**
+	 * @param webCollectionDao the webCollectionDao to set
+	 */
+	public void setWebCollectionDao(WebCollectionDao webCollectionDao) {
+		this.webCollectionDao = webCollectionDao;
 	}
 
 }

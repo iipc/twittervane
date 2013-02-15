@@ -166,7 +166,6 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<finalName>twittervane</finalName>
 		<pluginManagement>
 			<plugins>
 				<plugin>

@@ -151,12 +151,13 @@ label {
 	font-weight:bold;
 	margin:5px 0;
 }
+/*
 input {
 	padding:2px;
 	border:1px solid #797979;
 	font: normal 1em Verdana, sans-serif;
 	color:#777;
-}
+}*/
 textarea {
 	width:400px;
 	padding:2px;

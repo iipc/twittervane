@@ -95,8 +95,21 @@ public class ReportViewController {
         	if (column == null) {
         		column = "collectionName";
         	} 		
-        	mv = buildUrlsInCollectionReport(mv, sort, column, collectionId);
+        	Boolean expanded = false;
+        	mv = buildUrlsInCollectionReport(mv, sort, column, collectionId, expanded);
+    	} else if (report.equals("expandedUrlsInCollection")) {
+    		Long collectionId = null;
+        	if (!collection.equals("")) {
+        		collectionId = Long.parseLong(collection);
+        	} 
+        	 
+        	if (column == null) {
+        		column = "collectionName";
+        	} 		
+        	Boolean expanded = true;
+        	mv = buildUrlsInCollectionReport(mv, sort, column, collectionId, expanded);
     	}
+
     	
     	// pass the generic report information to the view
     	mv.addObject("reportDate", reportDate);
@@ -117,7 +130,20 @@ public class ReportViewController {
     	Calendar periodStart = new GregorianCalendar();
     	Calendar periodEnd = new GregorianCalendar();
     	
+    	periodStart.set(Calendar.HOUR_OF_DAY, 0);
+    	periodStart.set(Calendar.MINUTE, 0);
+    	periodStart.set(Calendar.SECOND, 0);
+    	periodStart.set(Calendar.MILLISECOND, -1);
+    	
+    	periodEnd.add(Calendar.DAY_OF_WEEK, 1);
+    	periodEnd.set(Calendar.HOUR_OF_DAY, 0);
+    	periodEnd.set(Calendar.MINUTE, 0);
+    	periodEnd.set(Calendar.SECOND, 0);
+    	periodEnd.set(Calendar.MILLISECOND, -1);
+    	
     	// construct a set of labels for the column headers
+    	
+    	SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     	
     	// by day (tweets over last week)
     	Map<String, Long> lastWeek = new LinkedHashMap<String, Long>();
@@ -125,13 +151,24 @@ public class ReportViewController {
     	for (int i=0; i<7; i++) {
     		Long count = 0L;
     		count = count + tweetDao.getTotalTweetsByPeriod(collectionId, periodStart, periodEnd);
-    		lastWeek.put(sdf.format(periodStart.getTime()), count);
+    		lastWeek.put(sdf.format(periodEnd.getTime()), count);
     		periodStart.add(Calendar.DAY_OF_WEEK, -1);
     		periodEnd.add(Calendar.DAY_OF_WEEK, -1);
     	}
     	
     	periodStart = new GregorianCalendar();
     	periodEnd = new GregorianCalendar();
+
+    	periodStart.set(Calendar.HOUR_OF_DAY, 0);
+    	periodStart.set(Calendar.MINUTE, 0);
+    	periodStart.set(Calendar.SECOND, 0);
+    	periodStart.set(Calendar.MILLISECOND, -1);
+    	
+    	periodEnd.add(Calendar.DAY_OF_WEEK, 1);
+    	periodEnd.set(Calendar.HOUR_OF_DAY, 0);
+    	periodEnd.set(Calendar.MINUTE, 0);
+    	periodEnd.set(Calendar.SECOND, 0);
+    	periodEnd.set(Calendar.MILLISECOND, -1);
     	
     	// by month (tweets over last month)
     	Map<String, Long> lastMonth = new LinkedHashMap<String, Long>();
@@ -139,25 +176,39 @@ public class ReportViewController {
     	for (int i=0; i<30; i++) {
     		Long count = 0L;
     		count = count + tweetDao.getTotalTweetsByPeriod(collectionId, periodStart, periodEnd);
-    		lastMonth.put(sdf.format(periodStart.getTime()), count);
+    		if (i%2 == 0 && i != 0) {
+    			lastMonth.put(sdf.format(periodEnd.getTime()), count);
+    		}
     		periodStart.add(Calendar.DAY_OF_MONTH, -1);
     		periodEnd.add(Calendar.DAY_OF_MONTH, -1);
     	}
     	
     	// by year (tweets over last year)
     	periodStart = new GregorianCalendar();
+    	periodStart.set(Calendar.DAY_OF_MONTH, 1);
+    	periodStart.set(Calendar.HOUR_OF_DAY, 0);
+    	periodStart.set(Calendar.MINUTE, 0);
+    	periodStart.set(Calendar.SECOND, 0);
+    	periodStart.set(Calendar.MILLISECOND, -1);
     	periodEnd = new GregorianCalendar();
-    	periodEnd.add(Calendar.MONTH, -1);
+    	periodEnd.set(Calendar.DAY_OF_MONTH, 1);
+    	periodEnd.set(Calendar.HOUR_OF_DAY, 0);
+    	periodEnd.set(Calendar.MINUTE, 0);
+    	periodEnd.set(Calendar.SECOND, 0);
+    	periodEnd.add(Calendar.MONTH, 1);
+    	periodEnd.set(Calendar.MILLISECOND, -1);
     	
-    	// by month (tweets over last month)
     	Map<String, Long> lastYear = new LinkedHashMap<String, Long>();
     	sdf = new SimpleDateFormat("MMM");
     	for (int i=0; i<12; i++) {
     		Long count = 0L;
-       		count = count + tweetDao.getTotalTweetsByPeriod(collectionId, periodEnd, periodStart);
-    		lastYear.put(sdf.format(periodStart.getTime()), count);
+       		count = count + tweetDao.getTotalTweetsByPeriod(collectionId, periodStart, periodEnd);
+       		lastYear.put(sdf.format(periodEnd.getTime()), count);
     		periodStart.add(Calendar.MONTH, -1);
+    		// ensure we find the end of the month
+    		periodEnd.add(Calendar.SECOND, 1);
     		periodEnd.add(Calendar.MONTH, -1);
+    		periodEnd.add(Calendar.SECOND, -1);
     	}
     	
     	mv.addObject("lastWeek", lastWeek);
@@ -190,11 +241,6 @@ public class ReportViewController {
 
     	// fetch the tweets for each collection
     	for (WebCollection webCollection : webCollections) {
-    		webCollection.setTotalTweets(tweetDao.getTotalTweetsByCollection(webCollection.getId()).longValue());
-    		webCollection.setTotalUrlsOriginal(urlEntityDao.getTotalOriginalURL(webCollection.getId(), null, null).longValue()
-    				+ urlEntityDao.getTotalURL(webCollection.getId(), null, null).longValue());
-       		webCollection.setTotalUrlsExpanded(urlEntityDao.getTotalURL(webCollection.getId(), null, null).longValue());
-       		webCollection.setTotalUrlErrors(urlEntityDao.getTotalEntitiesFailedByCollection(webCollection.getId()).longValue());
        		totalTweets = totalTweets + webCollection.getTotalTweets();
        		totalUrls = totalUrls + webCollection.getTotalUrlsOriginal();
        		totalUrlsExpanded = totalUrlsExpanded + webCollection.getTotalUrlsExpanded();
@@ -257,10 +303,6 @@ public class ReportViewController {
     	Long totalUrlErrors = 0L;
     	
     	for (WebCollection webCollection : webCollections) {
-    		webCollection.setTotalTweets(tweetDao.getTotalTweetsByCollection(webCollection.getId()).longValue());
-    		webCollection.setTotalUrlsOriginal(urlEntityDao.getTotalOriginalURL(webCollection.getId(), null, null).longValue());
-       		webCollection.setTotalUrlsExpanded(urlEntityDao.getTotalURL(webCollection.getId(), null, null).longValue());
-       		webCollection.setTotalUrlErrors(urlEntityDao.getTotalEntitiesFailedByCollection(webCollection.getId()).longValue());
        		totalTweets = totalTweets + webCollection.getTotalTweets();
        		totalUrls = totalUrls + webCollection.getTotalUrlsOriginal();
        		totalUrlsExpanded = totalUrlsExpanded + webCollection.getTotalUrlsExpanded();
@@ -330,7 +372,15 @@ public class ReportViewController {
     	return mv;
     }
     
-    private ModelAndView buildUrlsInCollectionReport(ModelAndView mv, String sort, String column, Long collectionId) {
+    /**
+     * Builds the unexpanded URLs for in a collection
+     * @param mv
+     * @param sort
+     * @param column
+     * @param collectionId
+     * @return
+     */
+    private ModelAndView buildUrlsInCollectionReport(ModelAndView mv, String sort, String column, Long collectionId, Boolean expanded) {
     	
     	UrlEntityComparator.SortOrder urlEntitySortOrder = null;
        	
@@ -344,7 +394,7 @@ public class ReportViewController {
     	WebCollection webCollection = webCollectionDao.getWebCollection(collectionId);
     	
        	// fetch the url entities
-       	List<UrlEntity> urlEntities = urlEntityDao.getUrlEntitiesByCollection(webCollection.getId(), (this.pageNumber - 1) * this.pageSize, this.pageSize);
+       	List<UrlEntity> urlEntities = urlEntityDao.getUrlEntitiesByCollection(webCollection.getId(), (this.pageNumber - 1) * this.pageSize, this.pageSize, expanded);
     	
     	// sort the url entities
     	if (column.equals("urlFull")) {
@@ -360,9 +410,13 @@ public class ReportViewController {
        	mv.addObject("collection", collectionId);
 
        	Page page = new Page();
-       	Long totalOriginal = urlEntityDao.getTotalURL(collectionId, null, null).longValue();
-       	Long totalExpanded = urlEntityDao.getTotalOriginalURL(collectionId, null, null).longValue();
-       	page.setTotal(totalOriginal + totalExpanded);
+       	Long totalExpanded = webCollection.getTotalUrlsExpanded();
+       	Long totalOriginal = webCollection.getTotalUrlsOriginal();
+       	if (expanded) {
+       		page.setTotal(totalExpanded);
+       	} else {
+       		page.setTotal(totalOriginal - totalExpanded);
+       	}
        	Integer firstResult = (this.pageNumber - 1) * this.pageSize + 1;
        	Integer lastResult = this.pageNumber * this.pageSize;
        	if (lastResult > page.getTotal()) {

@@ -2,9 +2,11 @@ package uk.bl.wap.crowdsourcing.controller;
 
 import java.text.ParseException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,40 +48,68 @@ public class WebCollectionController {
         String startDate = request.getParameter("startDate");
         String endDate = request.getParameter("endDate");
         
-        if (term != null) {
-        	SearchTerm searchTerm = new SearchTerm(term);
-        	webCollectionDao.addTerm(id, searchTerm);
-        	
-        	// Update twitter Stream filter
-        	long[] followArray = null;
-        	
-        	String trackList = "";
-    		
-    		for (WebCollection webCollection: webCollectionDao.getAllCollectionsForStream()) {
-    			for (SearchTerm st : webCollection.getSearchTerms()) {
-    				trackList += st.getTerm() + ",";
-    			}
-    		}
-    		
-    		if (trackList.length() > 0) {
-    			trackList = trackList.substring(0, trackList.lastIndexOf(","));
-    		}
-    		String[] trackArray = {trackList};
-    		
-    		//TODO: Send this as a RPC call to TweetStreamAgent
-    		if (Util.twitterStream != null) {
-    			Util.twitterStream.filter(new FilterQuery(0, followArray, trackArray));
-    		}
-        }
-        
-        if (name != null) {
-        	webCollectionDao.updateCollection(id, name, startDate, endDate);
-        	message.put("message", "Saved");
+        String action = request.getParameter("action");
+        String searchId = request.getParameter("searchTermId");
+        Long searchTermId = null;
+        if (searchId != null) {
+        	searchTermId = Long.parseLong(searchId);
         }
         
         WebCollection collection = webCollectionDao.getCollectionById(id);
         
+        if (action != null) {
+
+        	// Update twitter Stream filter
+        	long[] followArray = null;
+
+        	if (term != null && action.equals("add")) {
+        		String trackList = buildTrackList();
+	        	SearchTerm searchTerm = new SearchTerm(term);
+	        	searchTerm.setWebCollection(collection);
+	        	collection.addSearchTerm(searchTerm);
+	        	
+	    		if (trackList.length() > 0) {
+	    			trackList = trackList.substring(0, trackList.lastIndexOf(","));
+	    		}
+	    		String[] trackArray = {trackList};
+	    		
+	    		if (Util.twitterStream != null) {
+	    			Util.twitterStream.filter(new FilterQuery(0, followArray, trackArray));
+	    		}
+	            if (name != null) {
+	            	webCollectionDao.persist(collection);
+	            	message.put("message", "Saved");
+	            }
+	        }
+	        
+	        if (action.equals("delete")) {
+	        	// remove the search term from the web collection
+	        	SearchTerm searchTerm = searchTermDao.getSearchTermByid(searchTermId);
+	        	List<SearchTerm> items = collection.getSearchTerms();
+	        	for (int i=0; i<items.size(); i++) {
+	        		SearchTerm item = items.get(i);
+	        		if (item.getId().equals(searchTerm.getId())) {
+	        			items.remove(i);
+	        		}
+	        	}
+	        	webCollectionDao.persist(collection);
+	        	
+	        	// remove the search term from the rack array
+	        	String trackList = buildTrackList();
+	    		if (trackList.length() > 0) {
+	    			trackList = trackList.substring(0, trackList.lastIndexOf(","));
+	    		}
+	    		String[] trackArray = {trackList};
+	    		
+	    		if (Util.twitterStream != null) {
+	    			Util.twitterStream.filter(new FilterQuery(0, followArray, trackArray));
+	    		}
+
+	        }
+        }
         
+        // re-fetch the web collection so that any search terms added will have an id allocated
+        collection = webCollectionDao.getCollectionById(id);
         
         mv.addObject("searchTermDao",searchTermDao);
         mv.addObject("webCollection", collection);
@@ -87,5 +117,16 @@ public class WebCollectionController {
         mv.setViewName(jsp);
         return mv;
  
+    }
+    
+    private String buildTrackList() {
+    	String trackList = "";
+		
+		for (WebCollection webCollection: webCollectionDao.getAllCollectionsForStream()) {
+			for (SearchTerm st : webCollection.getSearchTerms()) {
+				trackList += st.getTerm() + ",";
+			}
+		}
+		return trackList;
     }
 }
