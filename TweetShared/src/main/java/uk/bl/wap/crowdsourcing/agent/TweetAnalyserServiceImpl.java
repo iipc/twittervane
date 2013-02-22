@@ -496,7 +496,7 @@ public class TweetAnalyserServiceImpl implements TweetAnalyserService {
 	public void setWebCollectionDao(WebCollectionDao webCollectionDao) {
 		this.webCollectionDao = webCollectionDao;
 	}
- 
+  
 	/**
 	 * @return the processBatchSize
 	 */

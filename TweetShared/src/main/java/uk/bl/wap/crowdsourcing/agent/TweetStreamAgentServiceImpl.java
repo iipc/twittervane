@@ -34,7 +34,7 @@ public class TweetStreamAgentServiceImpl implements TweetStreamAgentService {
  
 	@Autowired
 	private TweetAnalyserService tweetAnalyserService;
-	
+	 
 	/** the application logger **/
 	private Log log;
 	private JsonLogger jsonLogger = null;
