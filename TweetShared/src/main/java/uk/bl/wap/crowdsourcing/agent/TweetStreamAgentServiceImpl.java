@@ -47,7 +47,6 @@ public class TweetStreamAgentServiceImpl implements TweetStreamAgentService {
 	@Autowired
 	private SearchTermDao searchTermDao; 
 	
-	@Autowired
 	private WebCollectionDao webCollectionDao;
 	
 	@Autowired
@@ -115,6 +114,7 @@ public class TweetStreamAgentServiceImpl implements TweetStreamAgentService {
 		try {
 			if (Util.twitterStream != null) {
 				Util.twitterStream.shutdown();
+				Util.twitterStream.cleanUp();
 				Util.twitterStream = null;
 				log.info("Twitter Stream stopped");
 			}
@@ -160,60 +160,64 @@ public class TweetStreamAgentServiceImpl implements TweetStreamAgentService {
 		
         StatusListener listener = new StatusListener() {
         	
-        	
             public void onStatus(Status status) {
-
-            	URLEntity[] links = status.getURLEntities();
             	
-            	if (links != null && links.length > 0) {
-            		try {
-            			Tweet tweet = new Tweet(status.getUser().getName(),
-            					status.getText(),
-            					status.getRetweetCount(),
-            					status.getId());
-            			List<UrlEntity> urlEntities = new ArrayList<UrlEntity>();
-            			tweet.setUrlEntities(urlEntities);
-            			for( URLEntity link : links ) {
-   							UrlEntity url = new UrlEntity();
-   						    if(link.getExpandedURL() != null) {
-    							url.setUrlOriginal(link.getExpandedURL().toString());
-            				} else if (link.getURL() != null) {
-            					url.setUrlOriginal(link.getURL().toString());
-            				}
-   						    url.setTweet(tweet);
-   						    url.setPopularity(tweet.getRetweetCount());
-							tweet.getUrlEntities().add(url);
-            			}
-            			log.debug("Persisting tweetId: " + tweet.getTweetiD());
-            			String rawJson = DataObjectFactory.getRawJSON(status);
-            			if (rawJson != null) {
-            				jsonLogger.log(rawJson);
-            			} else {
-            				log.warn("Json logging is disabled");
-            			}
-            			tweetDao.persist(tweet);
-            			
-            			tweetCounter++;
-            			
-            			if (tweetAnalyserService != null && tweetCounter >= analysisTriggerValue) {
-            				log.debug("Triggering analysis after receiving " + tweetCounter + " tweets");
-            				tweetCounter = 0;
-            				tweetAnalyserService.run();
-            				// stop and start the tweet stream so the search terms are reloaded
-            				stop();
-            				start();
-             			}
-            			
-            			
-            		} catch (Exception e) {
-            			log.error("Transaction error on tweet" + e.getMessage() + ", cause: " + e.getCause());
-            			log.debug(e);
-            			setLastStreamError(e.getMessage());
-            		} finally {
-
-            		}
+            	if (Util.twitterStream != null) {
+            	
+	            	URLEntity[] links = status.getURLEntities();
+	            	
+	            	if (links != null && links.length > 0) {
+	            		List<UrlEntity> urlEntities = new ArrayList<UrlEntity>();
+	            		try {
+	            			Tweet tweet = new Tweet(status.getUser().getName(),
+	            					status.getText(),
+	            					status.getRetweetCount(),
+	            					status.getId());
+	            			
+	            			tweet.setUrlEntities(urlEntities);
+	            			for( URLEntity link : links ) {
+	   							UrlEntity url = new UrlEntity();
+	   						    if(link.getExpandedURL() != null) {
+	    							url.setUrlOriginal(link.getExpandedURL().toString());
+	            				} else if (link.getURL() != null) {
+	            					url.setUrlOriginal(link.getURL().toString());
+	            				}
+	   						    url.setTweet(tweet);
+	   						    url.setPopularity(tweet.getRetweetCount());
+								tweet.getUrlEntities().add(url);
+	            			}
+	            			log.debug("Persisting tweetId: " + tweet.getTweetiD());
+	            			String rawJson = DataObjectFactory.getRawJSON(status);
+	            			if (rawJson != null) {
+	            				jsonLogger.log(rawJson);
+	            			} else {
+	            				log.warn("Json logging is disabled");
+	            			}
+	            			tweetDao.persist(tweet);
+	            			
+	            			tweetCounter++;
+	            			
+	            			
+	            			if (tweetAnalyserService != null && tweetCounter >= analysisTriggerValue) {
+	            				log.debug("Triggering analysis after receiving " + tweetCounter + " tweets");
+	            				tweetCounter = 0;
+	            				tweetAnalyserService.setJobNumber(tweetDao.getTotalUnprocessed().intValue());
+	            				tweetAnalyserService.run();
+	            				// stop and start the tweet stream so the search terms are reloaded
+	            				stop();
+	            				start();
+	             			}
+	            			
+	            			
+	            		} catch (Exception e) {
+	            			log.error("Transaction error on tweet" + e.getMessage() + ", cause: " + e.getCause());
+	            			log.debug(e);
+	            			setLastStreamError(e.getMessage());
+	            		} finally {
+	
+	            		}
+	            	}
             	}
-            	
             }
             public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {}
             public void onTrackLimitationNotice(int numberOfLimitedStatuses) {}
@@ -222,6 +226,8 @@ public class TweetStreamAgentServiceImpl implements TweetStreamAgentService {
     			// log the exception if its not the inflater closed error (this is thrown when the stream is stopped)
     			if (ex.getMessage() != null && !ex.getMessage().equals("Inflater has been closed")) {
 	            	log.error("Error retrieving tweet: " + ex.getMessage());
+	            	if (ex.getCause() != null)
+	            		log.error("cause: " + ex.getCause());
 	            	setLastStreamError(ex.getMessage());
     			}
                }
@@ -355,6 +361,20 @@ public class TweetStreamAgentServiceImpl implements TweetStreamAgentService {
 		}
 		
 		return trackList;
+	}
+
+	/**
+	 * @return the webCollectionDao
+	 */
+	public WebCollectionDao getWebCollectionDao() {
+		return webCollectionDao;
+	}
+
+	/**
+	 * @param webCollectionDao the webCollectionDao to set
+	 */
+	public void setWebCollectionDao(WebCollectionDao webCollectionDao) {
+		this.webCollectionDao = webCollectionDao;
 	}
 
 }

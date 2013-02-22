@@ -50,8 +50,9 @@ public class WebCollectionsController {
     	
     	if (action != null) {
 	        if (action.equals("add")) {
-	        	if (name != null && !name.trim().equals("") && startDate != null && !startDate.isEmpty() && endDate != null && !endDate.isEmpty()) {
-	        		WebCollection webCollection = new WebCollection(name, description, startDate, endDate);
+        		WebCollection webCollection = null;
+        		try {
+        			webCollection = new WebCollection(name, description, startDate, endDate);
 	            	String[] terms = null;
 	            	if (searchTerms != null) {
 	            		terms = searchTerms.split(",");
@@ -66,16 +67,17 @@ public class WebCollectionsController {
 	        				searchTerm.setWebCollection(webCollection);
 	        			}
 	        		}
+	        		
 	        		webCollectionDao.persist(webCollection);
-	
-	        	} 
-	        	if (startDate == null || startDate.trim() == "" || endDate == null || endDate.trim() == "") {
-	        		message.put("message", "Start and end date required");
-	        		showFormValues = true;
-	        	}
+        		} catch (ParseException pe) {
+        			message.put("message", "Start and end dates are required and need to be valid");
+        			showFormValues = true;
+        		}
+
 	        }
 	        if (name == null || (name.trim() == "")) {
 	        	message.put("message", "Name is a required field");
+	        	showFormValues = true;
 	        }
 	        if (action.equals("delete")) {
 	        	webCollectionDao.deleteWebCollection(id);

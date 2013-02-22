@@ -271,21 +271,9 @@ public class ReportViewController {
     
     private ModelAndView buildTopUrlsByCollectionReport(ModelAndView mv, String sort, String column) {
     	
-    	List<UrlEntity> urlEntities = new ArrayList<UrlEntity>();
-    	HashMap<Long, Tweet> tweets = new HashMap<Long, Tweet>();
-    	Long tweetTotal = 0L;
-    	Long retweetTotal = 0L;
-    	
-    	UrlEntityComparator.SortOrder urlEntitySortOrder = null;
        	if (column == null) {
     		column = "totalTweets";
        	}
-       	
-    	if (sort.equals("desc")) {
-    		urlEntitySortOrder = UrlEntityComparator.SortOrder.desc;
-    	} else {
-    		urlEntitySortOrder = UrlEntityComparator.SortOrder.asc;
-    	}
        	
     	WebCollectionComparator.SortOrder webCollectionsSortOrder = null;
     	if (sort.equals("desc")) {
@@ -297,77 +285,28 @@ public class ReportViewController {
     	// fetch the list of collections
     	List<WebCollection> webCollections = webCollectionDao.getAllCollections();
     	
-    	Long totalTweets = 0L;
-    	Long totalUrls = 0L;
-    	Long totalUrlsExpanded = 0L;
-    	Long totalUrlErrors = 0L;
+    	Long totalTopUrlTweets = 0L;
+    	Long totalTopUrlRetweets = 0L;
     	
     	for (WebCollection webCollection : webCollections) {
-       		totalTweets = totalTweets + webCollection.getTotalTweets();
-       		totalUrls = totalUrls + webCollection.getTotalUrlsOriginal();
-       		totalUrlsExpanded = totalUrlsExpanded + webCollection.getTotalUrlsExpanded();
-       		totalUrlErrors = totalUrlErrors + webCollection.getTotalUrlErrors();
-       		mv.addObject("webCollections", webCollections);
+    		totalTopUrlTweets = totalTopUrlTweets + webCollection.getTopUrlTweets();
+    		totalTopUrlRetweets = totalTopUrlRetweets + webCollection.getTopUrlRetweets();
     	}
     	
     	// sort the web collection
     	if (column.equals("collectionName")) {
     		this.sortWebCollectionsBy(webCollections, WebCollectionComparator.Order.collectionName, webCollectionsSortOrder);
     	} else if (column.equals("totalTweets")) {
-    		this.sortWebCollectionsBy(webCollections, WebCollectionComparator.Order.totalTweets, webCollectionsSortOrder);
-    	} else if (column.equals("totalUrlsOriginal")) {
-    		this.sortWebCollectionsBy(webCollections, WebCollectionComparator.Order.totalUrlsOriginal, webCollectionsSortOrder);
-    	} else if (column.equals("totalUrlsFull")) {
-    		this.sortWebCollectionsBy(webCollections, WebCollectionComparator.Order.totalUrlsFull, webCollectionsSortOrder);
-    	} else if (column.equals("totalUrlErrors")) {
-    		this.sortWebCollectionsBy(webCollections, WebCollectionComparator.Order.totalUrlErrors, webCollectionsSortOrder);
-    	}
-    	
-    	// obtain the top url for each collection
-    	for (WebCollection webCollection : webCollections) {
-	    	UrlEntity urlEntity = urlEntityDao.getTopUrl(webCollection.getId());
-
-	    	if (urlEntity != null) {
-		    	urlEntities.add(urlEntity);
-		    	tweetTotal = tweetTotal + urlEntity.getTotalTweets();
-		    	
-	        	long tweetId = urlEntity.getTweet().getId();
-	        	Tweet tweet = tweetDao.getTweet(tweetId);
-	        	tweets.put(tweetId, tweet);
-	        	retweetTotal = retweetTotal + tweet.getRetweetCount();
-	        	urlEntity.setTotalRetweets(tweet.getRetweetCount());
-	    	} else {
-	    		UrlEntity newUrlEntity = new UrlEntity();
-	    		newUrlEntity.setExpanded(false);
-	    		newUrlEntity.setUrlFull("");
-	    		newUrlEntity.setUrlOriginal("");
-	    		newUrlEntity.setWebCollection(webCollection);
-	    		newUrlEntity.setTotalTweets(0L);
-	    		newUrlEntity.setTotalRetweets(0L);
-	    		Tweet tweet = new Tweet();
-	    		tweet.setId(-1L);
-	    		tweet.setRetweetCount(0L);
-	    		tweets.put(-1L, tweet);
-	    		
-	    		newUrlEntity.setTweet(tweet);
-	    		urlEntities.add(newUrlEntity);
-	    	}
-	    	
-    	}
-    	
-    	// sort the url entities
-    	if (column.equals("urlFull")) {
-    		this.sortUrlEntitiesBy(urlEntities, UrlEntityComparator.Order.urlFull, urlEntitySortOrder);
-    	} else if (column.equals("totalTweets")) {
-    		this.sortUrlEntitiesBy(urlEntities, UrlEntityComparator.Order.totalTweets, urlEntitySortOrder);
+    		this.sortWebCollectionsBy(webCollections, WebCollectionComparator.Order.totalTopUrlTweets, webCollectionsSortOrder);
     	} else if (column.equals("totalRetweets")) {
-    		this.sortUrlEntitiesBy(urlEntities, UrlEntityComparator.Order.totalRetweets, urlEntitySortOrder);
+    		this.sortWebCollectionsBy(webCollections, WebCollectionComparator.Order.totalTopUrlRetweets, webCollectionsSortOrder);
+    	} else if (column.equals("topUrl")) {
+    		this.sortWebCollectionsBy(webCollections, WebCollectionComparator.Order.topUrl, webCollectionsSortOrder);
     	}
     	
-    	mv.addObject("urlEntities", urlEntities);
-    	mv.addObject("tweets", tweets);
-    	mv.addObject("tweetTotal", tweetTotal);
-    	mv.addObject("retweetTotal", retweetTotal);
+    	mv.addObject("totalTopUrlTweets", totalTopUrlTweets);
+    	mv.addObject("totalTopUrlRetweets", totalTopUrlRetweets);
+   		mv.addObject("webCollections", webCollections);
 
     	return mv;
     }

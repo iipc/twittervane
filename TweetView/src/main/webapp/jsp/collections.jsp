@@ -47,7 +47,7 @@ function submitForm(collectionId, commandAction) {
 	         	 }
 	         	 %>
 	         	</td>
-	         	<td><a onclick="return submitForm(<%= webcollection.getId() %>, 'delete');">Delete</a></td>
+	         	<td><a style="cursor: pointer;" onclick="return submitForm(<%= webcollection.getId() %>, 'delete');">Delete</a></td>
 	       	 </tr>
 	  		<%
 	  			if ( trclass.contentEquals("row-a")) {

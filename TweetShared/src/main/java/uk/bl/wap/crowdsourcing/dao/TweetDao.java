@@ -60,6 +60,7 @@ public class TweetDao {
     	Number countUrl;
     	String sql = null;
     	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    	
     	if (collectionId != null) {
     		sql = "SELECT count(distinct tweet_id) FROM url_entity where web_collection_id = :collectionId and creation_date between :start and :end ";
     	} else {
@@ -69,8 +70,8 @@ public class TweetDao {
 		if (collectionId != null) {
 			query.setParameter("collectionId", collectionId);
 		}
-		query.setParameter("start", sdf.format(start.getTime()));
-		query.setParameter("end", sdf.format(end.getTime()));
+		query.setParameter("start", start.getTime());
+		query.setParameter("end", end.getTime());
 		countUrl =(Number) query.getSingleResult();
 
        	return countUrl.longValue();
@@ -128,7 +129,7 @@ public class TweetDao {
 	public Number getTotalUnprocessed() {
 		Number countResult;
 		Query query2 = em
-				.createQuery("SELECT COUNT(t.id) FROM Tweet t WHERE t.processed = false");
+				.createQuery("SELECT COUNT(t.processed) FROM Tweet t WHERE t.processed = false");
 		countResult = (Number) query2.getSingleResult();
 		return countResult;
 	}
@@ -163,13 +164,15 @@ public class TweetDao {
     
     @Transactional
     public void deleteProcessedTweets() {
-	   	Query query = em.createQuery(
-	   			"SELECT t FROM Tweet t WHERE t.processed = true", Tweet.class);
+	   	Query query = em.createQuery("SELECT t FROM Tweet t WHERE t.processed = true", Tweet.class);
 	    	query.setFirstResult(0);
-	    	query.setMaxResults(50000);
+	    	query.setMaxResults(100);
 		    List<Tweet> results = query.getResultList();
-		    for (Object entity : results) {
-		        em.remove(entity);
+		    while (results.size() > 0) {
+			    for (Object entity : results) {
+			        em.remove(entity);
+			    }
+			    results = query.getResultList();
 		    }
     	}
     
@@ -178,10 +181,13 @@ public class TweetDao {
 	   	Query query = em.createQuery(
 	               "SELECT t FROM Tweet t", Tweet.class);
 	    	query.setFirstResult(0);
-	    	query.setMaxResults(50000);
+	    	query.setMaxResults(100);
 		    List<Tweet> results = query.getResultList();
-		    for (Object entity : results) {
-		        em.remove(entity);
+		    while (results.size() > 0) {
+			    for (Object entity : results) {
+			        em.remove(entity);
+			    }
+			    results = query.getResultList();
 		    }
     	}
 }

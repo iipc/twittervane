@@ -20,7 +20,7 @@
       </ul>
       <h1>Sponsors</h1>
       <ul class="sidemenu">
-        <li><a href="http://www.netpreserve.org/about/index.php"><strong>IIPC</strong></a> <br />
+        <li><a href="http://www.netpreserve.org/about-us"><strong>IIPC</strong></a> <br />
       </ul>
       <!-- 
       <h1>Wise Words</h1>

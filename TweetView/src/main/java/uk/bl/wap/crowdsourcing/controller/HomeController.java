@@ -9,8 +9,28 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class HomeController {
 	
+	private Boolean upgradeNotice = false;
+	
 	@RequestMapping(value="/home")
     public ModelAndView crowdsourcing(HttpServletRequest request) {
-        return new ModelAndView("home.jsp");
+		if (!upgradeNotice) {
+			return new ModelAndView("home.jsp");
+		} else {
+			return new ModelAndView("upgrade.jsp");
+		}
     }
+
+	/**
+	 * @return the upgradeNotice
+	 */
+	public Boolean getUpgradeNotice() {
+		return upgradeNotice;
+	}
+
+	/**
+	 * @param upgradeNotice the upgradeNotice to set
+	 */
+	public void setUpgradeNotice(Boolean upgradeNotice) {
+		this.upgradeNotice = upgradeNotice;
+	}
 }

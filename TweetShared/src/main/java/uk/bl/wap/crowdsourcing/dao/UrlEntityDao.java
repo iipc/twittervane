@@ -1,5 +1,6 @@
 package uk.bl.wap.crowdsourcing.dao;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -172,68 +173,70 @@ public class UrlEntityDao {
 		return query.getResultList();
 	}
 
-	public UrlEntity getTopUrl(Long collectionId) {
-
-		String urlFull = null;
-		UrlEntity urlEntity = null;
-		Long count = 0L;
-
-		String sql = "SELECT u FROM UrlEntity u WHERE u.urlFull = :urlFull";
-
-		List<Object[]> topUrl = getTopUrlAsObjectArray(collectionId);
-
-		// get the top url within the specified web collection
-		if (topUrl != null && topUrl.size() > 0) {
-			urlFull = (String) topUrl.get(0)[0];
-			count = ((BigInteger) topUrl.get(0)[1]).longValue();
+	public Long getTotalUrlTweets(Long collectionId, String urlOriginal) {
+				
+		// fetch the number of tweets associated with this url
+		String tweetCountsql = null;
+		if (collectionId != null) {
+			tweetCountsql = "SELECT COUNT(distinct tweet_id) FROM url_entity WHERE web_collection_id = :collectionid and url_original = :urlOriginal ";
+		} else {
+			tweetCountsql = "SELECT COUNT(distinct tweet_id) FROM url_entity WHERE web_collection_id is null and url_original = :urlOriginal ";
 		}
 
-		// retrieve the url entity and set the number of associated tweets as a
-		// transient property
-		if (count > 0) {
-			TypedQuery<UrlEntity> entityQuery = em.createQuery(sql,
-					UrlEntity.class);
-			entityQuery.setParameter("urlFull", urlFull);
-			entityQuery.setFirstResult(0);
-			entityQuery.setMaxResults(1);
-
-			urlEntity = entityQuery.getResultList().get(0);
-
-			// fetch the number of tweets associated with this url
-			String tweetCountsql = null;
-			if (collectionId != null) {
-				tweetCountsql = "SELECT COUNT(distinct t.id) FROM tweet t, url_entity u WHERE u.url_original is not null and t.id = u.tweet_id and u.web_collection_id = :collectionid";
-			} else {
-				tweetCountsql = "SELECT COUNT(distinct t.id) FROM tweet t, url_entity u WHERE u.url_original is not null and t.id = u.tweet_id and u.web_collection_id is null ";
-			}
-			tweetCountsql += " ORDER BY COUNT(t.id) desc";
-
-			Query query = em.createNativeQuery(tweetCountsql);
-			if (collectionId != null) {
-				query.setParameter("collectionid", collectionId);
-			}
-			query.setFirstResult(0);
-			query.setMaxResults(1);
-			List<BigInteger> tuples = query.getResultList();
-
-			Long tweetCount = (tuples.get(0)).longValue();
-			urlEntity.setTotalTweets(tweetCount);
-
+		Query query = em.createNativeQuery(tweetCountsql);
+		if (collectionId != null) {
+			query.setParameter("collectionid", collectionId);
 		}
+		query.setParameter("urlOriginal", urlOriginal);
+		query.setFirstResult(0);
+		query.setMaxResults(1);
+		List<BigInteger> tuples = query.getResultList();
 
-		return urlEntity;
-
+		Long tweetCount = (tuples.get(0)).longValue();
+		
+		return tweetCount;
 	}
+	
+	public Long getTotalUrlRetweets(Long collectionId, String urlOriginal) {
+		
+		// fetch the number of tweets associated with this url
+		String tweetCountsql = null;
+		if (collectionId != null) {
+			tweetCountsql = "SELECT SUM(popularity) FROM url_entity WHERE web_collection_id = :collectionid and url_original = :urlOriginal ";
+		} else {
+			tweetCountsql = "SELECT SUM(popularity) FROM url_entity WHERE web_collection_id is null and url_original = :urlOriginal ";
+		}
 
+		Query query = em.createNativeQuery(tweetCountsql);
+		if (collectionId != null) {
+			query.setParameter("collectionid", collectionId);
+		}
+		query.setParameter("urlOriginal", urlOriginal);
+		query.setFirstResult(0);
+		query.setMaxResults(1);
+		List<BigDecimal> tuples = query.getResultList();
+
+		
+		Long tweetCount = null;
+		
+		try {
+			tweetCount = (tuples.get(0)).longValue();
+		} catch (NullPointerException npe) {
+			tweetCount = 0L;
+		}
+		
+		return tweetCount;
+	}
+	
 	public List<Object[]> getTopUrlAsObjectArray(Long collectionId) {
 
 		String sql = null;
 		if (collectionId != null) {
-			sql = "SELECT u.url_full, COUNT(u.id) FROM url_entity u WHERE u.url_original is not null and u.url_full is not null and u.web_collection_id = :collectionid";
+			sql = "SELECT url_original, COUNT(url_original) FROM url_entity WHERE web_collection_id = :collectionid ";
 		} else {
-			sql = "SELECT u.url_full, COUNT(u.id) FROM url_entity u WHERE u.url_original is not null and u.url_full is not null and u.web_collection_id is null ";
+			sql = "SELECT url_original, COUNT(url_original) FROM url_entity WHERE web_collection_id is null ";
 		}
-		sql += " GROUP BY u.url_full ORDER BY COUNT(u.id) desc";
+		sql += " GROUP BY url_original ORDER BY COUNT(url_original) desc";
 
 		Query query = em.createNativeQuery(sql);
 		if (collectionId != null) {
@@ -244,6 +247,7 @@ public class UrlEntityDao {
 		List<Object[]> tuples = query.getResultList();
 		return tuples;
 	}
+	
 	
 	/**
 	 * Fetch the specified number of top URLs

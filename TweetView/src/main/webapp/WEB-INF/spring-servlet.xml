@@ -77,4 +77,10 @@
 		</property>
 	</bean>
 	
+	<bean id="homeController" class="uk.bl.wap.crowdsourcing.controller.HomeController">
+		<property name="upgradeNotice">
+			<value type="java.lang.Boolean">false</value>
+		</property>
+	</bean> 
+	
 </beans>

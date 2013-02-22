@@ -58,6 +58,10 @@
 			<value type="java.lang.Integer">10</value>
 		</property>
 		<property name="webCollectionDao" ref="webCollectionDao" />
+		<!-- defines the number of tweets that will be loaded into memory for processing -->
+		<property name="processBatchSize">
+			<value type="java.lang.Integer">200</value>
+		</property>
 	</bean>
 	
 	<bean id="webCollectionDao" class="uk.bl.wap.crowdsourcing.dao.WebCollectionDao">

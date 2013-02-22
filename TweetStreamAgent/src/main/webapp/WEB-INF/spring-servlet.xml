@@ -46,8 +46,14 @@
 		<property name="jsonLogger" ref="jsonLogger" />
 		<property name="analysisTriggerValue" value="100" />
 		<property name="displayLastStreamErrors" value="5" />
+		<property name="webCollectionDao" ref="webCollectionDao" />
 	</bean>
-
+	
+	<bean id="webCollectionDao" class="uk.bl.wap.crowdsourcing.dao.WebCollectionDao">
+		<!-- defines name for the "UNKNOWN" bucket web collection -->
+		<property name="unknownCollectionName" value="UNKNOWN" />
+	</bean>
+	
 	<!-- RMI client definition for the tweetAnalyserService -->
 	<bean id="tweetAnalyserService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">
 		<property name="serviceUrl" value="rmi://localhost:1099/TweetAnalyserService"/>

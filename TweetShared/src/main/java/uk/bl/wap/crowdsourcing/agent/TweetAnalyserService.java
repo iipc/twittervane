@@ -63,6 +63,11 @@ public interface TweetAnalyserService {
 	public void setTopUrls(Integer topUrls);
 	
 	/**
+	 * @param processBatchSize the processBatchSize to set
+	 */
+	public void setProcessBatchSize(Integer processBatchSize);
+	
+	/**
 	 * Delete all URL Entities
 	 */
 	public void purgeUrlEntities();

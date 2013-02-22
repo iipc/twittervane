@@ -5,8 +5,6 @@
 <%@taglib prefix="tv" uri="http://ukwa/tv" %>
 <%@ include file="header.jsp" %>
 
-
-
 <form name="report" id="report" action="reportView.html" method="post">
 <script language="javascript">
 function submitForm(column, sortOrder) {

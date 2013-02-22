@@ -111,9 +111,9 @@ public class WebCollectionController {
         // re-fetch the web collection so that any search terms added will have an id allocated
         collection = webCollectionDao.getCollectionById(id);
         
-        mv.addObject("searchTermDao",searchTermDao);
+        mv.addObject("searchTermDao", searchTermDao);
         mv.addObject("webCollection", collection);
-        mv.addObject("message",message);
+        mv.addObject("message", message);
         mv.setViewName(jsp);
         return mv;
  

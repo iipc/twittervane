@@ -34,7 +34,14 @@ public class WebCollection implements Serializable {
     private Long totalUrlsOriginal = 0L;
     private Long totalUrlsExpanded = 0L;
     private Long totalUrlErrors = 0L;
-   
+    private String topUrl = "";
+    private Long topUrlTweets = 0L;
+    private Long topUrlRetweets = 0L;
+    private Long totalTweetsProcessed = 0L;
+    private Long totalTweetsUnprocessed = 0L;
+    private Long totalUrlsProcessed = 0L;
+    private Long totalUrlsUnprocessed = 0L;
+    
     public WebCollection() {
     }
  
@@ -43,24 +50,17 @@ public class WebCollection implements Serializable {
         this.creationDate = new Date(System.currentTimeMillis());
     }
     
-    public WebCollection(String name,String description,String startDate,String endDate) {
+    public WebCollection(String name,String description,String startDate,String endDate) throws ParseException {
         this.name = name;
         this.description = description;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy"); 
 		Date convertedDate;
-		try {
-			convertedDate = dateFormat.parse(startDate);
-			this.startDate = convertedDate;
-		} catch (ParseException e) {
-			e.printStackTrace();
-		} 
-		
-		try {
-			convertedDate = dateFormat.parse(endDate);
-			this.endDate = convertedDate;
-		} catch (ParseException e) {
-			e.printStackTrace();
-		} 
+		convertedDate = dateFormat.parse(startDate);
+		this.startDate = convertedDate;
+	
+		convertedDate = dateFormat.parse(endDate);
+		this.endDate = convertedDate;
+			
         this.creationDate = new Date(System.currentTimeMillis());
     }
     
@@ -218,4 +218,103 @@ public class WebCollection implements Serializable {
 	public void setTotalUrlErrors(Long totalUrlErrors) {
 		this.totalUrlErrors = totalUrlErrors;
 	}
+
+	/**
+	 * @return the topUrl
+	 */
+	public String getTopUrl() {
+		return topUrl;
+	}
+
+	/**
+	 * @return the topUrlTweets
+	 */
+	public Long getTopUrlTweets() {
+		return topUrlTweets;
+	}
+
+	/**
+	 * @param topUrl the topUrl to set
+	 */
+	public void setTopUrl(String topUrl) {
+		this.topUrl = topUrl;
+	}
+
+	/**
+	 * @param topUrlTweets the topUrlTweets to set
+	 */
+	public void setTopUrlTweets(Long topUrlTweets) {
+		this.topUrlTweets = topUrlTweets;
+	}
+
+	/**
+	 * @return the topUrlRetweets
+	 */
+	public Long getTopUrlRetweets() {
+		return topUrlRetweets;
+	}
+
+	/**
+	 * @param topUrlRetweets the topUrlRetweets to set
+	 */
+	public void setTopUrlRetweets(Long topUrlRetweets) {
+		this.topUrlRetweets = topUrlRetweets;
+	}
+
+	/**
+	 * @return the totalTweetsProcessed
+	 */
+	public Long getTotalTweetsProcessed() {
+		return totalTweetsProcessed;
+	}
+
+	/**
+	 * @return the totalTweetsUnprocessed
+	 */
+	public Long getTotalTweetsUnprocessed() {
+		return totalTweetsUnprocessed;
+	}
+
+	/**
+	 * @param totalTweetsProcessed the totalTweetsProcessed to set
+	 */
+	public void setTotalTweetsProcessed(Long totalTweetsProcessed) {
+		this.totalTweetsProcessed = totalTweetsProcessed;
+	}
+
+	/**
+	 * @param totalTweetsUnprocessed the totalTweetsUnprocessed to set
+	 */
+	public void setTotalTweetsUnprocessed(Long totalTweetsUnprocessed) {
+		this.totalTweetsUnprocessed = totalTweetsUnprocessed;
+	}
+
+	/**
+	 * @return the totalUrlsProcessed
+	 */
+	public Long getTotalUrlsProcessed() {
+		return totalUrlsProcessed;
+	}
+
+	/**
+	 * @return the totalUrlsUnprocessed
+	 */
+	public Long getTotalUrlsUnprocessed() {
+		return totalUrlsUnprocessed;
+	}
+
+	/**
+	 * @param totalUrlsProcessed the totalUrlsProcessed to set
+	 */
+	public void setTotalUrlsProcessed(Long totalUrlsProcessed) {
+		this.totalUrlsProcessed = totalUrlsProcessed;
+	}
+
+	/**
+	 * @param totalUrlsUnprocessed the totalUrlsUnprocessed to set
+	 */
+	public void setTotalUrlsUnprocessed(Long totalUrlsUnprocessed) {
+		this.totalUrlsUnprocessed = totalUrlsUnprocessed;
+	}
+
 }

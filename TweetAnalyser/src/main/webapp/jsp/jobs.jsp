@@ -6,7 +6,7 @@
 <h1>Jobs</h1>
 
 		<form method="POST" action="runjob.html">
-            <label>Number of entities to process</label><input type="text" name="jobNumber" maxlength="10" />
+            <label>Number of tweets to process</label><input type="text" name="jobNumber" maxlength="10" />
             <input type="submit" value="Submit" />
         </form>
         

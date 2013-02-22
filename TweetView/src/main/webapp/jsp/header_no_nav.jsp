@@ -7,8 +7,6 @@
 <link class="include" rel="stylesheet" type="text/css" href="./styles/jquery.jqplot.min.css" />
 <link type="text/css" rel="stylesheet" href="./scripts/syntaxhighlighter/styles/shCoreDefault.min.css" />
 <link type="text/css" rel="stylesheet" href="./scripts/syntaxhighlighter/styles/shThemejqPlot.min.css" />
-   
-<!--[if lt IE 9]><script language="javascript" type="text/javascript" src="./scripts/excanvas.js"></script><![endif]-->
     
 <script src="./scripts/jquery.min.js" type="text/javascript"></script>
 <script src="./scripts/jquery.bgiframe.js" type="text/javascript"></script>
@@ -52,9 +50,9 @@ $(document).ready(function() {
   </div>
   <div  id="menu">
     <ul>
-	  	<li><a href="./collections.html">Collections</a></li>
-		<li><a href="./report.html">Reports</a></li>
-		<li class="last"><a href="./tweets.html">Streamed Tweets</a></li>
+	  	<li>&nbsp;</li>
+		<li>&nbsp;</li>
+		<li class="last">&nbsp;</li>
     </ul>
   </div>
   <div id="content-wrap">

@@ -40,8 +40,12 @@ public class JobController {
 
 		Map<String, String> message = new HashMap<String, String>();
 		
+		jobNumber = null;
+		
 		if (request.getParameter("jobNumber") != null) {
-			jobNumber = Integer.parseInt(request.getParameter("jobNumber"));
+			if (!request.getParameter("jobNumber").equals("")) {
+				jobNumber = Integer.parseInt(request.getParameter("jobNumber"));
+			} 
 		} else {
 			jobNumber = 0;
 		}
@@ -70,7 +74,7 @@ public class JobController {
 			purgeFailed = false;
 		}
 		
-		if (jobNumber > 0) {
+		if (jobNumber == null || jobNumber > 0) {
 			tweetAnalyserService.setJobNumber(jobNumber);
 			tweetAnalyserService.run();
 			message.put("message", ""+ tweetAnalyserService.getProcessCounter());	 

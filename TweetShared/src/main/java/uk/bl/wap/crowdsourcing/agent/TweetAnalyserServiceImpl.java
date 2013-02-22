@@ -54,6 +54,7 @@ public class TweetAnalyserServiceImpl implements TweetAnalyserService {
 	private String urlInProgress = null;
 	private AppConfig appConfig = null;
 	private WebCollection unknownWebCollection = null;
+	private Integer processBatchSize = 100;
 
 	/**
 	 * Number of most popular (eg: top 10) tweets for url expansion
@@ -102,94 +103,145 @@ public class TweetAnalyserServiceImpl implements TweetAnalyserService {
 
 		this.processCounter = 0;
 		boolean expandStatus = false;
-
-		List<Tweet> tweets = tweetDao.getUnprocessedTweets(jobNumber);
-		Set<String> popularUrls = urlEntityDao.getTopUrls(topUrls);
-
-		List<WebCollection> tweetWebCollection = new ArrayList<WebCollection>();
 		
-		if (unknownWebCollection == null) {
-			unknownWebCollection = webCollectionDao.getUnknownCollection();
+		Integer tweetsToProcess = processBatchSize;
+		
+		// process the specified number of tweets, otherwise process all tweets
+		if (jobNumber != null) {
+			tweetsToProcess = jobNumber;
 		}
 
-		URL u = null;
-		String expandedUrl = null;
-
-		for (Tweet tweet : tweets) {
-			log.debug("Analysing tweet id: " + tweet.getId());
-			tweetWebCollection = matchCollections(webCollections, tweet.getText());
-
-			List<UrlEntity> urlEntities = tweet.getUrlEntities();
-
-			for (UrlEntity ue : urlEntities) {
-
-				try {
-
-					this.urlInProgress = ue.getUrlOriginal();
-
-					// expand the url if the original url is popular
-					if (popularUrls.contains(ue.getUrlOriginal())) {
-						expandStatus = getExpandedUrl();
-					}
-
-					u = new URL(this.urlInProgress);
-
-					if (u.getProtocol() != null) {
-						expandedUrl = u.getProtocol() + "://";
-					}
-					expandedUrl += u.getHost();
-					if (u.getPath() != null) {
-						expandedUrl += u.getPath();
-					}
-					if (u.getQuery() != null) {
-						expandedUrl += u.getQuery();
-					}
-
-					for (WebCollection wc : tweetWebCollection) {
-						ue.setExpanded(expandStatus);
-						if (expandStatus) {
-							ue.setUrlFull(expandedUrl);
+		List<Tweet> tweets = null;
+		if (tweetsToProcess > processBatchSize) {
+			tweets = tweetDao.getUnprocessedTweets(processBatchSize);
+		} else {
+			tweets = tweetDao.getUnprocessedTweets(tweetsToProcess);
+		}
+		while (tweets.size() > 0) {
+			Set<String> popularUrls = urlEntityDao.getTopUrls(topUrls);
+	
+			List<WebCollection> tweetWebCollection = new ArrayList<WebCollection>();
+			
+			if (unknownWebCollection == null) {
+				unknownWebCollection = webCollectionDao.getUnknownCollection();
+			}
+			
+			// update the tweet summary stats (we allocate tweet totals to the unknown collection initially and then adjust after we resolve the collection)
+			unknownWebCollection.setTotalTweets(unknownWebCollection.getTotalTweets() + tweets.size());
+			unknownWebCollection.setTotalTweetsUnprocessed(unknownWebCollection.getTotalTweetsUnprocessed() + tweets.size());
+			webCollectionDao.persist(unknownWebCollection);
+	
+			URL u = null;
+			String expandedUrl = null;
+	
+			for (Tweet tweet : tweets) {
+				log.debug("Analysing tweet id: " + tweet.getId());
+				tweetWebCollection = matchCollections(webCollections, tweet.getText());
+	
+				List<UrlEntity> urlEntities = tweet.getUrlEntities();
+				unknownWebCollection.setTotalUrlsUnprocessed(unknownWebCollection.getTotalUrlsUnprocessed() + urlEntities.size());
+				webCollectionDao.persist(unknownWebCollection);
+	
+				for (UrlEntity ue : urlEntities) {
+	
+					try {
+	
+						this.urlInProgress = ue.getUrlOriginal();
+	
+						// expand the url if the original url is popular
+						if (popularUrls.contains(ue.getUrlOriginal())) {
+							expandStatus = getExpandedUrl();
 						}
-						ue.setUrlDomain(u.getHost());
-						ue.setTotalRetweets(tweet.getRetweetCount());
-						ue.setWebCollection(wc);
-					}
-					if (tweetWebCollection.isEmpty()) {
-						ue.setExpanded(expandStatus);
-						ue.setUrlDomain(u.getHost());
-						ue.setTotalRetweets(tweet.getRetweetCount());
-						if (expandStatus) {
-							ue.setUrlFull(expandedUrl);
-							// attempt to resolve for the collection by scanning the expanded url for the search terms 
-							tweetWebCollection = matchCollections(webCollections, ue.getUrlFull());
-							for (WebCollection wc : tweetWebCollection) {
-								ue.setWebCollection(wc);
+	
+						u = new URL(this.urlInProgress);
+	
+						if (u.getProtocol() != null) {
+							expandedUrl = u.getProtocol() + "://";
+						}
+						expandedUrl += u.getHost();
+						if (u.getPath() != null) {
+							expandedUrl += u.getPath();
+						}
+						if (u.getQuery() != null) {
+							expandedUrl += u.getQuery();
+						}
+	
+						for (WebCollection wc : tweetWebCollection) {
+							ue.setExpanded(expandStatus);
+							if (expandStatus) {
+								ue.setUrlFull(expandedUrl);
 							}
-							if (tweetWebCollection.isEmpty()) {
-								// attempt to resolve for the collection by scanning the original url for the search terms 
-								tweetWebCollection = matchCollections(webCollections, ue.getUrlOriginal());
+							ue.setUrlDomain(u.getHost());
+							ue.setTotalRetweets(tweet.getRetweetCount());
+							ue.setWebCollection(wc);
+						}
+						if (tweetWebCollection.isEmpty()) {
+							ue.setExpanded(expandStatus);
+							ue.setUrlDomain(u.getHost());
+							ue.setTotalRetweets(tweet.getRetweetCount());
+							if (expandStatus) {
+								ue.setUrlFull(expandedUrl);
+								// attempt to resolve for the collection by scanning the expanded url for the search terms 
+								tweetWebCollection = matchCollections(webCollections, ue.getUrlFull());
 								for (WebCollection wc : tweetWebCollection) {
 									ue.setWebCollection(wc);
 								}
-							}
+								if (tweetWebCollection.isEmpty()) {
+									// attempt to resolve for the collection by scanning the original url for the search terms 
+									tweetWebCollection = matchCollections(webCollections, ue.getUrlOriginal());
+									for (WebCollection wc : tweetWebCollection) {
+										ue.setWebCollection(wc);
+									}
+								}
+							} 
 						} 
+						if (tweetWebCollection.isEmpty()) {
+							ue.setErrors("Failed to identify web collection: no search term found in tweet text");
+							// allocate it to the unknown collection
+							ue.setWebCollection(unknownWebCollection);
+						}
+					} catch (Exception e) {
+						log.error("Error adding urlEntity : " + e.getMessage());
+						log.error(e);
+						ue.getWebCollection().setTotalUrlErrors(ue.getWebCollection().getTotalUrlErrors() + 1L);
+					} finally {
+						// url now has a web collection, (allocated or UNKNOWN) so update the url summary stats
+						ue.getWebCollection().setTotalUrlsProcessed(ue.getWebCollection().getTotalUrlsProcessed() + 1L);
+						unknownWebCollection.setTotalUrlsUnprocessed(unknownWebCollection.getTotalUrlsUnprocessed() - 1L);
+						ue.getWebCollection().setTotalUrlsOriginal(ue.getWebCollection().getTotalUrlsOriginal() + 1L);
+						if (ue.getExpanded()) {
+							ue.getWebCollection().setTotalUrlsExpanded(ue.getWebCollection().getTotalUrlsExpanded() + 1L);
+						}
+						webCollectionDao.persist(unknownWebCollection);
+						webCollectionDao.persist(ue.getWebCollection());
 					}
-					if (tweetWebCollection.isEmpty()) {
-						ue.setErrors("Failed to identify web collection: no search term found in tweet text");
-						// allocate it to the unknown collection
-						ue.setWebCollection(unknownWebCollection);
-					}
-
-				} catch (Exception e) {
-					log.error("Error adding urlEntity : " + e.getMessage());
-					log.error(e);
+					
 				}
-
+	
+				processCounter++;
+				tweet.setProcessed(true);
+				tweetDao.persist(tweet);
+				// update the tweet summary stats
+				WebCollection webCollection = tweet.getUrlEntities().get(tweet.getUrlEntities().size() - 1).getWebCollection();
+				// increment the allocated web collection
+				webCollection.setTotalTweets(webCollection.getTotalTweets() + 1L);
+				webCollection.setTotalTweetsProcessed(webCollection.getTotalTweetsProcessed() + 1L);
+				// decrement the unknown web collection
+				unknownWebCollection.setTotalTweets(unknownWebCollection.getTotalTweets() - 1L);
+				unknownWebCollection.setTotalTweetsUnprocessed(unknownWebCollection.getTotalTweetsUnprocessed() - 1L);
+				webCollectionDao.persist(webCollection);
+				webCollectionDao.persist(unknownWebCollection);
 			}
-
-			processCounter++;
-			tweet.setProcessed(true);
-			tweetDao.persist(tweet);
+			
+			// keep track of the number of tweets left to process
+			tweetsToProcess = tweetsToProcess - processCounter;
+			
+			// keep going if there are more tweets to process
+			if (tweetsToProcess > processBatchSize) {
+				tweets = tweetDao.getUnprocessedTweets(processBatchSize);
+			} else {
+				tweets = tweetDao.getUnprocessedTweets(tweetsToProcess);
+			}
 		}
 		// update the summary stats
 		updateWebCollectionSummary();
@@ -204,11 +256,16 @@ public class TweetAnalyserServiceImpl implements TweetAnalyserService {
     	// fetch the list of collections
     	List<WebCollection> webCollections = webCollectionDao.getAllCollections();
     	
+    	// update the top url summary stats (other stats are populated during analysis)
     	for (WebCollection webCollection : webCollections) {
-    		webCollection.setTotalTweets(tweetDao.getTotalTweetsByCollection(webCollection.getId()).longValue());
-    		webCollection.setTotalUrlsOriginal(urlEntityDao.getTotalOriginalURL(webCollection.getId(), null, null).longValue());
-       		webCollection.setTotalUrlsExpanded(urlEntityDao.getTotalURL(webCollection.getId(), null, null).longValue());
-       		webCollection.setTotalUrlErrors(urlEntityDao.getTotalEntitiesFailedByCollection(webCollection.getId()).longValue());
+       		List<Object[]> topUrl = urlEntityDao.getTopUrlAsObjectArray(webCollection.getId());
+       		if (topUrl != null) {
+       			if (topUrl.size() > 0) {
+       				webCollection.setTopUrl((String)topUrl.get(0)[0]);
+       				webCollection.setTopUrlTweets(urlEntityDao.getTotalUrlTweets(webCollection.getId(), (String)topUrl.get(0)[0]));
+       				webCollection.setTopUrlRetweets(urlEntityDao.getTotalUrlRetweets(webCollection.getId(), (String)topUrl.get(0)[0]));
+       			}
+       		}
        		webCollectionDao.persist(webCollection);
     	}
 	}
@@ -282,7 +339,7 @@ public class TweetAnalyserServiceImpl implements TweetAnalyserService {
 					result = false;
 				}
 			} catch (IOException e) {
-				log.error("JobController.getExpandedUrl : Error connecting to url : "
+				log.info("JobController.getExpandedUrl : Error connecting to url : "
 						+ e.getMessage());
 				result = false;
 			} finally {
@@ -290,7 +347,7 @@ public class TweetAnalyserServiceImpl implements TweetAnalyserService {
 				con = null;
 			}
 		} catch (MalformedURLException e) {
-			log.error("JobController.getExpandedUrl : Error creating url from string : "
+			log.info("JobController.getExpandedUrl : Error creating url from string : "
 					+ e.getMessage());
 			result = false;
 		}
@@ -364,17 +421,29 @@ public class TweetAnalyserServiceImpl implements TweetAnalyserService {
 
 	@Override
 	public Number getTotalTweets() {
-		return tweetDao.getTotalTweets();
+		Long totalTweets = 0L;
+		for (WebCollection webCollection : webCollectionDao.getAllCollections()) {
+			totalTweets += webCollection.getTotalTweets();
+		}
+		return totalTweets;
 	}
 
 	@Override
 	public Number getTotalUnprocessed() {
-		return tweetDao.getTotalUnprocessed();
+		Long totalTweets = 0L;
+		for (WebCollection webCollection : webCollectionDao.getAllCollections()) {
+			totalTweets += webCollection.getTotalTweetsUnprocessed();
+		}
+		return totalTweets;
 	}
 
 	@Override
 	public Number getTotalProcessedEntities() {
-		return urlEntityDao.getTotalProcessedEntities();
+		Long totalTweets = 0L;
+		for (WebCollection webCollection : webCollectionDao.getAllCollections()) {
+			totalTweets += webCollection.getTotalUrlsProcessed();
+		}
+		return totalTweets;
 	}
 
 	/**
@@ -426,6 +495,20 @@ public class TweetAnalyserServiceImpl implements TweetAnalyserService {
 	 */
 	public void setWebCollectionDao(WebCollectionDao webCollectionDao) {
 		this.webCollectionDao = webCollectionDao;
+	}
+
+	/**
+	 * @return the processBatchSize
+	 */
+	public Integer getProcessBatchSize() {
+		return processBatchSize;
+	}
+
+	/**
+	 * @param processBatchSize the processBatchSize to set
+	 */
+	public void setProcessBatchSize(Integer processBatchSize) {
+		this.processBatchSize = processBatchSize;
 	}
 
 }
