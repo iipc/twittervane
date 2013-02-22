@@ -31,7 +31,7 @@ import uk.bl.wap.crowdsourcing.dao.WebCollectionDao;
 import uk.bl.wap.crowdsourcing.logger.JsonLogger;
 
 public class TweetStreamAgentServiceImpl implements TweetStreamAgentService {
-
+ 
 	@Autowired
 	private TweetAnalyserService tweetAnalyserService;
 	
