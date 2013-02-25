@@ -43,13 +43,13 @@ public class UrlEntityComparator implements Comparator<UrlEntity> {
 			} else {
 				return url2.getTweet().getName().compareTo(url1.getTweet().getName());
 			}
-	case tweet:
-		if (this.sortOrder == SortOrder.asc) {
-			return url1.getTweet().getText().compareTo(url2.getTweet().getText());
-		} else {
-			return url2.getTweet().getText().compareTo(url1.getTweet().getText());
+		case tweet:
+			if (this.sortOrder == SortOrder.asc) {
+				return url1.getTweet().getText().compareTo(url2.getTweet().getText());
+			} else {
+				return url2.getTweet().getText().compareTo(url1.getTweet().getText());
+			}
 		}
-	}
 		throw new RuntimeException(
 				"Practically unreachable code, can't be thrown");
 	}

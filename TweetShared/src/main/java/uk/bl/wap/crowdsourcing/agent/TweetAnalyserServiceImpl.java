@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -55,7 +56,7 @@ public class TweetAnalyserServiceImpl implements TweetAnalyserService {
 	private AppConfig appConfig = null;
 	private WebCollection unknownWebCollection = null;
 	private Integer processBatchSize = 100;
-
+	
 	/**
 	 * Number of most popular (eg: top 10) tweets for url expansion
 	 */
@@ -97,8 +98,7 @@ public class TweetAnalyserServiceImpl implements TweetAnalyserService {
 
 		status = TweetAnalyserStatusEnum.RUNNING;
 
-		List<WebCollection> webCollections = webCollectionDao
-				.getAllCollections();
+		List<WebCollection> webCollections = webCollectionDao.getAllCollections();
 		appConfig = appConfigDao.getAppConfig();
 
 		this.processCounter = 0;
@@ -117,8 +117,9 @@ public class TweetAnalyserServiceImpl implements TweetAnalyserService {
 		} else {
 			tweets = tweetDao.getUnprocessedTweets(tweetsToProcess);
 		}
+		Set<String> popularUrls = urlEntityDao.getTopUrls(topUrls);
+
 		while (tweets.size() > 0) {
-			Set<String> popularUrls = urlEntityDao.getTopUrls(topUrls);
 	
 			List<WebCollection> tweetWebCollection = new ArrayList<WebCollection>();
 			
@@ -148,23 +149,24 @@ public class TweetAnalyserServiceImpl implements TweetAnalyserService {
 	
 						this.urlInProgress = ue.getUrlOriginal();
 	
+						u = new URL(this.urlInProgress);
+						
 						// expand the url if the original url is popular
 						if (popularUrls.contains(ue.getUrlOriginal())) {
 							expandStatus = getExpandedUrl();
-						}
 	
-						u = new URL(this.urlInProgress);
-	
-						if (u.getProtocol() != null) {
-							expandedUrl = u.getProtocol() + "://";
+							if (u.getProtocol() != null) {
+								expandedUrl = u.getProtocol() + "://";
+							}
+							expandedUrl += u.getHost();
+							if (u.getPath() != null) {
+								expandedUrl += u.getPath();
+							}
+							if (u.getQuery() != null) {
+								expandedUrl += u.getQuery();
+							}
 						}
-						expandedUrl += u.getHost();
-						if (u.getPath() != null) {
-							expandedUrl += u.getPath();
-						}
-						if (u.getQuery() != null) {
-							expandedUrl += u.getQuery();
-						}
+
 	
 						for (WebCollection wc : tweetWebCollection) {
 							ue.setExpanded(expandStatus);
@@ -214,6 +216,7 @@ public class TweetAnalyserServiceImpl implements TweetAnalyserService {
 						}
 						webCollectionDao.persist(unknownWebCollection);
 						webCollectionDao.persist(ue.getWebCollection());
+						
 					}
 					
 				}
@@ -249,7 +252,7 @@ public class TweetAnalyserServiceImpl implements TweetAnalyserService {
 		status = TweetAnalyserStatusEnum.STOPPED;
 	}
 	
-	/**
+ 	/**
 	 * Updates Web Collections with summary statistics
 	 */
 	private void updateWebCollectionSummary() {
