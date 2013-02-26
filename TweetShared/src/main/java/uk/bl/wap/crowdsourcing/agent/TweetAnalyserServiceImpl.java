@@ -10,7 +10,6 @@ import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -117,7 +116,7 @@ public class TweetAnalyserServiceImpl implements TweetAnalyserService {
 		} else {
 			tweets = tweetDao.getUnprocessedTweets(tweetsToProcess);
 		}
-		Set<String> popularUrls = urlEntityDao.getTopUrls(topUrls);
+		Set<String> popularUrls = urlEntityDao.getTopFreqUrls(topUrls);
 
 		while (tweets.size() > 0) {
 	
@@ -214,9 +213,10 @@ public class TweetAnalyserServiceImpl implements TweetAnalyserService {
 						if (ue.getExpanded()) {
 							ue.getWebCollection().setTotalUrlsExpanded(ue.getWebCollection().getTotalUrlsExpanded() + 1L);
 						}
+						// update the frequency
+						ue.setFrequency(urlEntityDao.getUrlFrequency(ue.getWebCollection().getId(), ue.getUrlOriginal()).intValue() + 1);
 						webCollectionDao.persist(unknownWebCollection);
 						webCollectionDao.persist(ue.getWebCollection());
-						
 					}
 					
 				}
@@ -261,13 +261,11 @@ public class TweetAnalyserServiceImpl implements TweetAnalyserService {
     	
     	// update the top url summary stats (other stats are populated during analysis)
     	for (WebCollection webCollection : webCollections) {
-       		List<Object[]> topUrl = urlEntityDao.getTopUrlAsObjectArray(webCollection.getId());
-       		if (topUrl != null) {
-       			if (topUrl.size() > 0) {
-       				webCollection.setTopUrl((String)topUrl.get(0)[0]);
-       				webCollection.setTopUrlTweets(urlEntityDao.getTotalUrlTweets(webCollection.getId(), (String)topUrl.get(0)[0]));
-       				webCollection.setTopUrlRetweets(urlEntityDao.getTotalUrlRetweets(webCollection.getId(), (String)topUrl.get(0)[0]));
-       			}
+    		UrlEntity urlEntity = urlEntityDao.getTopUrl(webCollection.getId());
+       		if (urlEntity != null) {
+       			webCollection.setTopUrl(urlEntity.getUrlOriginal());
+   				webCollection.setTopUrlTweets(urlEntityDao.getTotalUrlTweets(webCollection.getId(), urlEntity.getUrlOriginal()));
+   				webCollection.setTopUrlRetweets(urlEntityDao.getTotalUrlRetweets(webCollection.getId(), urlEntity.getUrlOriginal()));
        		}
        		webCollectionDao.persist(webCollection);
     	}

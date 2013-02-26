@@ -248,6 +248,19 @@ public class UrlEntityDao {
 		return tuples;
 	}
 	
+	public UrlEntity getTopUrl(Long webCollectionId) {
+		String sql = "SELECT u FROM UrlEntity u WHERE u.webCollection.id = :webCollectionId ORDER BY u.frequency DESC ";
+		TypedQuery<UrlEntity> query = em.createQuery(sql, UrlEntity.class);
+		query.setParameter("webCollectionId", webCollectionId);
+		query.setFirstResult(0);
+		query.setMaxResults(1);
+		try {
+			return query.getSingleResult();
+		} catch (javax.persistence.NoResultException nre) {
+			return null;
+		}
+	}
+	
 	
 	/**
 	 * Fetch the specified number of top URLs
@@ -274,6 +287,30 @@ public class UrlEntityDao {
 	     	
 	     	return popUrls;
 	    }
+	  
+	  /**
+	   * Returns the same number as getTopUrls() but will lower total cost
+	   * @param topUrls
+	   * @return
+	   */
+	  public Set<String> getTopFreqUrls(Integer topUrls) {
+		  	// fetch the top urls
+	    	String sql = "select url_original, max(frequency) from url_entity group by url_original order by max(frequency) desc ";
+	    	
+	     	Query query = em.createNativeQuery(sql);
+	    	query.setFirstResult(0);
+	    	query.setMaxResults(topUrls);
+	    	List<Object[]> urls = query.getResultList();
+	    	
+	    	// fetch the tweet ids associated with the url
+	     	Set<String> popUrls = new HashSet<String>();
+	     	for (int i=0; i<urls.size(); i++) {
+	     		String url = (String)(urls.get(i)[0]);
+   			popUrls.add(url);
+	     	}
+	     	
+	     	return popUrls;
+	  }
 
 	  /**
 	   * Returns the top expanded URLs 
@@ -642,4 +679,19 @@ public class UrlEntityDao {
 		query.setMaxResults(rows);
 		return query.getResultList();
 	}
+	
+    /**
+     * Return the count of the specified original URL
+     * @param webCollectionId
+     * @param urlOriginal
+     * @return
+     */
+    public Number getUrlFrequency(Long webCollectionId, String urlOriginal) {
+    	Number countResult;
+		Query query = em.createNativeQuery("SELECT count(url_original) FROM url_entity where web_collection_id = :webCollectionId and url_original = :urlOriginal ");
+		query.setParameter("webCollectionId", webCollectionId);
+		query.setParameter("urlOriginal", urlOriginal);
+		countResult=(Number) query.getSingleResult();
+       	return countResult;
+    }
 }

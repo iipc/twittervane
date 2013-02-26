@@ -55,5 +55,7 @@ public interface TweetStreamAgentService {
 	public void setDisplayLastStreamErrors(Integer displayLastStreamErrors);
 	
 	public List<SearchTerm> getAllSearchTerms();
+	
+	public TweetStreamAgentStatusEnum getStatus();
 
 }

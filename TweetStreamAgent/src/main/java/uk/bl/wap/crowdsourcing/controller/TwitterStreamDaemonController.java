@@ -51,7 +51,6 @@ public class TwitterStreamDaemonController {
 	@RequestMapping(value="/twitterstream")
     public ModelAndView crowdsourcing(HttpServletRequest request) {
 
-		Map<String, String> message = new HashMap<String, String>();
 		String action = null;
 		
 		if (request.getParameter("action") != null) {
@@ -59,30 +58,23 @@ public class TwitterStreamDaemonController {
         }
 		
 		if (action != null && !action.isEmpty()) {
-			if (action.contentEquals("start")) {
+			if (action.contentEquals("start") && tweetStreamAgentService != null) {
 				if (Util.twitterStream == null) {
 					tweetStreamAgentService.start();
 				}
 			} else if (action.contentEquals("stop")) {
-				if (Util.twitterStream != null) {
+				if (Util.twitterStream != null && tweetStreamAgentService != null) {
 					tweetStreamAgentService.stop();
 				}
 			}
 		}
 	
-		if (Util.twitterStream != null) {
-			message.put("message", "<span style=\"color:green;\">RUNNING</span>");
-		} else {
-			message.put("message", "<span style=\"color:red;\">SHUTDOWN</span>");
-		}
-		
-	
-        mv.addObject("message",message);
 		mv.addObject("appConfig",tweetStreamAgentService.getAppConfig());
 		mv.addObject("allSearchTerms",tweetStreamAgentService.getAllSearchTerms());
 		mv.addObject("analysisTriggerValue", tweetStreamAgentService.getAnalysisTriggerValue());
 		mv.addObject("lastStreamErrors", tweetStreamAgentService.getLastStreamErrors());
 		mv.addObject("displayLastStreamErrors", tweetStreamAgentService.getDisplayLastStreamErrors());
+		mv.addObject("status", tweetStreamAgentService.getStatus());
         mv.setViewName("twitterstream.jsp");
         return mv;
 

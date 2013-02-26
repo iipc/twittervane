@@ -25,3 +25,7 @@ update web_collection set total_tweets= 0, total_urls_original = 0, total_urls_e
 -- web_collections table is generated
 update tweet set processed = false;
 update url_entity set processed = false;
+ALTER TABLE URL_ENTITY ADD COLUMN FREQUENCY INTEGER DEFAULT 1;
+update url_entity u set frequency = (select count(1) from url_entity where web_collection_id = u.web_collection_id and url_original = u.url_original);
+CREATE INDEX ix_ue_frequency ON URL_ENTITY USING BTREE (frequency);
+

@@ -9,7 +9,15 @@
 <div id="main">
  <h1>Twitter Stream</h1>
 
-		 <p><b>Twitter Stream Status:</b> ${message.message}</p>
+		 <p><b>Twitter Stream Status:</b> 
+		<span style="color:
+		<c:if test="${status eq 'RUNNING'}" >green</c:if>
+		<c:if test="${status eq 'SHUTDOWN'}" >red</c:if>
+		<c:if test="${status eq 'WAITING'}" >orange</c:if>
+		">
+		<c:out value="${status}" />
+		</span>
+		</p>
 		 <p><b>Twitter Stream Manager:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		 <a href="twitterstream.html?action=start">Start</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		 <a href="twitterstream.html?action=stop">Stop</a></p>

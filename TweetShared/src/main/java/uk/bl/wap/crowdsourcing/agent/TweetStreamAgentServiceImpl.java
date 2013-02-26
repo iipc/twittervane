@@ -60,8 +60,11 @@ public class TweetStreamAgentServiceImpl implements TweetStreamAgentService {
 	private Integer displayLastStreamErrors = 3;
 	private List<String> lastStreamErrors = new ArrayList<String>(); 
 	
+	private TweetStreamAgentStatusEnum status = TweetStreamAgentStatusEnum.SHUTDOWN;
+	
 	public TweetStreamAgentServiceImpl() {
 		log = LogFactory.getLog(getClass());
+		status = TweetStreamAgentStatusEnum.SHUTDOWN;
 	}
 	
 	@Override
@@ -90,6 +93,7 @@ public class TweetStreamAgentServiceImpl implements TweetStreamAgentService {
 			       
 			    if (checkAuthReady() && termsFound ) {
 			    	 initStream(trackArray);
+			    	 status = TweetStreamAgentStatusEnum.RUNNING;
 			    	 log.info("Twitter Stream started");
 			     } else if (!termsFound) {
 			    	 log.warn("Twitter Stream start aborted (no search terms defined or all search terms have expired)");
@@ -116,6 +120,7 @@ public class TweetStreamAgentServiceImpl implements TweetStreamAgentService {
 				Util.twitterStream.shutdown();
 				Util.twitterStream.cleanUp();
 				Util.twitterStream = null;
+				status = TweetStreamAgentStatusEnum.SHUTDOWN;
 				log.info("Twitter Stream stopped");
 			}
 		} catch (Exception e) {
@@ -160,19 +165,19 @@ public class TweetStreamAgentServiceImpl implements TweetStreamAgentService {
 		
         StatusListener listener = new StatusListener() {
         	
-            public void onStatus(Status status) {
+            public void onStatus(Status streamStatus) {
             	
             	if (Util.twitterStream != null) {
             	
-	            	URLEntity[] links = status.getURLEntities();
+	            	URLEntity[] links = streamStatus.getURLEntities();
 	            	
 	            	if (links != null && links.length > 0) {
 	            		List<UrlEntity> urlEntities = new ArrayList<UrlEntity>();
 	            		try {
-	            			Tweet tweet = new Tweet(status.getUser().getName(),
-	            					status.getText(),
-	            					status.getRetweetCount(),
-	            					status.getId());
+	            			Tweet tweet = new Tweet(streamStatus.getUser().getName(),
+	            					streamStatus.getText(),
+	            					streamStatus.getRetweetCount(),
+	            					streamStatus.getId());
 	            			
 	            			tweet.setUrlEntities(urlEntities);
 	            			for( URLEntity link : links ) {
@@ -187,7 +192,7 @@ public class TweetStreamAgentServiceImpl implements TweetStreamAgentService {
 								tweet.getUrlEntities().add(url);
 	            			}
 	            			log.debug("Persisting tweetId: " + tweet.getTweetiD());
-	            			String rawJson = DataObjectFactory.getRawJSON(status);
+	            			String rawJson = DataObjectFactory.getRawJSON(streamStatus);
 	            			if (rawJson != null) {
 	            				jsonLogger.log(rawJson);
 	            			} else {
@@ -197,17 +202,16 @@ public class TweetStreamAgentServiceImpl implements TweetStreamAgentService {
 	            			
 	            			tweetCounter++;
 	            			
-	            			
 	            			if (tweetAnalyserService != null && tweetCounter >= analysisTriggerValue) {
 	            				log.debug("Triggering analysis after receiving " + tweetCounter + " tweets");
 	            				tweetCounter = 0;
 	            				tweetAnalyserService.setJobNumber(tweetDao.getTotalUnprocessed().intValue());
+	            				status = TweetStreamAgentStatusEnum.WAITING;
 	            				tweetAnalyserService.run();
 	            				// stop and start the tweet stream so the search terms are reloaded
 	            				stop();
 	            				start();
 	             			}
-	            			
 	            			
 	            		} catch (Exception e) {
 	            			log.error("Transaction error on tweet" + e.getMessage() + ", cause: " + e.getCause());
@@ -375,6 +379,13 @@ public class TweetStreamAgentServiceImpl implements TweetStreamAgentService {
 	 */
 	public void setWebCollectionDao(WebCollectionDao webCollectionDao) {
 		this.webCollectionDao = webCollectionDao;
+	}
+
+	/**
+	 * @return the status
+	 */
+	public TweetStreamAgentStatusEnum getStatus() {
+		return status;
 	}
 
 }

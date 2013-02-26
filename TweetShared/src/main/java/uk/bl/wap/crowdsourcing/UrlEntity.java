@@ -27,6 +27,7 @@ public class UrlEntity implements Serializable {
 	private Boolean expanded = false;
 	private Boolean processed = false;
 	private Date creationDate;
+	private Integer frequency = 1;
 	
 	@Transient
 	private Long totalTweets = 0L;
@@ -207,6 +208,17 @@ public class UrlEntity implements Serializable {
 		this.creationDate = creationDate;
 	}
 
-	
+	/**
+	 * @return the frequency
+	 */
+	public Integer getFrequency() {
+		return frequency;
+	}
 
+	/**
+	 * @param frequency the frequency to set
+	 */
+	public void setFrequency(Integer frequency) {
+		this.frequency = frequency;
+	}
 }
