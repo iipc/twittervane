@@ -17,7 +17,7 @@ function submitForm(column, sortOrder) {
  <input type="hidden" name="column" id="column" value="${column}" />
  <input type="hidden" name="report" id="column" value="${report}" />
 		<h1>Report</h1>
-		<table>
+		<table width="100%">
 			<tr><td>Report Name:</td><td>Top URL By Collection</td></tr>
 			<tr><td>Report Date:</td><td><tv:date type="fullDateTime" value="${reportDate}"/></td></tr>
 		</table>
@@ -30,7 +30,7 @@ function submitForm(column, sortOrder) {
 				<c:set var="nextSort" value="desc" />
 			</c:otherwise>
 		</c:choose>
-        <table border="0">
+        <table width="100%" border="0">
 	        <tr>
 	          <th style="vertical-align: middle;" class="first" >
 					<tv:sortheader sort="${sort}" column="${column}" thisColumn="topUrl" displayName="URL"/>

@@ -1,6 +1,8 @@
 package uk.bl.wap.crowdsourcing.controller;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +17,7 @@ import uk.bl.wap.crowdsourcing.Page;
 import uk.bl.wap.crowdsourcing.SearchTerm;
 import uk.bl.wap.crowdsourcing.UrlEntity;
 import uk.bl.wap.crowdsourcing.WebCollection;
+import uk.bl.wap.crowdsourcing.WebCollectionComparator;
 import uk.bl.wap.crowdsourcing.dao.TweetDao;
 import uk.bl.wap.crowdsourcing.dao.UrlEntityDao;
 import uk.bl.wap.crowdsourcing.dao.WebCollectionDao;
@@ -56,16 +59,7 @@ public class UrlEntityController {
 		failed,
 		browseTopUrl
 	}
-	/*
-	@RequestMapping(
-		    value = "/{id}.json",
-		    method = RequestMethod.GET,
-		    produces = "application/json")
-		@ResponseBody
-		public Person getDetailsAsJson(@PathVariable Long id) {
-		    return personRepo.findOne(id);
-		}
-	*/
+
 	@RequestMapping(value="/report")
     public ModelAndView crowdsourcing(HttpServletRequest request) {
 		
@@ -138,10 +132,17 @@ public class UrlEntityController {
 			WebCollection webCollection = webCollectionDao.getCollectionById(collectionId);
 			mv.addObject("webCollection", webCollection);
 			mv.addObject("message", message);
+			Integer totalTweets = urlEntityDao.getTotalTweets(collectionId, filterUrl, filterDomain).intValue();
+			Integer totalURLs = urlEntityDao.getTotalURL(collectionId.longValue(), filterUrl, filterDomain).intValue();
+			Integer totalDomains = urlEntityDao.getTotalDomain(collectionId, filterUrl, filterDomain).intValue();
+			mv.addObject("totalTweets", totalTweets);
+			mv.addObject("totalURLs", totalURLs);
+			mv.addObject("totalDomains", totalDomains);
+			
 			mv.setViewName("report.jsp");
 			
 		} else {
-			mv.addObject("webCollectionDao",webCollectionDao);
+			mv.addObject("webCollectionDao", webCollectionDao);
 			mv.setViewName("reports.jsp");
 		}
 		
@@ -182,9 +183,51 @@ public class UrlEntityController {
        	mv.addObject("page", page);
        	mv.addObject("pageSize", pageSize);
        	mv.addObject("reportType", reportType);
+       	
+       	WebCollectionComparator.SortOrder webCollectionsSortOrder = WebCollectionComparator.SortOrder.asc;
+       	
+    	// fetch the list of collections
+    	List<WebCollection> webCollections = webCollectionDao.getAllCollections();
+    	// sort them
+   		this.sortWebCollectionsBy(webCollections, WebCollectionComparator.Order.collectionName, webCollectionsSortOrder);
+    	// rebuild the list placing the unknown collection as the last item
+    	LinkedList<WebCollection> sortedWebCollections = sortUnknownWebCollection(webCollections);
 
+    	mv.addObject("webCollections", sortedWebCollections);
+    	
 		return mv;
     }
+	
+    /**
+     * Sorts a sorted list of <code>WebCollection</code> so that the unknown collection is last
+     * @param webCollections
+     * @return The sorted <code>List</code> of <code>WebCollection</code>s with the known collection as the last element
+     */
+    private LinkedList<WebCollection> sortUnknownWebCollection(List<WebCollection> webCollections) {
+    	// rebuild the list placing the unknown collection as the last item
+    	LinkedList<WebCollection> sortedWebCollections = new LinkedList<WebCollection>();
+		WebCollection unknownWebCollection = null;
+    	for (WebCollection webCollection : webCollections) {
+    		if (webCollection.getName().equals(webCollectionDao.getUnknownCollectionName())) {
+    			unknownWebCollection = webCollection;
+    		} else {
+    			sortedWebCollections.add(webCollection);
+    		}
+    	}
+    	if (unknownWebCollection != null) {
+    		sortedWebCollections.add(unknownWebCollection);
+    	}
+
+    	return sortedWebCollections;
+    }
+	
+    public void sortWebCollectionsBy(List<WebCollection> urlEntities, WebCollectionComparator.Order sortingBy, WebCollectionComparator.SortOrder sortOrder) {
+    	WebCollectionComparator comparator = new WebCollectionComparator();
+		comparator.setSortOrder(sortOrder);
+		comparator.setSortingBy(sortingBy);
+		Collections.sort(urlEntities, comparator); // now we have a sorted list
+	}
+    
 	/**
 	 * @return the pageSize
 	 */

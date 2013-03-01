@@ -50,10 +50,11 @@ function submitForm(column, sortOrder) {
 
 	        </tr>
 	        <c:set var="trclass" scope="page" value="row-a" />
+	        <c:set var="unknownCollection" scope="page" value="" />
 		       <c:forEach items="${webCollections}" var="webCollection">
 		      		<tr class="<c:out value='${trclass}' />">
-		      		 			<td><a href="./reportView.html?report=tweetSummaryByDate&collection=${webCollection.id}"><tv:ellipsis theString="${webCollection.name}" length="45" /></a></td>
-		      		 			<td align="center">${webCollection.totalTweets}</td>
+		      		 			<td><tv:ellipsis theString="${webCollection.name}" length="45" /></td>
+		      		 			<td align="center"><a href="./reportView.html?report=tweetSummaryByDate&collection=${webCollection.id}">${webCollection.totalTweets}</a></td>
 		      		 			<td align="center"><a href="./reportView.html?report=urlsInCollection&collection=${webCollection.id}">${webCollection.totalUrlsOriginal - webCollection.totalUrlsExpanded}</a></td>
 		      		 			<td align="center"><a href="./reportView.html?report=expandedUrlsInCollection&collection=${webCollection.id}">${webCollection.totalUrlsExpanded}</a></td>
 	      		 				<td align="center">${webCollection.totalUrlErrors}</td>

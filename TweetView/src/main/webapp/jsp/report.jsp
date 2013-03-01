@@ -1,9 +1,8 @@
 <%@page import="uk.bl.wap.crowdsourcing.*"%>
 <%@taglib prefix = "c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="tv" uri="http://ukwa/tv" %>
-<jsp:useBean id="urlEntityDao" type="uk.bl.wap.crowdsourcing.dao.UrlEntityDao" scope="request" />
-<jsp:useBean id="webCollection" type="uk.bl.wap.crowdsourcing.WebCollection" scope="request" />
 <%@page import="java.util.Iterator" %>
 <%@ include file="header.jsp" %>
 <div id="main">
@@ -45,26 +44,41 @@
 		</form>
 		
 		<h1>Reports</h1>
-		
-	   	<table>
+	   	<table width="100%" border="0" style="border: 2px solid #93BC0C; background: #EFEFEF;">
 	   		<tr>
-	   			<td><Label>Total Tweets:</Label></td><td><%= urlEntityDao.getTotalTweets(collectionId, filterUrl, filterDomain) %></td>
-	   			<td rowspan="3" valign="top"><Label>KeyWords:</Label></td>
-	   			<td rowspan="3" valign="top">
+	   			<td width="5%"><Label>Total&nbsp;Tweets:</Label></td><td width="10%"><c:out value="${totalTweets}" /></td>
+	   			<td width="5%"><Label>Report&nbsp;Type:</Label></td>
+	   			<td align="left" width="30%">
+	   			<c:choose>
+	   			<c:when test="${reportType eq 'domain'}">Top Domains</c:when>
+	   			<c:when test="${reportType eq 'topUrl'}">Top URLs</c:when>
+	   			<c:when test="${reportType eq 'popUrl'}">Top URL by Retweet</c:when>
+	   			</c:choose>
+	   			</td>
+	   		</tr>
+	   		<tr>
+	   			<td width="5%"><Label>Total&nbsp;URLs:</Label></td><td width="10%"><c:out value="${totalURLs}"/></td>
+	   			<td width="5%"><Label>Collection&nbsp;Name:</Label></td>
+	   			<td align="left" width="30%">
+	   			<c:out value="${webCollection.name}" />			
+	   			</td>
+	   		</tr>
+	   		<tr>
+	   			<td width="5%"><Label>Total&nbsp;Domains:&nbsp;</Label></td><td width="10%"><c:out value="${totalDomains}"/></td>
+	   			<td width="5%"><Label>Key&nbsp;Words:</Label></td>
+	   			<td align="left" width="30%">
+	   			<c:set var="count" scope="page" value="0" />
 	   			<c:forEach items="${webCollection.searchTerms}" var="searchTerm">
-	   				<c:out value="${searchTerm.term}" /><br/>
+	   				<c:set var="count" scope="page" value="${count + 1}" />
+	   				<c:if test="${count gt 1 && count le fn:length(webCollection.searchTerms)}">, </c:if>
+	   				<c:out value="${searchTerm.term}" />
 	   			</c:forEach>
 				</td>
-	   		</tr>
-	   		<tr>
-	   			<td><Label>Total URLs:</Label></td><td><%= urlEntityDao.getTotalURL(collectionId, filterUrl, filterDomain) %></td>
-	   		</tr>
-	   		<tr>
-	   			<td><Label>Total Domains:</Label></td><td><%=urlEntityDao.getTotalDomain(collectionId, filterUrl, filterDomain) %></td>
+	   			
 	   		</tr>
 	   	</table>
 	 
-		<table>
+		<table width="100%">
 	        <tr>
 	          <th>No.</th>
 	          <th></th>
@@ -95,6 +109,14 @@
 	        			</span>
 	        		</td>
 	        	</tr>
+	        	<c:choose>
+		    	<c:when test="${trclass eq 'row-a' }" >
+		    		<c:set var="trclass" value="row-b" scope="page" />
+		    	</c:when>
+		    	<c:otherwise>
+		    		<c:set var="trclass" value="row-a" scope="page" />
+		    	</c:otherwise>
+		    </c:choose>
 	        </c:forEach>
 		</c:if>
     	<c:if test="${reportType eq 'domain' }" >
@@ -106,6 +128,14 @@
         		</td>
         		<td><a href="http://${entity[0]}" target="_new"><tv:ellipsis theString="${entity[0]}" length="85" /></a></td>
         	</tr>
+        	<c:choose>
+		    	<c:when test="${trclass eq 'row-a' }" >
+		    		<c:set var="trclass" value="row-b" scope="page" />
+		    	</c:when>
+		    	<c:otherwise>
+		    		<c:set var="trclass" value="row-a" scope="page" />
+		    	</c:otherwise>
+		    </c:choose>
         	</c:forEach>
         </c:if>
 
@@ -118,6 +148,14 @@
         		</td>
         		<td><a href="${entity[0]}" target="_new"><tv:ellipsis theString="${entity[0]}" length="85" /></a></td>
         	</tr>
+	        <c:choose>
+		    	<c:when test="${trclass eq 'row-a' }" >
+		    		<c:set var="trclass" value="row-b" scope="page" />
+		    	</c:when>
+		    	<c:otherwise>
+		    		<c:set var="trclass" value="row-a" scope="page" />
+		    	</c:otherwise>
+		    </c:choose>
         	</c:forEach>
         </c:if>
 	        
@@ -130,14 +168,7 @@
 	        	</tr>
 	        </c:forEach>
 	    </c:if>
-	    <c:choose>
-	    	<c:when test="${trclass eq 'row-a' }" >
-	    		<c:set var="trclass" value="row-b" scope="page" />
-	    	</c:when>
-	    	<c:otherwise>
-	    		<c:set var="trclass" value="row-a" scope="page" />
-	    	</c:otherwise>
-	    </c:choose>
+
 				<tr><td colspan="3">
 	        		<%@ include file="pagination.jsp" %>
 	        </td></tr>

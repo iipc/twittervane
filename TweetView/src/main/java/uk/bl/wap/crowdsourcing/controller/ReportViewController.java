@@ -2,13 +2,12 @@ package uk.bl.wap.crowdsourcing.controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import uk.bl.wap.crowdsourcing.Page;
-import uk.bl.wap.crowdsourcing.Tweet;
 import uk.bl.wap.crowdsourcing.UrlEntity;
 import uk.bl.wap.crowdsourcing.UrlEntityComparator;
 import uk.bl.wap.crowdsourcing.WebCollection;
@@ -245,13 +243,7 @@ public class ReportViewController {
        		totalUrls = totalUrls + webCollection.getTotalUrlsOriginal();
        		totalUrlsExpanded = totalUrlsExpanded + webCollection.getTotalUrlsExpanded();
        		totalUrlErrors = totalUrlErrors + webCollection.getTotalUrlErrors();
-       		mv.addObject("webCollections", webCollections);
     	}
-    	
-    	mv.addObject("totalTweets", totalTweets);
-    	mv.addObject("totalUrlsOriginal", totalUrls);
-    	mv.addObject("totalUrlsExpanded", totalUrlsExpanded);
-    	mv.addObject("totalUrlErrors", totalUrlErrors);
     	
     	// sort the web collection
     	if (column.equals("collectionName")) {
@@ -266,6 +258,15 @@ public class ReportViewController {
     		this.sortWebCollectionsBy(webCollections, WebCollectionComparator.Order.totalUrlErrors, sortOrder);
     	}
     	
+    	// rebuild the list placing the unknown collection as the last item
+    	LinkedList<WebCollection> sortedWebCollections = sortUnknownWebCollection(webCollections);
+   		mv.addObject("webCollections", sortedWebCollections);
+  	
+    	mv.addObject("totalTweets", totalTweets);
+    	mv.addObject("totalUrlsOriginal", totalUrls);
+    	mv.addObject("totalUrlsExpanded", totalUrlsExpanded);
+    	mv.addObject("totalUrlErrors", totalUrlErrors);
+
     	return mv;
     }
     
@@ -304,11 +305,37 @@ public class ReportViewController {
     		this.sortWebCollectionsBy(webCollections, WebCollectionComparator.Order.topUrl, webCollectionsSortOrder);
     	}
     	
+    	// rebuild the list placing the unknown collection as the last item
+    	LinkedList<WebCollection> sortedWebCollections = sortUnknownWebCollection(webCollections);
+    	
     	mv.addObject("totalTopUrlTweets", totalTopUrlTweets);
     	mv.addObject("totalTopUrlRetweets", totalTopUrlRetweets);
-   		mv.addObject("webCollections", webCollections);
+   		mv.addObject("webCollections", sortedWebCollections);
 
     	return mv;
+    }
+    
+    /**
+     * Sorts a sorted list of <code>WebCollection</code> so that the unknown collection is last
+     * @param webCollections
+     * @return The sorted <code>List</code> of <code>WebCollection</code>s with the known collection as the last element
+     */
+    private LinkedList<WebCollection> sortUnknownWebCollection(List<WebCollection> webCollections) {
+    	// rebuild the list placing the unknown collection as the last item
+    	LinkedList<WebCollection> sortedWebCollections = new LinkedList<WebCollection>();
+		WebCollection unknownWebCollection = null;
+    	for (WebCollection webCollection : webCollections) {
+    		if (webCollection.getName().equals(webCollectionDao.getUnknownCollectionName())) {
+    			unknownWebCollection = webCollection;
+    		} else {
+    			sortedWebCollections.add(webCollection);
+    		}
+    	}
+    	if (unknownWebCollection != null) {
+    		sortedWebCollections.add(unknownWebCollection);
+    	}
+
+    	return sortedWebCollections;
     }
     
     /**
@@ -372,8 +399,6 @@ public class ReportViewController {
 
     	return mv;
     }
-
-    
     
     public void sortUrlEntitiesBy(List<UrlEntity> urlEntities, UrlEntityComparator.Order sortingBy, UrlEntityComparator.SortOrder sortOrder) {
     		UrlEntityComparator comparator = new UrlEntityComparator();

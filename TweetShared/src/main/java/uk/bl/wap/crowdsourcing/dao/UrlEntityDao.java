@@ -355,37 +355,32 @@ public class UrlEntityDao {
 		return query.getResultList();
 	}
 
-	public Number getTotalTweets(long collectionId, String filterUrl,
-			String filterDomain) {
+	public Number getTotalTweets(long collectionId, String filterUrl, String filterDomain) {
 		Number countResult;
-		try {
-			String sql = "SELECT COUNT(DISTINCT u.tweetId) FROM UrlEntity u WHERE u.collectionId = :collectionid";
-			if (filterUrl != null && !filterUrl.isEmpty()) {
-				if (!filterUrl.contains("%")) {
-					filterUrl = "%" + filterUrl + "%";
-				}
-				sql += " AND u.urlFull LIKE :filterUrl";
+		String sql = "SELECT COUNT(DISTINCT u.tweet.id) FROM UrlEntity u WHERE u.webCollection.id = :collectionId";
+		if (filterUrl != null && !filterUrl.isEmpty()) {
+			if (!filterUrl.contains("%")) {
+				filterUrl = "%" + filterUrl + "%";
 			}
-			if (filterDomain != null && !filterDomain.isEmpty()) {
-				if (!filterDomain.contains("%")) {
-					filterDomain = "%" + filterDomain + "%";
-				}
-				sql += " AND u.urlDomain LIKE :filterDomain";
-			}
-
-			Query query = em.createQuery(sql);
-			query.setParameter("collectionid", collectionId);
-			if (filterUrl != null && !filterUrl.isEmpty()) {
-				query.setParameter("filterUrl", filterUrl);
-			}
-			if (filterDomain != null && !filterDomain.isEmpty()) {
-				query.setParameter("filterDomain", filterDomain);
-			}
-			countResult = (Number) query.getSingleResult();
-
-		} catch (Exception e) {
-			countResult = 0;
+			sql += " AND u.urlFull LIKE :filterUrl";
 		}
+		if (filterDomain != null && !filterDomain.isEmpty()) {
+			if (!filterDomain.contains("%")) {
+				filterDomain = "%" + filterDomain + "%";
+			}
+			sql += " AND u.urlDomain LIKE :filterDomain";
+		}
+
+		Query query = em.createQuery(sql);
+		query.setParameter("collectionId", collectionId);
+		if (filterUrl != null && !filterUrl.isEmpty()) {
+			query.setParameter("filterUrl", filterUrl);
+		}
+		if (filterDomain != null && !filterDomain.isEmpty()) {
+			query.setParameter("filterDomain", filterDomain);
+		}
+		countResult = (Number) query.getSingleResult();
+
 		return countResult;
 	}
 
@@ -477,36 +472,32 @@ public class UrlEntityDao {
 		return countResult;
 	}
 
-	public Number getTotalDomain(long collectionId, String filterUrl,
-			String filterDomain) {
+	public Number getTotalDomain(long collectionId, String filterUrl, String filterDomain) {
 		Number countResult;
-		try {
-			String sql = "SELECT COUNT(DISTINCT u.urlDomain) FROM UrlEntity u WHERE u.urlOriginal is not null and u.collectionId = :collectionid";
-			if (filterUrl != null && !filterUrl.isEmpty()) {
-				if (!filterUrl.contains("%")) {
-					filterUrl = "%" + filterUrl + "%";
-				}
-				sql += " AND u.urlFull LIKE :filterUrl";
+		String sql = "SELECT COUNT(DISTINCT u.urlDomain) FROM UrlEntity u WHERE u.urlOriginal is not null and u.webCollection.id = :collectionId ";
+		if (filterUrl != null && !filterUrl.isEmpty()) {
+			if (!filterUrl.contains("%")) {
+				filterUrl = "%" + filterUrl + "%";
 			}
-			if (filterDomain != null && !filterDomain.isEmpty()) {
-				if (!filterDomain.contains("%")) {
-					filterDomain = "%" + filterDomain + "%";
-				}
-				sql += " AND u.urlDomain LIKE :filterDomain";
-			}
-
-			Query query = em.createQuery(sql);
-			query.setParameter("collectionid", collectionId);
-			if (filterUrl != null && !filterUrl.isEmpty()) {
-				query.setParameter("filterUrl", filterUrl);
-			}
-			if (filterDomain != null && !filterDomain.isEmpty()) {
-				query.setParameter("filterDomain", filterDomain);
-			}
-			countResult = (Number) query.getSingleResult();
-		} catch (Exception e) {
-			countResult = 0;
+			sql += " AND u.urlFull LIKE :filterUrl";
 		}
+		if (filterDomain != null && !filterDomain.isEmpty()) {
+			if (!filterDomain.contains("%")) {
+				filterDomain = "%" + filterDomain + "%";
+			}
+			sql += " AND u.urlDomain LIKE :filterDomain";
+		}
+
+		Query query = em.createQuery(sql);
+		query.setParameter("collectionId", collectionId);
+		if (filterUrl != null && !filterUrl.isEmpty()) {
+			query.setParameter("filterUrl", filterUrl);
+		}
+		if (filterDomain != null && !filterDomain.isEmpty()) {
+			query.setParameter("filterDomain", filterDomain);
+		}
+		countResult = (Number) query.getSingleResult();
+		
 		return countResult;
 	}
 

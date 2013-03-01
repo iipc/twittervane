@@ -1,5 +1,6 @@
 <%@page import="uk.bl.wap.crowdsourcing.*"%>
-<jsp:useBean id="webCollectionDao" type="uk.bl.wap.crowdsourcing.dao.WebCollectionDao" scope="request" />
+<%@taglib prefix = "c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ include file="header.jsp" %>
 <div id="main">
 		<h1>Reports</h1>
@@ -7,21 +8,16 @@
 		<form method="POST" action="report.html">
             <label>Collection</label>
 	            <select name="collectionId" id="collectionId">
-	            	<%
-	        		for (WebCollection wc : webCollectionDao.getAllCollections()) { 
-	        		%>
-	        			<option value="<%= wc.getId()%>"><%= wc.getName() %></option>
-		  			<%
-		  			} 
-		  			%>
-	            	
+	            <c:forEach items="${webCollections}" var="webCollection">
+	           		<option value="${webCollection.id}"><c:out value="${webCollection.name}" /></option>
+	            </c:forEach>
 	            </select>
 			<label>Report Type</label>
 				<select name="reportType">
 					<option value="domain">Top Domains</option>
 					<option value="topUrl">Top URLs</option>
 					<option value="popUrl">Top URL by Retweet</otpion>
-					<option value="failed">Failed Analysis</otpion>
+					<!-- <option value="failed">Failed Analysis</otpion> -->
 				</select>
 				<input type="hidden" name="reportFormat" value="html">
 <!--			<label>Report Format</label>

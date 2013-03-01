@@ -54,7 +54,8 @@ $(document).ready(function() {
     <ul>
 	  	<li><a href="./collections.html">Collections</a></li>
 		<li><a href="./report.html">Reports</a></li>
-		<li class="last"><a href="./tweets.html">Streamed Tweets</a></li>
+		<li><a href="./tweets.html">Streamed Tweets</a></li>
+		<li class="last"><a href="./help.html">Help</a></li>
     </ul>
   </div>
   <div id="content-wrap">
