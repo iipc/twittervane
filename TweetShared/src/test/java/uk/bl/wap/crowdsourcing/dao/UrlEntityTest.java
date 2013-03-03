@@ -2,6 +2,7 @@ package uk.bl.wap.crowdsourcing.dao;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -131,7 +132,12 @@ public class UrlEntityTest {
 		
 		Tweet tweet = tweetDao.getAllTweets().get(0);
 		
-		UrlEntity urlEntity = tweet.getUrlEntities().get(0);
+		Iterator<UrlEntity> urlEntities = tweet.getUrlEntities().iterator();
+		
+		UrlEntity urlEntity = null;
+		while (urlEntities.hasNext() && (urlEntity == null || !urlEntity.getUrlDomain().equals("testDomain2"))) {
+			urlEntity = urlEntities.next();
+		}
 
 		// check it contains a stored attribute value
 		Assert.assertEquals("testDomain2", urlEntity.getUrlDomain());
@@ -145,7 +151,11 @@ public class UrlEntityTest {
 		// retrieve and re-check
 		tweet = tweetDao.getAllTweets().get(0);
 		
-		urlEntity = tweet.getUrlEntities().get(0);
+		urlEntities = tweet.getUrlEntities().iterator();
+		
+		while (urlEntities.hasNext() && (urlEntity == null || !urlEntity.getUrlDomain().equals("anotherTestDomain"))) {
+			urlEntity = urlEntities.next();
+		}
 
 		// check it contains a stored attribute value
 		Assert.assertEquals("anotherTestDomain", urlEntity.getUrlDomain());
