@@ -1,7 +1,9 @@
 Twittervane
 ===========
 
-*** No longer under active development ***
+<center>
+### No longer under active development ###
+</center>
 
 Twittervane is a prototype application capable of collecting and analysing Twitter feeds and outputs URLs mentioned in the Tweets. These URLs shared on the Twitter could potentially point to web resources relevant to web archive collections.
 
