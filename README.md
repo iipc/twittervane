@@ -29,3 +29,12 @@ Twittervane is not a replacement of the curatorial process but has the potential
 Further work need to take place to productionise Twittervane. However the question that needs to be answered first is whether the amount of processing required to produce the small amount of relevant URLs can be justified. 
 
 Note also that there are third-party services like [Topsy](http://topsy.com/) that fulfil a very similar role.
+
+Other tools
+-----------
+
+* http://www.l3s.de/~kanhabua/papers/ECIR2013-WikiEvents.pdf
+* http://arxiv.org/pdf/1303.4702.pdf
+    * http://wikipedia-irc.herokuapp.com/
+* http://topsy.com
+
