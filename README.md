@@ -37,4 +37,4 @@ Other tools
 * http://arxiv.org/pdf/1303.4702.pdf
     * http://wikipedia-irc.herokuapp.com/
 * http://topsy.com
-
+* [Evaluating Twittervane - IIPC Project Report](http://www.netpreserve.org/sites/default/files/resources/ProjectFinalReport_Twittervane_Approved.pdf)
